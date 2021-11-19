@@ -9,7 +9,9 @@ const useStyles = createUseStyles({
     height: "100vh",
   },
   subContainer: {
-    height: "calc(100vh - 80px)",
+    minHeight: "calc(100vh - 80px)",
+    display: "flex",
+    flexDirection: "row",
   },
   flex1: {
     flex: 1,
@@ -21,10 +23,8 @@ function Layout() {
   return (
     <div className={classes.container}>
       <Header />
-      <div className={"p-grid p-mt-0 " + classes.subContainer}>
-        <div>
-          <SideNav />
-        </div>
+      <div className={classes.subContainer}>
+        <SideNav />
         <div className={classes.flex1}>
           <Outlet />
         </div>

@@ -2,7 +2,7 @@ import React from "react";
 import { createUseStyles } from "react-jss";
 
 const useStyles = createUseStyles({
-  container: { height: "100%", width: "200px", backgroundColor: "#2A3042" },
+  container: { width: "200px", backgroundColor: "#2A3042" },
 });
 
 export default function SideNav() {
