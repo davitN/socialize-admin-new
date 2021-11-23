@@ -13,6 +13,7 @@ import Login from "./routes/Login";
 import Companies from "./routes/Companies";
 import AppUsers from "./routes/AppUsers";
 import Dashboard from "./routes/Dashboard";
+import AddVanue from './routes/AddVanue';
 
 export const store = configureStore();
 storeRegistry.register(store);
@@ -29,6 +30,7 @@ ReactDOM.render(
             <Route path="app-users" element={<AppUsers />} />
             <Route path="auth" element={<Login />} />
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="add-vanue" element={<AddVanue />} />
             <Route
               path="*"
               element={

@@ -200,7 +200,16 @@
 }
 
 .select2-selection__placeholder {
+  text-align: start;
   color: $input-placeholder-color !important;
+}
+
+.select2-selection__single-value {
+  text-align: start;
+}
+
+.select2-selection__option {
+  text-align: start;
 }
 
 .select2-selection__menu {

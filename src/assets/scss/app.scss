@@ -15,9 +15,13 @@ File: Main Css File
 @import "./node_modules/bootstrap/scss/functions";
 @import "./node_modules/bootstrap/scss/variables";
 @import "variables";
+@import "./node_modules/bootstrap/scss/mixins.scss";
+
+// Cold Vision Styles
 @import "cv-styles/flex-box";
 @import "cv-styles/text-align";
-@import "./node_modules/bootstrap/scss/mixins.scss";
+@import "cv-styles/elements/switcher";
+@import "cv-styles/reset";
 
 // Structure
 @import "custom/structure/general";

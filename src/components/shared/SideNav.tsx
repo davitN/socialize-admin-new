@@ -2,17 +2,15 @@ import React, { useState } from "react";
 import { createUseStyles } from "react-jss";
 import { Link, useLocation } from 'react-router-dom';
 
-const mainRoutes: Array<{name: string, route: string, active: boolean, iconName: string}> = [
+const mainRoutes: Array<{name: string, route: string, iconName: string}> = [
   {
     name: 'Dashboard',
     route: '/dashboard',
-    active: false,
     iconName: 'bx bx-home-circle'
   },
   {
-    name: 'Companies',
-    route: '/companies',
-    active: false,
+    name: 'Add Vanue',
+    route: '/add-vanue',
     iconName: 'bx bx-home-circle'
   }
 ]
