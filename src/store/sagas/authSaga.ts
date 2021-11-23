@@ -34,6 +34,7 @@ export function* summitSignInOTP_Saga(payload: {
     const res: IUserData = yield axiosInstance.post("authorization/sign_in", {
       code: code,
     });
+    localStorage.setItem("token", res.accessToken);
     yield put(setUserDataAction(res));
     yield put(checkedSignedInAction(true));
     callbacks?.success && callbacks.success();
