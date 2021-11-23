@@ -10,10 +10,9 @@ import configureStore, { sagaMiddleware } from "./store/configureStore";
 import rootSaga from "./store/sagas";
 import storeRegistry from "./store/storeRegistry";
 import Login from "./routes/Login";
-import Companies from "./routes/Companies";
-import AppUsers from "./routes/AppUsers";
 import Dashboard from "./routes/Dashboard";
 import AddVanue from './routes/AddVanue';
+import WithAuth from "./components/shared/WithAuth";
 
 export const store = configureStore();
 storeRegistry.register(store);
@@ -26,11 +25,23 @@ ReactDOM.render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />}>
-            <Route path="companies" element={<Companies />} />
-            <Route path="app-users" element={<AppUsers />} />
+            <Route
+              path="/dashboard"
+              element={
+                <WithAuth>
+                  <Dashboard />
+                </WithAuth>
+              }
+            />
+            <Route
+                path="/add-vanue"
+                element={
+                  <WithAuth>
+                    <AddVanue />
+                  </WithAuth>
+                }
+            />
             <Route path="auth" element={<Login />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="add-vanue" element={<AddVanue />} />
             <Route
               path="*"
               element={

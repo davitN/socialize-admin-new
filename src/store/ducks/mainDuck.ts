@@ -1,4 +1,5 @@
 import { AnyAction } from "redux";
+import notificationService from "../../services/notification.service";
 // import navigationService from "../../services/navigation.service";
 // import notificationService from "../../services/notification.service";
 
@@ -78,11 +79,31 @@ export const resetStoreAction = (isLoading = false) => ({
 //   };
 // };
 
-// export const notifyAction = (type: string, title: string, message: string, showError = false) => {
-//   if (!(!showError && type === "error")) {
-//     notificationService.notify(type, title, message);
-//   }
-//   return {
-//     type: DEFAULT,
-//   };
-// };
+export const notifyAction = ({
+  type,
+  message,
+  title,
+  duration,
+  callback,
+  showError,
+}: {
+  type: "error" | "info" | "success" | "warning";
+  message: string;
+  title?: string | undefined;
+  duration?: number | undefined;
+  callback?: Function | undefined;
+  showError?: boolean;
+}) => {
+  if (!(!showError && type === "error")) {
+    notificationService[type](message, title, duration, callback);
+  }
+  return {
+    type: DEFAULT,
+  };
+};
+
+export const defaultAction = () => {
+  return {
+    type: DEFAULT,
+  };
+};

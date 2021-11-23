@@ -1,5 +1,5 @@
-export const ENV = 'dev';
-export const backendUrl = 'https://api-dev.empowerofyou.com/api/';
+export const ENV = "dev";
+export const backendUrl = "https://aws-dev.thatsocialapp.com/admin/";
 // export const backendUrl = 'http://localhost:8080/api/';
 // export const backendUrl = 'http://192.168.1.5:8080/api/';
 
@@ -9,5 +9,5 @@ export const backendUrl = 'https://api-dev.empowerofyou.com/api/';
 // }`;
 
 //long polling
-export const cleanBackendUrl = backendUrl.split('api')[0];
+export const cleanBackendUrl = backendUrl.split("api")[0];
 // export const cleanBackendUrl = 'wss://192.168.1.5:8080/';

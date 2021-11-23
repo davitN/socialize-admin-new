@@ -11,3 +11,7 @@ export interface ISignUpData {
   phone: string;
   companyCode: string;
 }
+
+export interface AuthState {
+  userData: any;
+}

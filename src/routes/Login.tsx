@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createUseStyles } from "react-jss";
 import profile from "../assets/images/profile-img.png";
 import logo from "../assets/images/logo.svg";
-import { checkSignedInAction } from "../store/ducks/authDuck";
+import { checkSignedInAction, signInActionSG, summitSignInOTP_ActionSG } from "../store/ducks/authDuck";
 import notificationService from "../services/notification.service";
 import { startLoader } from "../services/loader.service";
 
 import { Row, Col, CardBody, Card, Alert, Container } from "reactstrap";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 // availity-reactstrap-validation
 import { AvForm, AvField } from "availity-reactstrap-validation";
@@ -41,23 +41,49 @@ const useStyles = createUseStyles({
 const Login = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [values1, setValues1] = useState<any>([]);
-  const [values2, setValues2] = useState<any>([]);
-  const [values3, setValues3] = useState<any>([]);
-
-  useEffect(() => {
-    dispatch(checkSignedInAction());
-    setTimeout(() => {
-      // notificationService.success("haiaa");
-      // startLoader();
-    }, 3000);
-  }, [dispatch]);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [smsIsSent, setSmsIsSent] = useState<boolean>(false);
+  const [smsCode, setSmsCode] = useState<string>("");
+  const from = location.state?.from?.pathname || "/dashboard";
 
   // handleValidSubmit
-  const login = (event: any, values: any) => {};
+  const login = (event: any, values: any) => {
+    dispatch(
+      signInActionSG(
+        { email, password },
+        {
+          success: () => {
+            setErrorMessage("");
+            setSmsIsSent(true);
+            notificationService.info("sms code's been sent to your phone");
+          },
+          error: (message: string) => {
+            setErrorMessage(message);
+          },
+        }
+      )
+    );
+  };
+
+  const submitOTP = (event: any, values: any) => {
+    dispatch(
+      summitSignInOTP_ActionSG(smsCode, {
+        success: () => {
+          navigate(from, { replace: true });
+        },
+        error: (message: string) => {
+          setErrorMessage(message);
+        },
+      })
+    );
+  };
 
   return (
-    <React.Fragment>
+    <>
       <div className="home-btn d-none d-sm-block">
         <Link to="/" className="text-dark">
           <i className="fas fa-home h2" />
@@ -94,33 +120,56 @@ const Login = () => {
                     <AvForm
                       className="form-horizontal"
                       onValidSubmit={(e: any, v: any) => {
-                        login(e, v);
+                        smsIsSent ? submitOTP(e, v) : login(e, v);
                       }}
                     >
-                      {true ? <Alert color="danger">{"error"}</Alert> : null}
+                      {errorMessage ? <Alert color="danger">{errorMessage}</Alert> : null}
+                      {smsIsSent ? (
+                        <div className="mb-3">
+                          <AvField
+                            name="code"
+                            label="code"
+                            value={smsCode}
+                            type="text"
+                            placeholder="Enter Code"
+                            required
+                            onChange={(event: any) => {
+                              setSmsCode(event.target.value);
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <>
+                          <div className="mb-3">
+                            <AvField
+                              name="email"
+                              label="Email"
+                              value={email}
+                              className="form-control"
+                              placeholder="Enter email"
+                              type="email"
+                              required
+                              onChange={(event: any) => {
+                                setEmail(event.target.value);
+                              }}
+                            />
+                          </div>
 
-                      <div className="mb-3">
-                        <AvField
-                          name="email"
-                          label="Email"
-                          value="admin@themesbrand.com"
-                          className="form-control"
-                          placeholder="Enter email"
-                          type="email"
-                          required
-                        />
-                      </div>
-
-                      <div className="mb-3">
-                        <AvField
-                          name="password"
-                          label="Password"
-                          value="123456"
-                          type="password"
-                          required
-                          placeholder="Enter Password"
-                        />
-                      </div>
+                          <div className="mb-3">
+                            <AvField
+                              name="password"
+                              label="Password"
+                              value={password}
+                              type="password"
+                              placeholder="Enter Password"
+                              required
+                              onChange={(event: any) => {
+                                setPassword(event.target.value);
+                              }}
+                            />
+                          </div>
+                        </>
+                      )}
                       <div className="mt-3 d-grid">
                         <button className="btn btn-primary btn-block" type="submit">
                           Log In
@@ -134,7 +183,7 @@ const Login = () => {
           </Row>
         </Container>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

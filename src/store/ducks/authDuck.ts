@@ -1,15 +1,16 @@
 import { AnyAction } from "redux";
-import { ISignInData, ISignUpData } from "../../types/auth";
+import { AuthState, ISignInData, ISignUpData } from "../../types/auth";
 import { IUserData } from "../../types/main";
 
 export const CHECK_SIGNED_IN = "socialize/auth/checkSignedIn";
 export const SET_USER_DATA = "socialize/auth/setUserData";
 export const UPDATE_USER_DATA = "socialize/auth/updateUserData";
 export const REQUEST_SIGN_IN_SG = "socialize/auth/requestSignIn_sg";
+export const SUBMIT_SIGN_IN_OTP_SG = "socialize/auth/summitSignInOTP_sg";
 export const REQUEST_SIGN_UP_SG = "socialize/auth/requestSignUp_sg";
 export const LOGOUT = "socialize/auth/logout";
 
-const initialState = {
+const initialState: AuthState = {
   userData: {},
 };
 
@@ -35,10 +36,16 @@ export const checkSignedInAction = () => ({
   type: CHECK_SIGNED_IN,
 });
 
-export const signInActionSG = (data: ISignInData, callback: Function) => ({
+export const signInActionSG = (data: ISignInData, callbacks?: { success?: Function; error?: Function }) => ({
   type: REQUEST_SIGN_IN_SG,
   data,
-  callback,
+  callbacks,
+});
+
+export const summitSignInOTP_ActionSG = (code: string, callbacks?: { success?: Function; error?: Function }) => ({
+  type: SUBMIT_SIGN_IN_OTP_SG,
+  code,
+  callbacks,
 });
 
 export const signUpActionSG = (data: ISignUpData, callback: Function) => ({
