@@ -13,6 +13,7 @@ import Login from "./routes/Login";
 import Companies from "./routes/Companies";
 import AppUsers from "./routes/AppUsers";
 import Dashboard from "./routes/Dashboard";
+import WithAuth from "./components/shared/WithAuth";
 
 export const store = configureStore();
 storeRegistry.register(store);
@@ -25,10 +26,24 @@ ReactDOM.render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />}>
-            <Route path="companies" element={<Companies />} />
+            <Route
+              path="/companies"
+              element={
+                <WithAuth>
+                  <Companies />
+                </WithAuth>
+              }
+            />
+            <Route
+              path="/dashboard"
+              element={
+                <WithAuth>
+                  <Dashboard />
+                </WithAuth>
+              }
+            />
             <Route path="app-users" element={<AppUsers />} />
             <Route path="auth" element={<Login />} />
-            <Route path="dashboard" element={<Dashboard />} />
             <Route
               path="*"
               element={

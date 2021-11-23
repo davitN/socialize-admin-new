@@ -7,9 +7,7 @@ import { checkedSignedInAction, DEFAULT } from "../ducks/mainDuck";
 
 export function* checkSignedInSaga() {
   try {
-    const userData: IUserData = yield axiosInstance.post("authorization/ping", null, {
-      removeLoader: true,
-    });
+    const userData: IUserData = yield axiosInstance.get("authorization/ping");
     // if (userData.accessToken) {
     //   yield AsyncStorage.setItem('token', userData.accessToken);
     // }

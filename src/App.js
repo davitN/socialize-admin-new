@@ -1,23 +1,31 @@
-// import "primereact/resources/themes/lara-light-indigo/theme.css"; //theme
-// import "primereact/resources/primereact.min.css"; //core css
-// import "primeicons/primeicons.css";
-// import "primeflex/primeflex.css";
 import "./App.css";
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { setLoaderRef } from "./services/loader.service";
 import GlobalLoader from "./components/shared/GlobalLoader";
 import { NotificationContainer } from "react-notifications";
-import { Link, Outlet } from "react-router-dom";
 import Layout from "./components/shared/Layout";
+import { checkSignedInAction } from "./store/ducks/authDuck";
 
 function App() {
+  const dispatch = useDispatch();
+  const { isLoading } = useSelector((state) => state.mainReducer);
+
+  useEffect(() => {
+    dispatch(checkSignedInAction());
+  }, [dispatch]);
+
   return (
     <>
-      <div className="App">
-        <Layout />
-      </div>
-      <NotificationContainer />
-      <GlobalLoader ref={(ref) => setLoaderRef(ref)} />
+      {isLoading ? null : (
+        <>
+          <div className="App">
+            <Layout />
+          </div>
+          <NotificationContainer />
+          <GlobalLoader ref={(ref) => setLoaderRef(ref)} />
+        </>
+      )}
     </>
   );
 }
