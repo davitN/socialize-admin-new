@@ -15,6 +15,8 @@ File: Main Css File
 @import "./node_modules/bootstrap/scss/functions";
 @import "./node_modules/bootstrap/scss/variables";
 @import "variables";
+@import "cv-styles/flex-box";
+@import "cv-styles/text-align";
 @import "./node_modules/bootstrap/scss/mixins.scss";
 
 // Structure

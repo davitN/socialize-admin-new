@@ -43,56 +43,56 @@ import { useDispatch } from "react-redux";
 
 const yearData = [
   {
-    name: "Series A",
+    name: "First Visit",
     data: [44, 55, 41, 67, 22, 43, 36, 52, 24, 18, 36, 48],
   },
   {
-    name: "Series B",
+    name: "Second Visit",
     data: [13, 23, 20, 8, 13, 27, 18, 22, 10, 16, 24, 22],
   },
   {
-    name: "Series C",
+    name: "Regular Customer",
     data: [11, 17, 15, 15, 21, 14, 11, 18, 17, 12, 20, 18],
   },
 ];
 
 const monthData = [
   {
-    name: "Series A",
+    name: "First Visit",
     data: [34, 55, 21, 77, 32, 63, 86, 42, 34, 18, 16, 41],
   },
   {
-    name: "Series B",
+    name: "Second Visit",
     data: [10, 63, 40, 80, 52, 41, 11, 32, 30, 86, 44, 33],
   },
   {
-    name: "Series C",
+    name: "Regular Customer",
     data: [11, 17, 15, 85, 21, 14, 80, 58, 17, 12, 20, 18],
   },
 ];
 
 const weekData = [
   {
-    name: "Series A",
+    name: "First Visit",
     data: [14, 52, 11, 57, 22, 33, 31, 22, 64, 14, 32, 68],
   },
   {
-    name: "Series B",
+    name: "Second Visit",
     data: [13, 23, 20, 8, 13, 27, 18, 22, 10, 16, 24, 22],
   },
   {
-    name: "Series C",
+    name: "Regular Customer",
     data: [11, 17, 15, 15, 34, 55, 21, 18, 17, 12, 20, 18],
   },
 ];
 
 const reports = [
-  { title: "Orders", iconClass: "bx-copy-alt", description: "1,235" },
-  { title: "Revenue", iconClass: "bx-archive-in", description: "$35, 723" },
+  { title: "New Customers This Month", iconClass: "bx-copy-alt", description: "1,235" },
+  { title: "Total Customers This Month", iconClass: "bx-archive-in", description: "2,586" },
   {
-    title: "Average Price",
+    title: "Busiest Day",
     iconClass: "bx-purchase-tag-alt",
-    description: "$16.2",
+    description: "Tuesday",
   },
 ];
 
@@ -132,7 +132,7 @@ const Dashboard = (props) => {
         </MetaTags>
         <Container fluid>
           {/* Render Breadcrumb */}
-          <Breadcrumbs title={props.t("Dashboards")} breadcrumbItem={props.t("Dashboard")} />
+          <Breadcrumbs title={props.t("Welcome to That Social App Premium Dashboard")} breadcrumbItem={props.t("Dashboard")} />
 
           <Row>
             <Col xl="4">
@@ -166,7 +166,7 @@ const Dashboard = (props) => {
               <Card>
                 <CardBody>
                   <div className="d-sm-flex flex-wrap">
-                    <h4 className="card-title mb-4">Email Sent</h4>
+                    <h4 className="card-title mb-4">Customer Trends</h4>
                     <div className="ms-auto">
                       <ul className="nav nav-pills">
                         <li className="nav-item">
@@ -215,18 +215,18 @@ const Dashboard = (props) => {
             </Col>
           </Row>
 
-          <Row>
-            <Col xl="4">
-              <SocialSource />
-            </Col>
-            <Col xl="4">
-              <ActivityComp />
-            </Col>
+          {/*<Row>*/}
+          {/*  <Col xl="4">*/}
+          {/*    <SocialSource />*/}
+          {/*  </Col>*/}
+          {/*  <Col xl="4">*/}
+          {/*    <ActivityComp />*/}
+          {/*  </Col>*/}
 
-            <Col xl="4">
-              <TopCities />
-            </Col>
-          </Row>
+          {/*  <Col xl="4">*/}
+          {/*    <TopCities />*/}
+          {/*  </Col>*/}
+          {/*</Row>*/}
 
           <Row>
             <Col lg="12">

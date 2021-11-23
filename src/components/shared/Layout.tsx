@@ -9,23 +9,22 @@ const useStyles = createUseStyles({
     height: "100vh",
   },
   subContainer: {
-    minHeight: "calc(100vh - 80px)",
-    display: "flex",
-    flexDirection: "row",
+    flex: 1
   },
-  flex1: {
+  mainWrapper: {
     flex: 1,
-  },
+    overflow: 'hidden'
+  }
 });
 
 function Layout() {
   const classes = useStyles();
   return (
-    <div className={classes.container}>
-      <Header />
-      <div className={classes.subContainer}>
-        <SideNav />
-        <div className={classes.flex1}>
+    <div className={`flex-horizontal horizontal-filled ${classes.container}`}>
+      <SideNav />
+      <div className={`flex-vertical vertical-filled ${classes.subContainer}`}>
+        <Header />
+        <div className={`${classes.mainWrapper}`}>
           <Outlet />
         </div>
       </div>
