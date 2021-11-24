@@ -14,3 +14,8 @@ export interface NotificationManager {
   warning: (message: string, title?: string, duration?: number, callback?: Function) => void;
   error: (message: string, title?: string, duration?: number, callback?: Function) => void;
 }
+
+export interface CallBacks {
+  success?: Function;
+  error?: Function;
+}

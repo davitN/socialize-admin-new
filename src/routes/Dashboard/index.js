@@ -40,6 +40,7 @@ import { withTranslation } from "react-i18next";
 
 //redux
 import { useDispatch } from "react-redux";
+import { getDashboardDataActionSG } from "../../store/ducks/dashboardDuck";
 
 const yearData = [
   {
@@ -102,6 +103,10 @@ const Dashboard = (props) => {
   const [subscribemodal, setSubscribemodal] = useState(false);
   const [periodData, setPeriodData] = useState([]);
   const [periodType, setPeriodType] = useState("yearly");
+
+  useEffect(() => {
+    dispatch(getDashboardDataActionSG());
+  }, [dispatch]);
 
   useEffect(() => {
     setTimeout(() => {

@@ -52,10 +52,6 @@ const Login = () => {
   const from = location.state?.from?.pathname || "/dashboard";
   const { isSignedIn } = useSelector((state: RootState) => state.mainReducer);
 
-  useEffect(() => {
-    navigate(from, { replace: true });
-  }, [from, isSignedIn, navigate]);
-
   // handleValidSubmit
   const login = (event: any, values: any) => {
     dispatch(

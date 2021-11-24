@@ -14,6 +14,7 @@ import Companies from "./routes/Companies";
 import AppUsers from "./routes/AppUsers";
 import Dashboard from "./routes/Dashboard";
 import WithAuth from "./components/shared/WithAuth";
+import WithoutAuth from "./components/shared/WithoutAuth";
 
 export const store = configureStore();
 storeRegistry.register(store);
@@ -44,7 +45,14 @@ ReactDOM.render(
               }
             />
             <Route path="app-users" element={<AppUsers />} />
-            <Route path="auth" element={<Login />} />
+            <Route
+              path="auth"
+              element={
+                <WithoutAuth>
+                  <Login />
+                </WithoutAuth>
+              }
+            />
             <Route
               path="*"
               element={
