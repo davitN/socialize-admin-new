@@ -13,6 +13,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 
 // availity-reactstrap-validation
 import { AvForm, AvField } from "availity-reactstrap-validation";
+import { RootState } from "../store/configureStore";
 
 // უბრალოდ მაგალითი
 const useStyles = createUseStyles({
@@ -49,6 +50,11 @@ const Login = () => {
   const [smsIsSent, setSmsIsSent] = useState<boolean>(false);
   const [smsCode, setSmsCode] = useState<string>("");
   const from = location.state?.from?.pathname || "/dashboard";
+  const { isSignedIn } = useSelector((state: RootState) => state.mainReducer);
+
+  useEffect(() => {
+    navigate(from, { replace: true });
+  }, [from, isSignedIn, navigate]);
 
   // handleValidSubmit
   const login = (event: any, values: any) => {
