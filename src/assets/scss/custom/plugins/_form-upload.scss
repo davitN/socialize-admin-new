@@ -5,12 +5,14 @@
 
 /* Dropzone */
 .dropzone {
-  min-height: 230px;
+  height: 140px;
   border: 2px dashed $gray-400;
   background: $card-bg;
   border-radius: 6px;
+  cursor: pointer;
 
   .dz-message {
+    height: 100%;
     font-size: 24px;
     width: 100%;
     &:focus{

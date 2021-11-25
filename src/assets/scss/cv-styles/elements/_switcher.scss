@@ -1,0 +1,37 @@
+$_duration: 300ms;
+
+.cv-switcher-wrapper {
+  width: 56px;
+  height: 26px;
+  background-color: $white;
+  border-radius: 2px;
+  border: 1px solid $gray-300;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  padding: 2px 4px 2px 2px;
+  cursor: pointer;
+
+  .point {
+    width: 20px;
+    height: 20px;
+    background-color: $gray-300;
+    border-radius: 1px;
+  }
+
+  span {
+    font-size: 12px;
+    color: $gray-800;
+  }
+
+  &.active {
+    border-color: $cyan;
+    padding: 2px 2px 2px 4px;
+    flex-direction: row-reverse;
+    background-color: $cyan;
+    span {
+      color: $white;
+    }
+  }
+}
