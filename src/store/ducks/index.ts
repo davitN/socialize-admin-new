@@ -1,3 +1,4 @@
 import { mainReducer } from "./mainDuck";
 import { authReducer } from "./authDuck";
-export { mainReducer, authReducer };
+import { dashboardReducer } from "./dashboardDuck";
+export { mainReducer, authReducer, dashboardReducer };

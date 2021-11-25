@@ -1,6 +1,6 @@
 import { AnyAction } from "redux";
 import { AuthState, ISignInData, ISignUpData } from "../../types/auth";
-import { IUserData } from "../../types/main";
+import { CallBacks, IUserData } from "../../types/main";
 
 export const CHECK_SIGNED_IN = "socialize/auth/checkSignedIn";
 export const SET_USER_DATA = "socialize/auth/setUserData";
@@ -36,13 +36,13 @@ export const checkSignedInAction = () => ({
   type: CHECK_SIGNED_IN,
 });
 
-export const signInActionSG = (data: ISignInData, callbacks?: { success?: Function; error?: Function }) => ({
+export const signInActionSG = (data: ISignInData, callbacks?: CallBacks) => ({
   type: REQUEST_SIGN_IN_SG,
   data,
   callbacks,
 });
 
-export const summitSignInOTP_ActionSG = (code: string, callbacks?: { success?: Function; error?: Function }) => ({
+export const summitSignInOTP_ActionSG = (code: string, callbacks?: CallBacks) => ({
   type: SUBMIT_SIGN_IN_OTP_SG,
   code,
   callbacks,

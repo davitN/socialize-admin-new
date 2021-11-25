@@ -3,13 +3,12 @@ import axiosInstance from "../../services/interceptor.service";
 import notificationService from "../../services/notification.service";
 import { ISignInData, ISignUpData } from "../../types/auth";
 // import {pushNotificationData} from '../../services/pushNotificationService';
-import { IUserData } from "../../types/main";
+import { CallBacks, IUserData } from "../../types/main";
 // import {setMonitoringUsername} from '../../utils/monitoring';
 import { setUserDataAction } from "../ducks/authDuck";
 import { checkedSignedInAction, DEFAULT, defaultAction, notifyAction, resetStoreAction } from "../ducks/mainDuck";
 
-export function* signInSaga(payload: { data: ISignInData; callbacks?: { success?: Function; error?: Function }; type: string }) {
-  const { data, callbacks } = payload;
+export function* signInSaga({ data, callbacks }: { data: ISignInData; callbacks?: CallBacks; type: string }) {
   try {
     const res: IUserData = yield axiosInstance.post("authorization/verify_user", {
       email: data.email,
@@ -24,11 +23,7 @@ export function* signInSaga(payload: { data: ISignInData; callbacks?: { success?
   }
 }
 
-export function* summitSignInOTP_Saga(payload: {
-  code: string;
-  callbacks?: { success?: Function; error?: Function };
-  type: string;
-}) {
+export function* summitSignInOTP_Saga(payload: { code: string; callbacks?: CallBacks; type: string }) {
   const { code, callbacks } = payload;
   try {
     const res: IUserData = yield axiosInstance.post("authorization/sign_in", {

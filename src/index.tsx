@@ -1,7 +1,7 @@
 import "react-notifications/lib/notifications.css";
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
@@ -13,6 +13,7 @@ import Login from "./routes/Login";
 import Dashboard from "./routes/Dashboard";
 import AddVanue from './routes/AddVanue';
 import WithAuth from "./components/shared/WithAuth";
+import WithoutAuth from "./components/shared/WithoutAuth";
 
 export const store = configureStore();
 storeRegistry.register(store);
@@ -25,6 +26,7 @@ ReactDOM.render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />}>
+            <Route path="/" element={<Navigate to="/auth" />} />
             <Route
               path="/dashboard"
               element={
@@ -42,6 +44,14 @@ ReactDOM.render(
                 }
             />
             <Route path="auth" element={<Login />} />
+            <Route
+              path="auth"
+              element={
+                <WithoutAuth>
+                  <Login />
+                </WithoutAuth>
+              }
+            />
             <Route
               path="*"
               element={
