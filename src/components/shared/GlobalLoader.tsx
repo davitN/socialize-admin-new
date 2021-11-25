@@ -9,7 +9,7 @@ class GlobalLoader extends React.Component {
     showLoader: false,
   };
 
-  render() {
+  render(): JSX.Element | null {
     return this.state.showLoader ? (
       <div
         style={{

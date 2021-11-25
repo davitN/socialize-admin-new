@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 import Dropzone from 'react-dropzone';
 
@@ -15,7 +16,7 @@ import {
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { createUseStyles } from 'react-jss';
-import CvSwitcher from '../../components/custom-elements/switcher';
+import CvSwitcher from '../shared/switcher';
 
 const useStyles = createUseStyles({
   dropZoneWrapper: {
@@ -31,7 +32,7 @@ const useStyles = createUseStyles({
   },
 });
 
-const ImagesCard = () => {
+const ImagesCard: React.FC<{}> = () => {
   const classes = useStyles();
   const [selectedLogo, setSelectedLogo] = useState([]);
   const [selectedListing, setSelectedListing] = useState([]);

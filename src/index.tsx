@@ -11,7 +11,7 @@ import rootSaga from './store/sagas';
 import storeRegistry from './store/storeRegistry';
 import Login from './routes/Login';
 import Dashboard from './routes/Dashboard';
-import AddVanue from './routes/AddVanue';
+import AddVenue from './routes/AddVenue';
 import WithAuth from './components/shared/WithAuth';
 import WithoutAuth from './components/shared/WithoutAuth';
 
@@ -36,10 +36,10 @@ ReactDOM.render(
               }
             />
             <Route
-              path="/add-vanue"
+              path="/add-venue"
               element={
                 <WithAuth>
-                  <AddVanue />
+                  <AddVenue />
                 </WithAuth>
               }
             />
@@ -55,7 +55,7 @@ ReactDOM.render(
               path="*"
               element={
                 <main style={{ padding: '1rem' }}>
-                  <p>There's nothing here!</p>
+                  <p>{"There's nothing here!"}</p>
                 </main>
               }
             />

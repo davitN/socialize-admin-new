@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React from 'react';
 
 import { Row, Col, Card, CardBody, CardTitle } from 'reactstrap';

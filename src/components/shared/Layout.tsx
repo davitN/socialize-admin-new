@@ -17,7 +17,7 @@ const useStyles = createUseStyles({
   },
 });
 
-function Layout() {
+const Layout: React.FC<{}> = () => {
   const location = useLocation();
   const classes = useStyles();
   return (
@@ -41,6 +41,6 @@ function Layout() {
       )}
     </>
   );
-}
+};
 
 export default Layout;

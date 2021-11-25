@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React from 'react';
 import { Card, CardBody, CardTitle, Media } from 'reactstrap';
 import { Link } from 'react-router-dom';

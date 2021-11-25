@@ -6,7 +6,7 @@ const useStyles = createUseStyles({
     backgroundColor: 'white',
   },
 });
-function Header() {
+const Header: React.FC<{}> = () => {
   const classes = useStyles();
   return (
     <div className={`flex-horizontal ${classes.container}`}>
@@ -14,6 +14,6 @@ function Header() {
       {/*<Link to="/dashboard">dashboard</Link>*/}
     </div>
   );
-}
+};
 
 export default Header;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React, { Component } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import './dashboard.scss';

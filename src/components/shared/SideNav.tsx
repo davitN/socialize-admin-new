@@ -10,7 +10,7 @@ const mainRoutes: Array<{ name: string; route: string; iconName: string }> = [
   },
   {
     name: 'Add Vanue',
-    route: '/add-vanue',
+    route: '/add-venue',
     iconName: 'bx bx-home-circle',
   },
 ];
@@ -22,7 +22,7 @@ const useStyles = createUseStyles({
   },
 });
 
-export default function SideNav() {
+const SideNav: React.FC<{}> = () => {
   const classes = useStyles();
   const location = useLocation();
   const [activeRoute, setActiveRoute] = useState('');
@@ -60,4 +60,6 @@ export default function SideNav() {
       </div>
     </div>
   );
-}
+};
+
+export default SideNav;

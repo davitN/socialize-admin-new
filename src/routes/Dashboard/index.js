@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React, { useEffect, useState } from 'react';
 import MetaTags from 'react-meta-tags';
 import {
@@ -27,9 +27,6 @@ import modalimage2 from '../../assets/images/product/img-4.png';
 // Pages Components
 import WelcomeComp from './WelcomeComp';
 import MonthlyEarning from './MonthlyEarning';
-import SocialSource from './SocialSource';
-import ActivityComp from './ActivityComp';
-import TopCities from './TopCities';
 import LatestTranaction from './LatestTranaction';
 
 //Import Breadcrumb
@@ -105,7 +102,7 @@ const reports = [
   },
 ];
 
-const Dashboard = (props) => {
+const Dashboard = () => {
   const dispatch = useDispatch();
   const [modal, setmodal] = useState(false);
   const [subscribemodal, setSubscribemodal] = useState(false);
@@ -146,8 +143,8 @@ const Dashboard = (props) => {
         <Container fluid>
           {/* Render Breadcrumb */}
           <Breadcrumbs
-            title={props.t('Welcome to That Social App Premium Dashboard')}
-            breadcrumbItem={props.t('Dashboard')}
+            title={'Welcome to That Social App Premium Dashboard'}
+            breadcrumbItem={'Dashboard'}
           />
 
           <Row>

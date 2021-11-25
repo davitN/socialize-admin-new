@@ -34,10 +34,6 @@ export const checkedSignedInAction = (isSignedIn: boolean) => ({
   isSignedIn,
 });
 
-export const setDeviceTokenAction_SG = (data: any) => ({
-  type: SET_DEVICE_TOKEN,
-  data,
-});
 
 export const resetStoreAction = (isLoading = false) => ({
   type: RESET_STORE,

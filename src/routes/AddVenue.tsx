@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import Select from 'react-select';
+import Select, { SingleValue } from 'react-select';
 
 import {
-  Container,
-  Row,
   Col,
   Input,
   Card,
@@ -14,8 +12,8 @@ import {
   CardTitle,
   CardSubtitle,
 } from 'reactstrap';
-import Breadcrumbs from '../../components/shared/Breadcrumb';
-import ImagesCard from './imagesCard';
+import Breadcrumbs from '../components/shared/Breadcrumb';
+import ImagesCard from '../components/add-venue/imagesCard';
 
 const provinceOptions = [
   { label: 'Vancouver', value: 'Vancouver' },
@@ -27,11 +25,27 @@ const countryOptions = [
   { label: 'USA', value: 'USA' },
 ];
 
-const AddVanue = () => {
-  const [selectedProvince, setSelectedProvince] = useState(null);
-  const [selectedCountry, setSelectedCountry] = useState(null);
+const AddVenue: React.FC<{}> = () => {
+  const [selectedProvince, setSelectedProvince] = useState<
+    SingleValue<{
+      label: string;
+      value: string;
+    } | null>
+  >(null);
+  const [selectedCountry, setSelectedCountry] = useState<
+    SingleValue<{
+      label: string;
+      value: string;
+    } | null>
+  >(null);
 
-  function handleSelectGroup(key: string, selectedGroup: any) {
+  const handleSelectGroup = (
+    key: string,
+    selectedGroup: SingleValue<{
+      label: string;
+      value: string;
+    } | null>
+  ) => {
     switch (key) {
       case 'province':
         setSelectedProvince(selectedGroup);
@@ -40,7 +54,7 @@ const AddVanue = () => {
         setSelectedCountry(selectedGroup);
         break;
     }
-  }
+  };
 
   return (
     <React.Fragment>
@@ -132,7 +146,7 @@ const AddVanue = () => {
                   <Select
                     isClearable
                     value={selectedProvince}
-                    onChange={(s: any) => {
+                    onChange={(s) => {
                       handleSelectGroup('province', s);
                     }}
                     options={provinceOptions}
@@ -149,7 +163,7 @@ const AddVanue = () => {
                   <Select
                     isClearable
                     value={selectedCountry}
-                    onChange={(s: any) => {
+                    onChange={(s) => {
                       handleSelectGroup('country', s);
                     }}
                     options={countryOptions}
@@ -218,4 +232,4 @@ const AddVanue = () => {
   );
 };
 
-export default AddVanue;
+export default AddVenue;

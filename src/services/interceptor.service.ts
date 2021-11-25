@@ -13,7 +13,7 @@ declare module 'axios' {
   }
 }
 
-let canNotPressBackButton = false;
+
 let counter = 0;
 
 const axiosInstance = axios.create({
@@ -22,7 +22,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   async (request) => {
-    canNotPressBackButton = true;
+
     if (++counter < 2 && !request.removeLoader) {
       // loader.show();
     }
@@ -37,7 +37,7 @@ axiosInstance.interceptors.request.use(
     return request;
   },
   (error) => {
-    canNotPressBackButton = false;
+
     // loader.hide();
     return Promise.reject({ ...error });
   }
@@ -53,7 +53,6 @@ axiosInstance.interceptors.response.use(
 );
 
 const onResponseFulfilled = (response: AxiosResponse) => {
-  canNotPressBackButton = false;
   if (--counter < 1) {
     // loader.hide();
   }
@@ -61,7 +60,6 @@ const onResponseFulfilled = (response: AxiosResponse) => {
 };
 
 const onResponseRejected = (error: AxiosError) => {
-  canNotPressBackButton = false;
   if (--counter < 1) {
     // loader.hide();
   }
@@ -86,6 +84,7 @@ const onResponseRejected = (error: AxiosError) => {
     error.response.status === 403
   ) {
     if (
+      // eslint-disable-next-line no-constant-condition
       true
       // navigationService.getCurrentRoute()?.name !== 'Ping' &&
       // navigationService.getCurrentRoute()?.name !== 'EnableNotifications' &&

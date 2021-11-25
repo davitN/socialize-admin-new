@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
@@ -177,7 +179,7 @@ const LatestTranaction = (props) => {
   const selectRow = {
     mode: 'checkbox',
   };
-
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
   const [modal, setModal] = useState(false);
   const [modal1, setModal1] = useState(false);
   const [orderList, setOrderList] = useState([]);
