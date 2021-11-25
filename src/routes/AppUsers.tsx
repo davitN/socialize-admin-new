@@ -1,22 +1,22 @@
-import React, { useState } from "react";
-import { createUseStyles } from "react-jss";
+import React, { useState } from 'react';
+import { createUseStyles } from 'react-jss';
 
 const F1: React.FC<{ fff: any }> = ({ fff }) => {
-  return <div onClick={() => fff("davit")}>some text</div>;
+  return <div onClick={() => fff('davit')}>some text</div>;
 };
 
 const useStyles = createUseStyles({
   container: {
-    backgroundColor: "red",
+    backgroundColor: 'red',
   },
 });
 
 function AppUsers() {
-  const [name, setName] = useState("non");
+  const [name, setName] = useState('non');
   const classes = useStyles();
 
   const func = () => {
-    setName("asjdnasjkdn");
+    setName('asjdnasjkdn');
   };
 
   return (

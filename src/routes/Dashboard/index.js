@@ -1,6 +1,6 @@
-import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
-import MetaTags from "react-meta-tags";
+import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
+import MetaTags from 'react-meta-tags';
 import {
   Container,
   Row,
@@ -15,85 +15,93 @@ import {
   ModalFooter,
   Media,
   Table,
-} from "reactstrap";
-import { Link } from "react-router-dom";
-import classNames from "classnames";
-import StackedColumnChart from "./StackedColumnChart";
+} from 'reactstrap';
+import { Link } from 'react-router-dom';
+import classNames from 'classnames';
+import StackedColumnChart from './StackedColumnChart';
 
 //import action
-import modalimage1 from "../../assets/images/product/img-7.png";
-import modalimage2 from "../../assets/images/product/img-4.png";
+import modalimage1 from '../../assets/images/product/img-7.png';
+import modalimage2 from '../../assets/images/product/img-4.png';
 
 // Pages Components
-import WelcomeComp from "./WelcomeComp";
-import MonthlyEarning from "./MonthlyEarning";
-import SocialSource from "./SocialSource";
-import ActivityComp from "./ActivityComp";
-import TopCities from "./TopCities";
-import LatestTranaction from "./LatestTranaction";
+import WelcomeComp from './WelcomeComp';
+import MonthlyEarning from './MonthlyEarning';
+import SocialSource from './SocialSource';
+import ActivityComp from './ActivityComp';
+import TopCities from './TopCities';
+import LatestTranaction from './LatestTranaction';
 
 //Import Breadcrumb
-import Breadcrumbs from "../../components/shared/Breadcrumb";
+import Breadcrumbs from '../../components/shared/Breadcrumb';
 
 //i18n
-import { withTranslation } from "react-i18next";
+import { withTranslation } from 'react-i18next';
 
 //redux
-import { useDispatch } from "react-redux";
-import { getDashboardDataActionSG } from "../../store/ducks/dashboardDuck";
+import { useDispatch } from 'react-redux';
+import { getDashboardDataActionSG } from '../../store/ducks/dashboardDuck';
 
 const yearData = [
   {
-    name: "First Visit",
+    name: 'First Visit',
     data: [44, 55, 41, 67, 22, 43, 36, 52, 24, 18, 36, 48],
   },
   {
-    name: "Second Visit",
+    name: 'Second Visit',
     data: [13, 23, 20, 8, 13, 27, 18, 22, 10, 16, 24, 22],
   },
   {
-    name: "Regular Customer",
+    name: 'Regular Customer',
     data: [11, 17, 15, 15, 21, 14, 11, 18, 17, 12, 20, 18],
   },
 ];
 
 const monthData = [
   {
-    name: "First Visit",
+    name: 'First Visit',
     data: [34, 55, 21, 77, 32, 63, 86, 42, 34, 18, 16, 41],
   },
   {
-    name: "Second Visit",
+    name: 'Second Visit',
     data: [10, 63, 40, 80, 52, 41, 11, 32, 30, 86, 44, 33],
   },
   {
-    name: "Regular Customer",
+    name: 'Regular Customer',
     data: [11, 17, 15, 85, 21, 14, 80, 58, 17, 12, 20, 18],
   },
 ];
 
 const weekData = [
   {
-    name: "First Visit",
+    name: 'First Visit',
     data: [14, 52, 11, 57, 22, 33, 31, 22, 64, 14, 32, 68],
   },
   {
-    name: "Second Visit",
+    name: 'Second Visit',
     data: [13, 23, 20, 8, 13, 27, 18, 22, 10, 16, 24, 22],
   },
   {
-    name: "Regular Customer",
+    name: 'Regular Customer',
     data: [11, 17, 15, 15, 34, 55, 21, 18, 17, 12, 20, 18],
   },
 ];
 
 const reports = [
-  { title: "New Customers This Month", iconClass: "bx-copy-alt", description: "1,235" },
-  { title: "Total Customers This Month", iconClass: "bx-archive-in", description: "2,586" },
   {
-    title: "Busiest Day",
-    iconClass: "bx-purchase-tag-alt",
-    description: "Tuesday",
+    title: 'New Customers This Month',
+    iconClass: 'bx-copy-alt',
+    description: '1,235',
+  },
+  {
+    title: 'Total Customers This Month',
+    iconClass: 'bx-archive-in',
+    description: '2,586',
+  },
+  {
+    title: 'Busiest Day',
+    iconClass: 'bx-purchase-tag-alt',
+    description: 'Tuesday',
   },
 ];
 
@@ -102,7 +110,7 @@ const Dashboard = (props) => {
   const [modal, setmodal] = useState(false);
   const [subscribemodal, setSubscribemodal] = useState(false);
   const [periodData, setPeriodData] = useState([]);
-  const [periodType, setPeriodType] = useState("yearly");
+  const [periodType, setPeriodType] = useState('yearly');
 
   useEffect(() => {
     dispatch(getDashboardDataActionSG());
@@ -120,11 +128,11 @@ const Dashboard = (props) => {
 
   const onChangeChartPeriod = (pType) => {
     setPeriodType(pType);
-    if (pType === "yearly") {
+    if (pType === 'yearly') {
       setPeriodData(yearData);
-    } else if (pType === "monthly") {
+    } else if (pType === 'monthly') {
       setPeriodData(monthData);
-    } else if (pType === "weekly") {
+    } else if (pType === 'weekly') {
       setPeriodData(weekData);
     }
   };
@@ -137,7 +145,10 @@ const Dashboard = (props) => {
         </MetaTags>
         <Container fluid>
           {/* Render Breadcrumb */}
-          <Breadcrumbs title={props.t("Welcome to That Social App Premium Dashboard")} breadcrumbItem={props.t("Dashboard")} />
+          <Breadcrumbs
+            title={props.t('Welcome to That Social App Premium Dashboard')}
+            breadcrumbItem={props.t('Dashboard')}
+          />
 
           <Row>
             <Col xl="4">
@@ -148,17 +159,23 @@ const Dashboard = (props) => {
               <Row>
                 {/* Reports Render */}
                 {reports.map((report, key) => (
-                  <Col md="4" key={"_col_" + key}>
+                  <Col md="4" key={'_col_' + key}>
                     <Card className="mini-stats-wid">
                       <CardBody>
                         <Media>
                           <Media body>
-                            <p className="text-muted fw-medium">{report.title}</p>
+                            <p className="text-muted fw-medium">
+                              {report.title}
+                            </p>
                             <h4 className="mb-0">{report.description}</h4>
                           </Media>
                           <div className="avatar-sm rounded-circle bg-primary align-self-center mini-stat-icon">
                             <span className="avatar-title rounded-circle bg-primary">
-                              <i className={"bx " + report.iconClass + " font-size-24"}></i>
+                              <i
+                                className={
+                                  'bx ' + report.iconClass + ' font-size-24'
+                                }
+                              ></i>
                             </span>
                           </div>
                         </Media>
@@ -177,21 +194,27 @@ const Dashboard = (props) => {
                         <li className="nav-item">
                           <Link
                             to="#"
-                            className={classNames({ active: periodType === "weekly" }, "nav-link")}
+                            className={classNames(
+                              { active: periodType === 'weekly' },
+                              'nav-link'
+                            )}
                             onClick={() => {
-                              onChangeChartPeriod("weekly");
+                              onChangeChartPeriod('weekly');
                             }}
                             id="one_month"
                           >
                             Week
-                          </Link>{" "}
+                          </Link>{' '}
                         </li>
                         <li className="nav-item">
                           <Link
                             to="#"
-                            className={classNames({ active: periodType === "monthly" }, "nav-link")}
+                            className={classNames(
+                              { active: periodType === 'monthly' },
+                              'nav-link'
+                            )}
                             onClick={() => {
-                              onChangeChartPeriod("monthly");
+                              onChangeChartPeriod('monthly');
                             }}
                             id="one_month"
                           >
@@ -201,9 +224,12 @@ const Dashboard = (props) => {
                         <li className="nav-item">
                           <Link
                             to="#"
-                            className={classNames({ active: periodType === "yearly" }, "nav-link")}
+                            className={classNames(
+                              { active: periodType === 'yearly' },
+                              'nav-link'
+                            )}
                             onClick={() => {
-                              onChangeChartPeriod("yearly");
+                              onChangeChartPeriod('yearly');
                             }}
                             id="one_month"
                           >
@@ -271,10 +297,16 @@ const Dashboard = (props) => {
               <div className="row justify-content-center">
                 <div className="col-xl-10">
                   <h4 className="text-primary">Subscribe !</h4>
-                  <p className="text-muted font-size-14 mb-4">Subscribe our newletter and get notification to stay update.</p>
+                  <p className="text-muted font-size-14 mb-4">
+                    Subscribe our newletter and get notification to stay update.
+                  </p>
 
                   <div className="input-group rounded bg-light">
-                    <Input type="email" className="form-control bg-transparent border-0" placeholder="Enter Email address" />
+                    <Input
+                      type="email"
+                      className="form-control bg-transparent border-0"
+                      placeholder="Enter Email address"
+                    />
                     <Button color="primary" type="button" id="button-addon2">
                       <i className="bx bxs-paper-plane"></i>
                     </Button>
@@ -331,7 +363,9 @@ const Dashboard = (props) => {
                     </th>
                     <td>
                       <div>
-                        <h5 className="text-truncate font-size-14">Wireless Headphone (Black)</h5>
+                        <h5 className="text-truncate font-size-14">
+                          Wireless Headphone (Black)
+                        </h5>
                         <p className="text-muted mb-0">$ 225 x 1</p>
                       </div>
                     </td>
@@ -345,7 +379,9 @@ const Dashboard = (props) => {
                     </th>
                     <td>
                       <div>
-                        <h5 className="text-truncate font-size-14">Hoodie (Blue)</h5>
+                        <h5 className="text-truncate font-size-14">
+                          Hoodie (Blue)
+                        </h5>
                         <p className="text-muted mb-0">$ 145 x 1</p>
                       </div>
                     </td>

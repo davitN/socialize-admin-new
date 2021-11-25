@@ -1,6 +1,6 @@
-import React from "react"
-import { Card, CardBody, CardTitle, Media } from "reactstrap"
-import { Link } from "react-router-dom"
+import React from 'react';
+import { Card, CardBody, CardTitle, Media } from 'reactstrap';
+import { Link } from 'react-router-dom';
 
 const ActivityComp = () => {
   return (
@@ -16,7 +16,7 @@ const ActivityComp = () => {
               <Media>
                 <div className="me-3">
                   <h5 className="font-size-14">
-                    22 Nov{" "}
+                    22 Nov{' '}
                     <i className="bx bx-right-arrow-alt font-size-16 text-primary align-middle ms-2" />
                   </h5>
                 </div>
@@ -33,7 +33,7 @@ const ActivityComp = () => {
               <Media>
                 <div className="me-3">
                   <h5 className="font-size-14">
-                    17 Nov{" "}
+                    17 Nov{' '}
                     <i className="bx bx-right-arrow-alt font-size-16 text-primary align-middle ms-2" />
                   </h5>
                 </div>
@@ -52,7 +52,7 @@ const ActivityComp = () => {
               <Media>
                 <div className="me-3">
                   <h5 className="font-size-14">
-                    15 Nov{" "}
+                    15 Nov{' '}
                     <i className="bx bx-right-arrow-alt font-size-16 text-primary align-middle ms-2" />
                   </h5>
                 </div>
@@ -68,7 +68,7 @@ const ActivityComp = () => {
               <Media>
                 <div className="me-3">
                   <h5 className="font-size-14">
-                    12 Nov{" "}
+                    12 Nov{' '}
                     <i className="bx bx-right-arrow-alt font-size-16 text-primary align-middle ms-2" />
                   </h5>
                 </div>
@@ -79,10 +79,7 @@ const ActivityComp = () => {
             </li>
           </ul>
           <div className="text-center mt-4">
-            <Link
-              to=""
-              className="btn btn-primary  btn-sm"
-            >
+            <Link to="" className="btn btn-primary  btn-sm">
               View More <i className="mdi mdi-arrow-right ms-1" />
             </Link>
           </div>
@@ -90,6 +87,6 @@ const ActivityComp = () => {
       </Card>
     </React.Fragment>
   );
-}
+};
 
 export default ActivityComp;

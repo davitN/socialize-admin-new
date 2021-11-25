@@ -1,12 +1,12 @@
-import { AnyAction } from "redux";
-import notificationService from "../../services/notification.service";
+import { AnyAction } from 'redux';
+import notificationService from '../../services/notification.service';
 // import navigationService from "../../services/navigation.service";
 // import notificationService from "../../services/notification.service";
 
-export const DEFAULT = "socialize/main/default";
-export const RESET_STORE = "socialize/main/resetStore";
-export const CHECKED_SIGNED_IN = "socialize/main/checkedSignedIn";
-export const SET_DEVICE_TOKEN = "socialize/main/setDeviceToken";
+export const DEFAULT = 'socialize/main/default';
+export const RESET_STORE = 'socialize/main/resetStore';
+export const CHECKED_SIGNED_IN = 'socialize/main/checkedSignedIn';
+export const SET_DEVICE_TOKEN = 'socialize/main/setDeviceToken';
 
 const initialState = {
   isLoading: true,
@@ -87,14 +87,14 @@ export const notifyAction = ({
   callback,
   showError,
 }: {
-  type: "error" | "info" | "success" | "warning";
+  type: 'error' | 'info' | 'success' | 'warning';
   message: string;
   title?: string | undefined;
   duration?: number | undefined;
   callback?: Function | undefined;
   showError?: boolean;
 }) => {
-  if (!(!showError && type === "error")) {
+  if (!(!showError && type === 'error')) {
     notificationService[type](message, title, duration, callback);
   }
   return {

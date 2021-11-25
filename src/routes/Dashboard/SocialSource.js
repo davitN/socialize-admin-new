@@ -1,28 +1,28 @@
-import React from "react"
-import { Row, Col, Card, CardBody, CardTitle } from "reactstrap"
-import { Link } from "react-router-dom"
+import React from 'react';
+import { Row, Col, Card, CardBody, CardTitle } from 'reactstrap';
+import { Link } from 'react-router-dom';
 
 const SocialSource = () => {
   const socials = [
     {
-      title: "Facebook",
-      bgColor: "bg-primary",
-      iconClass: "mdi-facebook",
-      description: "125",
+      title: 'Facebook',
+      bgColor: 'bg-primary',
+      iconClass: 'mdi-facebook',
+      description: '125',
     },
     {
-      title: "Twitter",
-      bgColor: "bg-info",
-      iconClass: "mdi-twitter",
-      description: "112",
+      title: 'Twitter',
+      bgColor: 'bg-info',
+      iconClass: 'mdi-twitter',
+      description: '112',
     },
     {
-      title: "Instagram",
-      bgColor: "bg-pink",
-      iconClass: "mdi-instagram",
-      description: "104",
+      title: 'Instagram',
+      bgColor: 'bg-pink',
+      iconClass: 'mdi-instagram',
+      description: '104',
     },
-  ]
+  ];
 
   return (
     <React.Fragment>
@@ -38,7 +38,7 @@ const SocialSource = () => {
             <p className="font-16 text-muted mb-2"></p>
             <h5>
               <Link to="#" className="text-dark">
-                Facebook - <span className="text-muted font-16">125 sales</span>{" "}
+                Facebook - <span className="text-muted font-16">125 sales</span>{' '}
               </Link>
             </h5>
             <p className="text-muted">
@@ -51,19 +51,18 @@ const SocialSource = () => {
           </div>
           <Row className="mt-4">
             {socials.map((social, key) => (
-              <Col xs="4" key={"_li_" + key}>
+              <Col xs="4" key={'_li_' + key}>
                 <div className="social-source text-center mt-3">
                   <div className="avatar-xs mx-auto mb-3">
-
                     <span
                       className={
-                        "avatar-title rounded-circle " +
+                        'avatar-title rounded-circle ' +
                         social.bgColor +
-                        " font-size-16"
+                        ' font-size-16'
                       }
                     >
                       <i
-                        className={"mdi " + social.iconClass + " text-white"}
+                        className={'mdi ' + social.iconClass + ' text-white'}
                       ></i>
                     </span>
                   </div>
@@ -76,7 +75,7 @@ const SocialSource = () => {
         </CardBody>
       </Card>
     </React.Fragment>
-  )
-}
+  );
+};
 
-export default SocialSource
+export default SocialSource;

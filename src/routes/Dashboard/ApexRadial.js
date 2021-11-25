@@ -1,10 +1,10 @@
-import React, { Component } from "react"
-import ReactApexChart from "react-apexcharts"
-import "./dashboard.scss"
+import React, { Component } from 'react';
+import ReactApexChart from 'react-apexcharts';
+import './dashboard.scss';
 
 class ApexRadial extends Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       options: {
@@ -14,26 +14,26 @@ class ApexRadial extends Component {
             endAngle: 135,
             dataLabels: {
               name: {
-                fontSize: "13px",
+                fontSize: '13px',
                 color: void 0,
                 offsetY: 60,
               },
               value: {
                 offsetY: 22,
-                fontSize: "16px",
+                fontSize: '16px',
                 color: void 0,
                 formatter: function (e) {
-                  return e + "%"
+                  return e + '%';
                 },
               },
             },
           },
         },
-        colors: ["#556ee6"],
+        colors: ['#556ee6'],
         fill: {
-          type: "gradient",
+          type: 'gradient',
           gradient: {
-            shade: "dark",
+            shade: 'dark',
             shadeIntensity: 0.15,
             inverseColors: !1,
             opacityFrom: 1,
@@ -44,10 +44,10 @@ class ApexRadial extends Component {
         stroke: {
           dashArray: 4,
         },
-        labels: ["Series A"],
+        labels: ['Series A'],
       },
       series: [67],
-    }
+    };
   }
 
   render() {
@@ -61,8 +61,8 @@ class ApexRadial extends Component {
           className="apex-charts"
         />
       </React.Fragment>
-    )
+    );
   }
 }
 
-export default ApexRadial
+export default ApexRadial;

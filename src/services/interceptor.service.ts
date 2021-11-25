@@ -1,13 +1,13 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from 'axios';
 // import AsyncStorage from '@react-native-community/async-storage';
 // import notificationService from './notification.service';
 // import loader from './loader.service';
-import { backendUrl } from "./credentials.service";
-import storeRegistry from "../store/storeRegistry";
-import { resetStoreAction } from "../store/ducks/mainDuck";
+import { backendUrl } from './credentials.service';
+import storeRegistry from '../store/storeRegistry';
+import { resetStoreAction } from '../store/ducks/mainDuck';
 // import navigationService, {_navigator} from './navigation.service';
 
-declare module "axios" {
+declare module 'axios' {
   export interface AxiosRequestConfig {
     removeLoader?: boolean;
   }
@@ -26,7 +26,7 @@ axiosInstance.interceptors.request.use(
     if (++counter < 2 && !request.removeLoader) {
       // loader.show();
     }
-    const token = await localStorage.getItem("token");
+    const token = await localStorage.getItem('token');
     if (token) {
       if (request.headers) {
         request.headers.Authorization = `Bearer ${token}`;
@@ -80,7 +80,11 @@ const onResponseRejected = (error: AxiosError) => {
   } else if (error.response.status === 500) {
     // notificationService.notify('error', 'Internal Server Error');
   }
-  if (error.response.status === 401 || error.response.status === 404 || error.response.status === 403) {
+  if (
+    error.response.status === 401 ||
+    error.response.status === 404 ||
+    error.response.status === 403
+  ) {
     if (
       true
       // navigationService.getCurrentRoute()?.name !== 'Ping' &&
@@ -89,7 +93,7 @@ const onResponseRejected = (error: AxiosError) => {
       // navigationService.getCurrentRoute()?.name !== 'EnterPassword'
     ) {
       // _navigator?.current?.resetRoot();
-      localStorage.setItem("authData", "");
+      localStorage.setItem('authData', '');
       storeRegistry?.getStore().dispatch(resetStoreAction());
     }
   }

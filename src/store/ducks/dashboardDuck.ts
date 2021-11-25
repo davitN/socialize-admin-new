@@ -1,8 +1,8 @@
-import { AnyAction } from "redux";
-import { CallBacks } from "../../types/main";
+import { AnyAction } from 'redux';
+import { CallBacks } from '../../types/main';
 
-export const GET_DASHBOARD_DATA_SG = "socialize/auth/getDashboardData_sg";
-export const SET_DASHBOARD_DATA = "socialize/auth/setDashboardData";
+export const GET_DASHBOARD_DATA_SG = 'socialize/auth/getDashboardData_sg';
+export const SET_DASHBOARD_DATA = 'socialize/auth/setDashboardData';
 
 const initialState: any = {
   dashboard: {},
