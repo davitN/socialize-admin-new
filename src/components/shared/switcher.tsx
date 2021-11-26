@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+
 
 const CvSwitcher: React.FC<{ onChange: Function }> = ({ onChange }) => {
   const [active, setActive] = useState(false);
@@ -18,3 +20,7 @@ const CvSwitcher: React.FC<{ onChange: Function }> = ({ onChange }) => {
 };
 
 export default CvSwitcher;
+
+CvSwitcher.propTypes = {
+  onChange: PropTypes.func.isRequired
+};

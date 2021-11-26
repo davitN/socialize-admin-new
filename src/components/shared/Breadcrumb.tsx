@@ -30,9 +30,10 @@ const Breadcrumb: React.FC<Props> = ({ breadcrumbItem, title }) => {
   );
 };
 
+
+export default Breadcrumb;
+
 Breadcrumb.propTypes = {
   breadcrumbItem: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
 };
-
-export default Breadcrumb;
