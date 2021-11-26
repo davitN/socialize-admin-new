@@ -29,6 +29,8 @@ const initialState: {dashboardData: DashboardDataModel, initialRoles: any} = {
 interface DashboardDataModel {
   newCustomersInThisMonth: number,
   totalCustomersInThisMonth: number,
+  totalVisitsCount: number,
+  totalVisitorsCount: number,
   topCustomers: Array<{
     _id: string,
     isRealInfoHidden: boolean,

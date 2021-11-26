@@ -43,11 +43,13 @@ const WelcomeComp = (props) => {
                 <Row>
                   <Col xs="6">
                     <h5 className="font-size-15">Total Visits</h5>
-                    <p className="text-muted mb-0">6,989</p>
+                    {/* eslint-disable-next-line react/prop-types */}
+                    <p className="text-muted mb-0">{props.dashboardData.totalVisitsCount}</p>
                   </Col>
                   <Col xs="6">
                     <h5 className="font-size-15">Total Customers</h5>
-                    <p className="text-muted mb-0">3,265</p>
+                    {/* eslint-disable-next-line react/prop-types */}
+                    <p className="text-muted mb-0">{props.dashboardData.totalVisitorsCount}</p>
                   </Col>
                 </Row>
                 <div className="mt-4">

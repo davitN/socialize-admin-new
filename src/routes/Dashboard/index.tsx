@@ -103,7 +103,6 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const { dashboardData } = useSelector((state: RootState) => state.dashboardReducer);
   const { userData } = useSelector((state: RootState) => state.authReducer);
-  console.log(dashboardData);
   const reports = [
     { title: "New Customers This Month", iconClass: "bx-copy-alt", description: dashboardData.newCustomersInThisMonth },
     {
@@ -134,9 +133,6 @@ const Dashboard = () => {
   useEffect(() => {
     const years = correctTrends(dashboardData.customerTrendsThrowYear);
     setPeriodData(years);
-    console.log([...dashboardData.customerTrendsThrowYear])
-    console.log([...years])
-    console.log([...periodData]);
   }, [dashboardData]);
 
   const onChangeChartPeriod = (pType: any) => {
@@ -165,7 +161,7 @@ const Dashboard = () => {
 
             <Row>
               <Col xl="4">
-                <WelcomeComp userData={userData}/>
+                <WelcomeComp userData={userData} dashboardData={dashboardData}/>
                 <MonthlyEarning/>
               </Col>
               <Col xl="8">
