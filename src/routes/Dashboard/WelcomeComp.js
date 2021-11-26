@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import avatar1 from '../../assets/images/users/avatar-1.jpg';
 import profileImg from '../../assets/images/profile-img.png';
 
-const WelcomeComp = () => {
+const WelcomeComp = (props) => {
   return (
     <React.Fragment>
       <Card className="overflow-hidden">
@@ -34,7 +34,8 @@ const WelcomeComp = () => {
                   className="img-thumbnail rounded-circle"
                 />
               </div>
-              <h5 className="font-size-15 text-truncate">Henry Price</h5>
+              {/* eslint-disable-next-line react/prop-types */}
+              <h5 className="font-size-15 text-truncate">{props.userData.firstName + ' ' + props.userData.lastName}</h5>
               <p className="text-muted mb-0 text-truncate">UI/UX Designer</p>
             </Col>
             <Col sm="8">

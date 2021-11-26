@@ -5,15 +5,28 @@ import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory, { PaginationListStandalone, PaginationProvider } from "react-bootstrap-table2-paginator";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 
-import {Button, Card, CardBody, Col, Row, CardTitle, CardSubtitle} from "reactstrap";
+import { Button, Card, CardBody, Col, Row, CardTitle, CardSubtitle, Badge } from "reactstrap";
 
 //შესამოწმებელია რაშია ზუსტად საჭირო
 // import EcommerceOrdersModal from "../Ecommerce/EcommerceOrders/EcommerceOrdersModal";
 
+const getCustomerTypeColors = (type: string): string => {
+  switch (type) {
+    case 'Regular':
+      return 'success';
+    case 'First Visit':
+      return 'warning';
+    case 'Second Visit':
+      return 'danger';
+    default:
+      return 'danger';
+  }
+}
+
 //redux
 import { useSelector, useDispatch } from "react-redux";
 
-const LatestTranaction = ({ incomeData }: any) => {
+const LatestPosts = ({ incomeData }: any) => {
   const dispatch = useDispatch();
 
   const selectRow = {
@@ -40,42 +53,60 @@ const LatestTranaction = ({ incomeData }: any) => {
 
   const EcommerceOrderColumns = (toggleModal: any) => [
     {
-      dataField: "username",
-      text: "Customer",
+      dataField: "_id",
+      text: "Post",
       sort: true,
       // eslint-disable-next-line react/display-name
       formatter: (cellContent: any, row: any) => (
         <Link to="#" className="text-body fw-bold">
-          {row.username}
+          {row._id}
         </Link>
       ),
     },
     {
-      dataField: "visitsCount",
-      text: "# of Visits",
-      sort: true,
-    },
-    {
-      dataField: "lastVisitingTime",
-      text: "Last Visit",
+      dataField: "name",
+      text: "Customer Posting",
       sort: true,
       // eslint-disable-next-line react/display-name
       formatter: (cellContent: any, row: any) => (
           <React.Fragment>
-            {new Date(row.lastVisitingTime).toLocaleDateString('en-GB', {
-              day: '2-digit', month: 'short'
-            })}, {new Date(row.lastVisitingTime).getFullYear()}
+            {row.firstName} {row.lastName}
           </React.Fragment>
       )
     },
     {
-      dataField: "postsCount",
-      text: "# of Posts",
+      dataField: "createdAt",
+      text: "Date",
+      sort: true,
+      // eslint-disable-next-line react/display-name
+      formatter: (cellContent: any, row: any) => (
+          <React.Fragment>
+            {new Date(row.createdAt).toLocaleDateString('en-GB', {
+              day: '2-digit', month: 'short'
+            })}, {new Date(row.createdAt).getFullYear()}
+          </React.Fragment>
+      )
+    },
+    {
+      dataField: "commentsCount",
+      text: "Comments",
       sort: true,
     },
     {
-      dataField: "viewsOnPosts",
-      text: "Views on Posts",
+      dataField: "customerType",
+      text: "Customer Type",
+      sort: true,
+      // eslint-disable-next-line react/display-name
+      formatter: (cellContent: any, row: any) => (
+        <Badge className={"font-size-12 badge-soft-" + getCustomerTypeColors(row.customerType)}
+               color={getCustomerTypeColors(row.customerType)} pill>
+          {row.customerType}
+        </Badge>
+      ),
+    },
+    {
+      dataField: "viewsCount",
+      text: "Views",
       sort: true,
     },
     // {
@@ -111,11 +142,11 @@ const LatestTranaction = ({ incomeData }: any) => {
     {
       dataField: "view",
       isDummyField: true,
-      text: "Send Offer",
+      text: "View Details",
       // eslint-disable-next-line react/display-name
       formatter: () => (
         <Button type="button" color="primary" className="btn-sm btn-rounded" onClick={toggleViewModal}>
-          Send Offer
+          View Details
         </Button>
       ),
     },
@@ -158,10 +189,7 @@ const LatestTranaction = ({ incomeData }: any) => {
       {/* <EcommerceOrdersModal isOpen={modal1} toggle={toggleViewModal} /> */}
       <Card>
         <CardBody>
-          <div className={'flex-horizontal mb-3'}>
-            <CardTitle className={'mb-0'}>Top Customers</CardTitle>
-            <CardSubtitle className={'ms-4'}>To unlock customers name, simply send an offer and ask that they reveal their name to your business.</CardSubtitle>
-          </div>
+          <CardTitle className={'mb-3 text-start'}>Latest Posts</CardTitle>
           <PaginationProvider
             pagination={paginationFactory(pageOptions)}
             // keyField="id"
@@ -204,9 +232,9 @@ const LatestTranaction = ({ incomeData }: any) => {
   );
 };
 
-// LatestTranaction.propTypes = {
+// TopCustomers.propTypes = {
 //   orders: PropTypes.array,
 //   onGetOrders: PropTypes.func,
 // };
 
-export default LatestTranaction;
+export default LatestPosts;

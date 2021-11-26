@@ -38,23 +38,36 @@ import { useDispatch, useSelector } from "react-redux";
 import { getDashboardDataActionSG, getInitialRolesActionSG } from "../../store/ducks/dashboardDuck";
 import { RootState } from "../../store/configureStore";
 import PropTypes from 'prop-types';
-import LatestTranaction from './LatestTranaction';
+import TopCustomers from './TopCustomers';
+import LatestPosts from './LatestPosts';
 
-const yearData = [
-  {
-    name: 'First Visit',
-    data: [44, 55, 41, 67, 22, 43, 36, 52, 24, 18, 36, 48],
-  },
-  {
-    name: 'Second Visit',
-    data: [13, 23, 20, 8, 13, 27, 18, 22, 10, 16, 24, 22],
-  },
-  {
-    name: 'Regular Customer',
-    data: [11, 17, 15, 15, 21, 14, 11, 18, 17, 12, 20, 18],
-  },
-];
-
+const correctTrends = (incomeArr: Array<{
+  firstTimeVisitor: number,
+  secondTimeVisitor: number,
+  regular: number,
+  visitYearMonthDate: any
+}>) => {
+  const yearData = [
+    {
+      name: 'First Visit',
+      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    },
+    {
+      name: 'Second Visit',
+      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    },
+    {
+      name: 'Regular Customer',
+      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    }
+  ];
+  incomeArr.map(item => {
+    yearData[0].data[parseInt(item.visitYearMonthDate.split('-')[1]) - 1] = item.firstTimeVisitor;
+    yearData[1].data[parseInt(item.visitYearMonthDate.split('-')[1]) - 1] = item.secondTimeVisitor;
+    yearData[2].data[parseInt(item.visitYearMonthDate.split('-')[1]) - 1] = item.regular;
+  });
+  return yearData;
+}
 const monthData = [
   {
     name: 'First Visit',
@@ -84,10 +97,12 @@ const weekData = [
     data: [11, 17, 15, 15, 34, 55, 21, 18, 17, 12, 20, 18],
   },
 ];
+const weekDays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
 const Dashboard = () => {
   const dispatch = useDispatch();
   const { dashboardData } = useSelector((state: RootState) => state.dashboardReducer);
+  const { userData } = useSelector((state: RootState) => state.authReducer);
   console.log(dashboardData);
   const reports = [
     { title: "New Customers This Month", iconClass: "bx-copy-alt", description: dashboardData.newCustomersInThisMonth },
@@ -97,7 +112,7 @@ const Dashboard = () => {
       description: dashboardData.totalCustomersInThisMonth
     },
     {
-      title: "Busiest Day", iconClass: "bx-purchase-tag-alt", description: "Tuesday",
+      title: "Busiest Day", iconClass: "bx-purchase-tag-alt", description: weekDays[new Date().getDay()],
     },
   ];
   const [modal, setmodal] = useState(false);
@@ -117,18 +132,22 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    setPeriodData(yearData);
-  }, [dispatch]);
+    const years = correctTrends(dashboardData.customerTrendsThrowYear);
+    setPeriodData(years);
+    console.log([...dashboardData.customerTrendsThrowYear])
+    console.log([...years])
+    console.log([...periodData]);
+  }, [dashboardData]);
 
   const onChangeChartPeriod = (pType: any) => {
-    setPeriodType(pType);
-    if (pType === "yearly") {
-      setPeriodData(yearData);
-    } else if (pType === "monthly") {
-      setPeriodData(monthData);
-    } else if (pType === "weekly") {
-      setPeriodData(weekData)
-    }
+    // setPeriodType(pType);
+    // if (pType === "yearly") {
+    //   setPeriodData(yearData);
+    // } else if (pType === "monthly") {
+    //   setPeriodData(monthData);
+    // } else if (pType === "weekly") {
+    //   setPeriodData(weekData)
+    // }
   }
 
   return (
@@ -146,7 +165,7 @@ const Dashboard = () => {
 
             <Row>
               <Col xl="4">
-                <WelcomeComp/>
+                <WelcomeComp userData={userData}/>
                 <MonthlyEarning/>
               </Col>
               <Col xl="8">
@@ -181,36 +200,36 @@ const Dashboard = () => {
                       <h4 className="card-title mb-4">Customer Trends</h4>
                       <div className="ms-auto">
                         <ul className="nav nav-pills">
-                          <li className="nav-item">
-                            <Link
-                                to="#"
-                                className={classNames(
-                                    { active: periodType === 'weekly' },
-                                    'nav-link'
-                                )}
-                                onClick={() => {
-                                  onChangeChartPeriod('weekly');
-                                }}
-                                id="one_month"
-                            >
-                              Week
-                            </Link>{' '}
-                          </li>
-                          <li className="nav-item">
-                            <Link
-                                to="#"
-                                className={classNames(
-                                    { active: periodType === 'monthly' },
-                                    'nav-link'
-                                )}
-                                onClick={() => {
-                                  onChangeChartPeriod('monthly');
-                                }}
-                                id="one_month"
-                            >
-                              Month
-                            </Link>
-                          </li>
+                          {/*<li className="nav-item">*/}
+                          {/*  <Link*/}
+                          {/*      to="#"*/}
+                          {/*      className={classNames(*/}
+                          {/*          { active: periodType === 'weekly' },*/}
+                          {/*          'nav-link'*/}
+                          {/*      )}*/}
+                          {/*      onClick={() => {*/}
+                          {/*        onChangeChartPeriod('weekly');*/}
+                          {/*      }}*/}
+                          {/*      id="one_month"*/}
+                          {/*  >*/}
+                          {/*    Week*/}
+                          {/*  </Link>{' '}*/}
+                          {/*</li>*/}
+                          {/*<li className="nav-item">*/}
+                          {/*  <Link*/}
+                          {/*      to="#"*/}
+                          {/*      className={classNames(*/}
+                          {/*          { active: periodType === 'monthly' },*/}
+                          {/*          'nav-link'*/}
+                          {/*      )}*/}
+                          {/*      onClick={() => {*/}
+                          {/*        onChangeChartPeriod('monthly');*/}
+                          {/*      }}*/}
+                          {/*      id="one_month"*/}
+                          {/*  >*/}
+                          {/*    Month*/}
+                          {/*  </Link>*/}
+                          {/*</li>*/}
                           <li className="nav-item">
                             <Link
                                 to="#"
@@ -251,7 +270,12 @@ const Dashboard = () => {
 
             <Row>
               <Col lg="12">
-                <LatestTranaction incomeData={dashboardData.topCustomers}/>
+                <TopCustomers incomeData={dashboardData.topCustomers}/>
+              </Col>
+            </Row>
+            <Row>
+              <Col lg="12">
+                <LatestPosts incomeData={dashboardData.latestPosts}/>
               </Col>
             </Row>
           </Container>

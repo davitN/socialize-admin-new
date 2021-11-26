@@ -44,7 +44,9 @@ interface DashboardDataModel {
     createdAt: string,
     commentsCount: number,
     viewsCount: number,
-    customerType: string
+    customerType: string,
+    firstName: string,
+    lastName: string
   }>,
   companySubscription: {
     _id: string,
