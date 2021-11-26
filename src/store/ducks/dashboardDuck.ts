@@ -12,6 +12,8 @@ const initialState: {dashboardData: DashboardDataModel, initialRoles: any} = {
   dashboardData: {
     newCustomersInThisMonth: null,
     totalCustomersInThisMonth: null,
+    totalVisitsCount: null,
+    totalVisitorsCount: null,
     topCustomers: [],
     latestPosts: [],
     companySubscription: {
