@@ -3,8 +3,9 @@ import { SET_DEVICE_TOKEN } from "../ducks/mainDuck";
 import { checkSignedInSaga, setDeviceTokenSaga } from "./mainSaga";
 import { logoutSaga, signInSaga, signUpSaga, summitSignInOTP_Saga } from "./authSaga";
 import { CHECK_SIGNED_IN, LOGOUT, REQUEST_SIGN_IN_SG, REQUEST_SIGN_UP_SG, SUBMIT_SIGN_IN_OTP_SG } from "../ducks/authDuck";
-import { GET_DASHBOARD_DATA_SG } from "../ducks/dashboardDuck";
+import { GET_DASHBOARD_DATA_SG, GET_INITIAL_ROLES_SG } from "../ducks/dashboardDuck";
 import { getDashboardDataSaga } from "./dashboardSaga";
+import { getInitialRolesSaga } from './initialRolesSaga';
 
 function* actionWatcher() {
   yield takeLatest(CHECK_SIGNED_IN, checkSignedInSaga);
@@ -14,6 +15,7 @@ function* actionWatcher() {
   yield takeLatest(REQUEST_SIGN_UP_SG, signUpSaga);
   yield takeLatest(LOGOUT, logoutSaga);
   yield takeLatest(GET_DASHBOARD_DATA_SG, getDashboardDataSaga);
+  yield takeLatest(GET_INITIAL_ROLES_SG, getInitialRolesSaga);
 }
 
 export default function* rootSaga() {

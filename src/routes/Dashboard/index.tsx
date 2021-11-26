@@ -1,6 +1,5 @@
-import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import MetaTags from "react-meta-tags";
+// import MetaTags from "react-meta-tags";
 import {
   Container,
   Row,
@@ -27,10 +26,6 @@ import modalimage2 from "../../assets/images/product/img-4.png";
 // Pages Components
 import WelcomeComp from "./WelcomeComp";
 import MonthlyEarning from "./MonthlyEarning";
-import SocialSource from "./SocialSource";
-import ActivityComp from "./ActivityComp";
-import TopCities from "./TopCities";
-import LatestTranaction from "./LatestTranaction";
 
 //Import Breadcrumb
 import Breadcrumbs from "../../components/shared/Breadcrumb";
@@ -39,8 +34,10 @@ import Breadcrumbs from "../../components/shared/Breadcrumb";
 import { withTranslation } from "react-i18next";
 
 //redux
-import { useDispatch } from "react-redux";
-import { getDashboardDataActionSG } from "../../store/ducks/dashboardDuck";
+import {useDispatch, useSelector} from "react-redux";
+import {getDashboardDataActionSG, getInitialRolesActionSG} from "../../store/ducks/dashboardDuck";
+import {RootState} from "../../store/configureStore";
+import LatestTranaction from './LatestTranaction';
 
 const yearData = [
   {
@@ -87,24 +84,23 @@ const weekData = [
   },
 ];
 
-const reports = [
-  { title: "New Customers This Month", iconClass: "bx-copy-alt", description: "1,235" },
-  { title: "Total Customers This Month", iconClass: "bx-archive-in", description: "2,586" },
-  {
-    title: "Busiest Day",
-    iconClass: "bx-purchase-tag-alt",
-    description: "Tuesday",
-  },
-];
-
-const Dashboard = (props) => {
+const Dashboard = (props: any) => {
   const dispatch = useDispatch();
+  const { dashboardData } = useSelector((state: RootState) => state.dashboardReducer);
+  console.log(dashboardData);
+  const reports = [
+    { title: "New Customers This Month", iconClass: "bx-copy-alt", description: dashboardData.newCustomersInThisMonth },
+    { title: "Total Customers This Month", iconClass: "bx-archive-in", description: dashboardData.totalCustomersInThisMonth },
+    { title: "Busiest Day", iconClass: "bx-purchase-tag-alt", description: "Tuesday",
+    },
+  ];
   const [modal, setmodal] = useState(false);
   const [subscribemodal, setSubscribemodal] = useState(false);
   const [periodData, setPeriodData] = useState([]);
   const [periodType, setPeriodType] = useState("yearly");
 
   useEffect(() => {
+    dispatch(getInitialRolesActionSG());
     dispatch(getDashboardDataActionSG());
   }, [dispatch]);
 
@@ -115,16 +111,20 @@ const Dashboard = (props) => {
   }, []);
 
   useEffect(() => {
+    // @ts-ignore
     setPeriodData(yearData);
   }, [dispatch]);
 
-  const onChangeChartPeriod = (pType) => {
+  const onChangeChartPeriod = (pType: any) => {
     setPeriodType(pType);
     if (pType === "yearly") {
+      // @ts-ignore
       setPeriodData(yearData);
     } else if (pType === "monthly") {
+      // @ts-ignore
       setPeriodData(monthData);
     } else if (pType === "weekly") {
+      // @ts-ignore
       setPeriodData(weekData);
     }
   };
@@ -132,9 +132,9 @@ const Dashboard = (props) => {
   return (
     <React.Fragment>
       <div className="page-content">
-        <MetaTags>
-          <title>Dashboard | Skote - React Admin & Dashboard Template</title>
-        </MetaTags>
+        {/*<MetaTags>*/}
+        {/*  <title>Dashboard | Skote - React Admin & Dashboard Template</title>*/}
+        {/*</MetaTags>*/}
         <Container fluid>
           {/* Render Breadcrumb */}
           <Breadcrumbs title={props.t("Welcome to That Social App Premium Dashboard")} breadcrumbItem={props.t("Dashboard")} />
@@ -158,7 +158,7 @@ const Dashboard = (props) => {
                           </Media>
                           <div className="avatar-sm rounded-circle bg-primary align-self-center mini-stat-icon">
                             <span className="avatar-title rounded-circle bg-primary">
-                              <i className={"bx " + report.iconClass + " font-size-24"}></i>
+                              <i className={"bx " + report.iconClass + " font-size-24"}/>
                             </span>
                           </div>
                         </Media>
@@ -235,7 +235,7 @@ const Dashboard = (props) => {
 
           <Row>
             <Col lg="12">
-              <LatestTranaction />
+              <LatestTranaction incomeData={dashboardData.topCustomers}/>
             </Col>
           </Row>
         </Container>
@@ -258,13 +258,13 @@ const Dashboard = (props) => {
               toggle={() => {
                 setSubscribemodal(!subscribemodal);
               }}
-            ></ModalHeader>
+            />
           </div>
           <div className="modal-body">
             <div className="text-center mb-4">
               <div className="avatar-md mx-auto mb-4">
                 <div className="avatar-title bg-light  rounded-circle text-primary h1">
-                  <i className="mdi mdi-email-open"></i>
+                  <i className="mdi mdi-email-open"/>
                 </div>
               </div>
 
@@ -276,7 +276,7 @@ const Dashboard = (props) => {
                   <div className="input-group rounded bg-light">
                     <Input type="email" className="form-control bg-transparent border-0" placeholder="Enter Email address" />
                     <Button color="primary" type="button" id="button-addon2">
-                      <i className="bx bxs-paper-plane"></i>
+                      <i className="bx bxs-paper-plane"/>
                     </Button>
                   </div>
                 </div>
@@ -292,7 +292,7 @@ const Dashboard = (props) => {
         autoFocus={true}
         centered={true}
         className="exampleModal"
-        tabIndex="-1"
+        tabIndex={-1}
         toggle={() => {
           setmodal(!modal);
         }}
@@ -352,19 +352,19 @@ const Dashboard = (props) => {
                     <td>$ 145</td>
                   </tr>
                   <tr>
-                    <td colSpan="2">
+                    <td colSpan={2}>
                       <h6 className="m-0 text-end">Sub Total:</h6>
                     </td>
                     <td>$ 400</td>
                   </tr>
                   <tr>
-                    <td colSpan="2">
+                    <td colSpan={2}>
                       <h6 className="m-0 text-end">Shipping:</h6>
                     </td>
                     <td>Free</td>
                   </tr>
                   <tr>
-                    <td colSpan="2">
+                    <td colSpan={2}>
                       <h6 className="m-0 text-end">Total:</h6>
                     </td>
                     <td>$ 400</td>

@@ -215,4 +215,4 @@ const AddVanue = () => {
   )
 }
 
-export default AddVanue
+export default AddVanue;

@@ -1,6 +1,6 @@
 import { call, put, takeLatest } from "redux-saga/effects";
 // import Api from '...'
-const getRecords = (isbnNum = null) => {
+const getRecords = (isbnNum: any = null) => {
   console.log("Get Records");
   const results = fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbnNum}`).then((response) => response.json());
   return results;

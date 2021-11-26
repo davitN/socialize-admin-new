@@ -10,10 +10,10 @@ import configureStore, { sagaMiddleware } from "./store/configureStore";
 import rootSaga from "./store/sagas";
 import storeRegistry from "./store/storeRegistry";
 import Login from "./routes/Login";
-import Dashboard from "./routes/Dashboard";
 import AddVanue from './routes/AddVanue';
 import WithAuth from "./components/shared/WithAuth";
 import WithoutAuth from "./components/shared/WithoutAuth";
+import Dashboard from './routes/Dashboard';
 
 export const store = configureStore();
 storeRegistry.register(store);
@@ -21,51 +21,51 @@ storeRegistry.register(store);
 sagaMiddleware.run(() => rootSaga());
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<App />}>
-            <Route path="/" element={<Navigate to="/auth" />} />
-            <Route
-              path="/dashboard"
-              element={
-                <WithAuth>
-                  <Dashboard />
-                </WithAuth>
-              }
-            />
-            <Route
-                path="/add-vanue"
-                element={
-                  <WithAuth>
-                    <AddVanue />
-                  </WithAuth>
-                }
-            />
-            <Route path="auth" element={<Login />} />
-            <Route
-              path="auth"
-              element={
-                <WithoutAuth>
-                  <Login />
-                </WithoutAuth>
-              }
-            />
-            <Route
-              path="*"
-              element={
-                <main style={{ padding: "1rem" }}>
-                  <p>There's nothing here!</p>
-                </main>
-              }
-            />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </Provider>
-  </React.StrictMode>,
-  document.getElementById("root")
+    <React.StrictMode>
+      <Provider store={store}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<App/>}>
+              <Route path="/" element={<Navigate to="/auth"/>}/>
+              <Route
+                  path="/dashboard"
+                  element={
+                    <WithAuth>
+                      <Dashboard/>
+                    </WithAuth>
+                  }
+              />
+              <Route
+                  path="/add-vanue"
+                  element={
+                    <WithAuth>
+                      <AddVanue/>
+                    </WithAuth>
+                  }
+              />
+              <Route path="auth" element={<Login/>}/>
+              <Route
+                  path="auth"
+                  element={
+                    <WithoutAuth>
+                      <Login/>
+                    </WithoutAuth>
+                  }
+              />
+              <Route
+                  path="*"
+                  element={
+                    <main style={{ padding: "1rem" }}>
+                      <p>There's nothing here!</p>
+                    </main>
+                  }
+              />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </Provider>
+    </React.StrictMode>,
+    document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function
