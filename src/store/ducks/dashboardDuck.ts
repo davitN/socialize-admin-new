@@ -1,8 +1,13 @@
-import { AnyAction } from "redux";
-import { CallBacks } from "../../types/main";
+import { AnyAction } from 'redux';
+import { CallBacks } from '../../types/main';
 
+<<<<<<< HEAD
 export const GET_INITIAL_ROLES_SG = "socialize/main/getInitialRoles_sg";
 export const SET_INITIAL_ROLES_DATA = "socialize/main/setInitialRoles";
+=======
+export const GET_DASHBOARD_DATA_SG = 'socialize/auth/getDashboardData_sg';
+export const SET_DASHBOARD_DATA = 'socialize/auth/setDashboardData';
+>>>>>>> 02a7af8ddadb6797b6657b28f3bf501e469a68e7
 
 export const GET_DASHBOARD_DATA_SG = "socialize/main/getDashboardData_sg";
 export const SET_DASHBOARD_DATA = "socialize/main/setDashboardData";

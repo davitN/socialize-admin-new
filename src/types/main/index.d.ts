@@ -9,10 +9,30 @@ export interface IUserData {
 }
 
 export interface NotificationManager {
-  info: (message: string, title?: string, duration?: number, callback?: Function) => void;
-  success: (message: string, title?: string, duration?: number, callback?: Function) => void;
-  warning: (message: string, title?: string, duration?: number, callback?: Function) => void;
-  error: (message: string, title?: string, duration?: number, callback?: Function) => void;
+  info: (
+    message: string,
+    title?: string,
+    duration?: number,
+    callback?: Function
+  ) => void;
+  success: (
+    message: string,
+    title?: string,
+    duration?: number,
+    callback?: Function
+  ) => void;
+  warning: (
+    message: string,
+    title?: string,
+    duration?: number,
+    callback?: Function
+  ) => void;
+  error: (
+    message: string,
+    title?: string,
+    duration?: number,
+    callback?: Function
+  ) => void;
 }
 
 export interface CallBacks {

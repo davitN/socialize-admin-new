@@ -1,20 +1,34 @@
-import { put } from "redux-saga/effects";
-import axiosInstance from "../../services/interceptor.service";
-import notificationService from "../../services/notification.service";
-import { ISignInData, ISignUpData } from "../../types/auth";
-// import {pushNotificationData} from '../../services/pushNotificationService';
-import { CallBacks, IUserData } from "../../types/main";
-// import {setMonitoringUsername} from '../../utils/monitoring';
-import { setUserDataAction } from "../ducks/authDuck";
-import { checkedSignedInAction, DEFAULT, defaultAction, notifyAction, resetStoreAction } from "../ducks/mainDuck";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { put } from 'redux-saga/effects';
+import axiosInstance from '../../services/interceptor.service';
+import { ISignInData, ISignUpData } from '../../types/auth';
+import { CallBacks, IUserData } from '../../types/main';
+import { setUserDataAction } from '../ducks/authDuck';
+import {
+  checkedSignedInAction,
+  DEFAULT,
+  defaultAction,
+  notifyAction,
+  resetStoreAction,
+} from '../ducks/mainDuck';
 
-export function* signInSaga({ data, callbacks }: { data: ISignInData; callbacks?: CallBacks; type: string }) {
+export function* signInSaga({
+  data,
+  callbacks,
+}: {
+  data: ISignInData;
+  callbacks?: CallBacks;
+  type: string;
+}) {
   try {
-    const res: IUserData = yield axiosInstance.post("authorization/verify_user", {
-      email: data.email,
-      password: data.password,
-    });
-    localStorage.setItem("token", res.accessToken);
+    const res: IUserData = yield axiosInstance.post(
+      'authorization/verify_user',
+      {
+        email: data.email,
+        password: data.password,
+      }
+    );
+    localStorage.setItem('token', res.accessToken);
     yield put(setUserDataAction(res));
     callbacks?.success && callbacks.success();
   } catch (error: any) {
@@ -23,13 +37,17 @@ export function* signInSaga({ data, callbacks }: { data: ISignInData; callbacks?
   }
 }
 
-export function* summitSignInOTP_Saga(payload: { code: string; callbacks?: CallBacks; type: string }) {
+export function* summitSignInOTP_Saga(payload: {
+  code: string;
+  callbacks?: CallBacks;
+  type: string;
+}) {
   const { code, callbacks } = payload;
   try {
-    const res: IUserData = yield axiosInstance.post("authorization/sign_in", {
+    const res: IUserData = yield axiosInstance.post('authorization/sign_in', {
       code: code,
     });
-    localStorage.setItem("token", res.accessToken);
+    localStorage.setItem('token', res.accessToken);
     yield put(setUserDataAction(res));
     yield put(checkedSignedInAction(true));
     callbacks?.success && callbacks.success();
@@ -38,13 +56,20 @@ export function* summitSignInOTP_Saga(payload: { code: string; callbacks?: CallB
   }
 }
 
-export function* signUpSaga(payload: { data: ISignUpData; callback: Function; type: string }) {
+export function* signUpSaga(payload: {
+  data: ISignUpData;
+  callback: Function;
+  type: string;
+}) {
   try {
     // const res: IUserData = yield axiosInstance.put('registration/register', {
     //   OS: Platform.OS,
     //   // deviceToken: pushNotificationData.token,
     // });
-    const res: IUserData = yield axiosInstance.post("registration/register", payload.data);
+    const res: IUserData = yield axiosInstance.post(
+      'registration/register',
+      payload.data
+    );
     // yield notifyAction(
     //   'success',
     //   'Success',
@@ -55,7 +80,13 @@ export function* signUpSaga(payload: { data: ISignUpData; callback: Function; ty
     yield put(setUserDataAction(res));
     payload.callback();
   } catch (error: any) {
-    yield put(notifyAction({ type: "error", message: error.response?.data.message, showError: true }));
+    yield put(
+      notifyAction({
+        type: 'error',
+        message: error.response?.data.message,
+        showError: true,
+      })
+    );
   } finally {
     yield put({ type: DEFAULT });
   }

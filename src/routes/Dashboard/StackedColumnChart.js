@@ -1,56 +1,57 @@
-import React from "react"
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import React from 'react';
 import PropTypes from 'prop-types';
-import ReactApexChart from "react-apexcharts"
+import ReactApexChart from 'react-apexcharts';
 
 const StackedColumnChart = ({ periodData }) => {
   const options = {
     chart: {
       stacked: !0,
       toolbar: {
-        show: 1
+        show: 1,
       },
       zoom: {
-        enabled: !0
-      }
+        enabled: !0,
+      },
     },
     plotOptions: {
       bar: {
         horizontal: !1,
-        columnWidth: "15%"
+        columnWidth: '15%',
         // endingShape: "rounded"
-      }
+      },
     },
     dataLabels: {
-      enabled: !1
+      enabled: !1,
     },
     xaxis: {
       show: true,
       categories: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec"
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
       ],
       labels: {
-        show: true
-      }
+        show: true,
+      },
     },
-    colors: ["#556ee6", "#f1b44c", "#34c38f"],
+    colors: ['#556ee6', '#f1b44c', '#34c38f'],
     legend: {
-      position: "bottom"
+      position: 'bottom',
     },
     fill: {
-      opacity: 1
-    }
-  }
+      opacity: 1,
+    },
+  };
   return (
     <React.Fragment>
       <ReactApexChart
@@ -62,9 +63,9 @@ const StackedColumnChart = ({ periodData }) => {
       />
     </React.Fragment>
   );
-}
+};
 
 StackedColumnChart.propTypes = {
-  periodData: PropTypes.any
-}
+  periodData: PropTypes.any,
+};
 export default StackedColumnChart;

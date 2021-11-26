@@ -1,0 +1,15 @@
+version: 0.2
+phases:
+  install:
+    on-failure: ABORT
+    commands:
+      - npm install
+  build:
+    on-failure: ABORT
+    commands:
+      - npm run build
+      - cp appspec.yml build/
+artifacts:
+  files:
+    - '**/*'
+  base-directory: 'build'

@@ -1,5 +1,6 @@
-import React from "react"
-import { Card, CardBody, CardTitle, Progress } from "reactstrap"
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import React from 'react';
+import { Card, CardBody, CardTitle, Progress } from 'reactstrap';
 
 const TopCities = () => {
   return (
@@ -19,10 +20,10 @@ const TopCities = () => {
             <table className="table align-middle table-nowrap">
               <tbody>
                 <tr>
-                  <td style={{ width: "30%" }}>
+                  <td style={{ width: '30%' }}>
                     <p className="mb-0">San Francisco</p>
                   </td>
-                  <td style={{ width: "25%" }}>
+                  <td style={{ width: '25%' }}>
                     <h5 className="mb-0">1,456</h5>
                   </td>
                   <td>
@@ -72,7 +73,7 @@ const TopCities = () => {
         </CardBody>
       </Card>
     </React.Fragment>
-  )
-}
+  );
+};
 
-export default TopCities
+export default TopCities;

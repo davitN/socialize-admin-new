@@ -1,12 +1,12 @@
-import React from "react";
-import { createUseStyles } from "react-jss";
+import React from 'react';
+import { createUseStyles } from 'react-jss';
 const useStyles = createUseStyles({
   container: {
-    height: "70px",
-    backgroundColor: "white",
+    height: '70px',
+    backgroundColor: 'white',
   },
 });
-function Header() {
+const Header: React.FC<{}> = () => {
   const classes = useStyles();
   return (
     <div className={`flex-horizontal ${classes.container}`}>
@@ -14,6 +14,6 @@ function Header() {
       {/*<Link to="/dashboard">dashboard</Link>*/}
     </div>
   );
-}
+};
 
 export default Header;

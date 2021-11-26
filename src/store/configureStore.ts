@@ -1,9 +1,15 @@
-import { AnyAction, applyMiddleware, combineReducers, createStore, compose } from "redux";
-import createSagaMiddleware from "redux-saga";
-import { composeWithDevTools } from "redux-devtools-extension";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  AnyAction,
+  applyMiddleware,
+  combineReducers,
+  createStore,
+} from 'redux';
+import createSagaMiddleware from 'redux-saga';
+import { composeWithDevTools } from 'redux-devtools-extension';
 
-import { authReducer, mainReducer, dashboardReducer } from "./ducks";
-import { RESET_STORE } from "./ducks/mainDuck";
+import { authReducer, mainReducer, dashboardReducer } from './ducks';
+import { RESET_STORE } from './ducks/mainDuck';
 
 export const sagaMiddleware = createSagaMiddleware();
 
@@ -41,8 +47,10 @@ export default function configureStore() {
 
   const store = createStore(rootReducer, {}, composedEnhancers);
 
-  if (process.env.NODE_ENV !== "production" && (module as any).hot) {
-    (module as any).hot.accept("./ducks", () => store.replaceReducer(rootReducer));
+  if (process.env.NODE_ENV !== 'production' && (module as any).hot) {
+    (module as any).hot.accept('./ducks', () =>
+      store.replaceReducer(rootReducer)
+    );
   }
 
   return store;

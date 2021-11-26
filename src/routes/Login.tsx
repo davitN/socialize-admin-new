@@ -1,46 +1,19 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, {  useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createUseStyles } from "react-jss";
-import profile from "../assets/images/profile-img.png";
-import logo from "../assets/images/logo.svg";
-import { checkSignedInAction, signInActionSG, summitSignInOTP_ActionSG } from "../store/ducks/authDuck";
-import notificationService from "../services/notification.service";
-import { startLoader } from "../services/loader.service";
-
 import { Row, Col, CardBody, Card, Alert, Container } from "reactstrap";
-
 import { Link, useNavigate, useLocation } from "react-router-dom";
-
 // availity-reactstrap-validation
 import { AvForm, AvField } from "availity-reactstrap-validation";
+import profile from "../assets/images/profile-img.png";
+import logo from "../assets/images/logo.svg";
+import { signInActionSG, summitSignInOTP_ActionSG } from "../store/ducks/authDuck";
+import notificationService from "../services/notification.service";
 import { RootState } from "../store/configureStore";
 
-// უბრალოდ მაგალითი
-const useStyles = createUseStyles({
-  myButton: {
-    color: "green",
-    margin: {
-      // jss-plugin-expand gives more readable syntax
-      top: 5, // jss-plugin-default-unit makes this 5px
-      right: 0,
-      bottom: 0,
-      left: "1rem",
-    },
-    "& span": {
-      // jss-plugin-nested applies this to a child span
-      fontWeight: "bold", // jss-plugin-camel-case turns this into 'font-weight'
-    },
-  },
-  myLabel: {
-    fontStyle: "italic",
-  },
-  marginBottom200: {
-    marginBottom: 200,
-  },
-});
 
-const Login = () => {
-  const classes = useStyles();
+
+const Login: React.FC<{}> = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -51,9 +24,11 @@ const Login = () => {
   const [smsCode, setSmsCode] = useState<string>("");
   const from = location.state?.from?.pathname || "/dashboard";
   const { isSignedIn } = useSelector((state: RootState) => state.mainReducer);
+  console.log(isSignedIn)
 
   // handleValidSubmit
   const login = (event: any, values: any) => {
+    console.log(event, values)
     dispatch(
       signInActionSG(
         { email, password },
@@ -72,6 +47,7 @@ const Login = () => {
   };
 
   const submitOTP = (event: any, values: any) => {
+    console.log(event, values)
     dispatch(
       summitSignInOTP_ActionSG(smsCode, {
         success: () => {
