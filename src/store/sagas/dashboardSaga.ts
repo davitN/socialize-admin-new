@@ -12,11 +12,7 @@ export function* getDashboardDataSaga({
   type: string;
 }) {
   try {
-<<<<<<< HEAD
     const res: IUserData = yield axiosInstance.get("/dashboard/get_dashboard");
-=======
-    const res: IUserData = yield axiosInstance.get('/initial/get_initial_data');
->>>>>>> 02a7af8ddadb6797b6657b28f3bf501e469a68e7
     console.log(res);
     yield put(setDashboardDataAction(res));
     callbacks?.success && callbacks.success();

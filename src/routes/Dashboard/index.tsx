@@ -1,11 +1,5 @@
-<<<<<<< HEAD:src/routes/Dashboard/index.tsx
 import React, { useEffect, useState } from "react";
-// import MetaTags from "react-meta-tags";
-=======
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import React, { useEffect, useState } from 'react';
-import MetaTags from 'react-meta-tags';
->>>>>>> 02a7af8ddadb6797b6657b28f3bf501e469a68e7:src/routes/Dashboard/index.js
 import {
   Container,
   Row,
@@ -30,14 +24,8 @@ import modalimage1 from '../../assets/images/product/img-7.png';
 import modalimage2 from '../../assets/images/product/img-4.png';
 
 // Pages Components
-<<<<<<< HEAD:src/routes/Dashboard/index.tsx
 import WelcomeComp from "./WelcomeComp";
 import MonthlyEarning from "./MonthlyEarning";
-=======
-import WelcomeComp from './WelcomeComp';
-import MonthlyEarning from './MonthlyEarning';
-import LatestTranaction from './LatestTranaction';
->>>>>>> 02a7af8ddadb6797b6657b28f3bf501e469a68e7:src/routes/Dashboard/index.js
 
 //Import Breadcrumb
 import Breadcrumbs from '../../components/shared/Breadcrumb';
@@ -46,15 +34,11 @@ import Breadcrumbs from '../../components/shared/Breadcrumb';
 import { withTranslation } from 'react-i18next';
 
 //redux
-<<<<<<< HEAD:src/routes/Dashboard/index.tsx
-import {useDispatch, useSelector} from "react-redux";
-import {getDashboardDataActionSG, getInitialRolesActionSG} from "../../store/ducks/dashboardDuck";
-import {RootState} from "../../store/configureStore";
+import { useDispatch, useSelector } from "react-redux";
+import { getDashboardDataActionSG, getInitialRolesActionSG } from "../../store/ducks/dashboardDuck";
+import { RootState } from "../../store/configureStore";
+import PropTypes from 'prop-types';
 import LatestTranaction from './LatestTranaction';
-=======
-import { useDispatch } from 'react-redux';
-import { getDashboardDataActionSG } from '../../store/ducks/dashboardDuck';
->>>>>>> 02a7af8ddadb6797b6657b28f3bf501e469a68e7:src/routes/Dashboard/index.js
 
 const yearData = [
   {
@@ -101,36 +85,19 @@ const weekData = [
   },
 ];
 
-<<<<<<< HEAD:src/routes/Dashboard/index.tsx
-const Dashboard = (props: any) => {
-=======
-const reports = [
-  {
-    title: 'New Customers This Month',
-    iconClass: 'bx-copy-alt',
-    description: '1,235',
-  },
-  {
-    title: 'Total Customers This Month',
-    iconClass: 'bx-archive-in',
-    description: '2,586',
-  },
-  {
-    title: 'Busiest Day',
-    iconClass: 'bx-purchase-tag-alt',
-    description: 'Tuesday',
-  },
-];
-
 const Dashboard = () => {
->>>>>>> 02a7af8ddadb6797b6657b28f3bf501e469a68e7:src/routes/Dashboard/index.js
   const dispatch = useDispatch();
   const { dashboardData } = useSelector((state: RootState) => state.dashboardReducer);
   console.log(dashboardData);
   const reports = [
     { title: "New Customers This Month", iconClass: "bx-copy-alt", description: dashboardData.newCustomersInThisMonth },
-    { title: "Total Customers This Month", iconClass: "bx-archive-in", description: dashboardData.totalCustomersInThisMonth },
-    { title: "Busiest Day", iconClass: "bx-purchase-tag-alt", description: "Tuesday",
+    {
+      title: "Total Customers This Month",
+      iconClass: "bx-archive-in",
+      description: dashboardData.totalCustomersInThisMonth
+    },
+    {
+      title: "Busiest Day", iconClass: "bx-purchase-tag-alt", description: "Tuesday",
     },
   ];
   const [modal, setmodal] = useState(false);
@@ -150,258 +117,238 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    // @ts-ignore
     setPeriodData(yearData);
   }, [dispatch]);
 
   const onChangeChartPeriod = (pType: any) => {
     setPeriodType(pType);
-<<<<<<< HEAD:src/routes/Dashboard/index.tsx
     if (pType === "yearly") {
-      // @ts-ignore
       setPeriodData(yearData);
     } else if (pType === "monthly") {
-      // @ts-ignore
       setPeriodData(monthData);
     } else if (pType === "weekly") {
-      // @ts-ignore
-=======
-    if (pType === 'yearly') {
-      setPeriodData(yearData);
-    } else if (pType === 'monthly') {
-      setPeriodData(monthData);
-    } else if (pType === 'weekly') {
->>>>>>> 02a7af8ddadb6797b6657b28f3bf501e469a68e7:src/routes/Dashboard/index.js
-      setPeriodData(weekData);
+      setPeriodData(weekData)
     }
-  };
+  }
 
   return (
-    <React.Fragment>
-      <div className="page-content">
-        {/*<MetaTags>*/}
-        {/*  <title>Dashboard | Skote - React Admin & Dashboard Template</title>*/}
-        {/*</MetaTags>*/}
-        <Container fluid>
-          {/* Render Breadcrumb */}
-          <Breadcrumbs
-            title={'Welcome to That Social App Premium Dashboard'}
-            breadcrumbItem={'Dashboard'}
-          />
-
-          <Row>
-            <Col xl="4">
-              <WelcomeComp />
-              <MonthlyEarning />
-            </Col>
-            <Col xl="8">
-              <Row>
-                {/* Reports Render */}
-                {reports.map((report, key) => (
-                  <Col md="4" key={'_col_' + key}>
-                    <Card className="mini-stats-wid">
-                      <CardBody>
-                        <Media>
-                          <Media body>
-                            <p className="text-muted fw-medium">
-                              {report.title}
-                            </p>
-                            <h4 className="mb-0">{report.description}</h4>
-                          </Media>
-                          <div className="avatar-sm rounded-circle bg-primary align-self-center mini-stat-icon">
-                            <span className="avatar-title rounded-circle bg-primary">
-<<<<<<< HEAD:src/routes/Dashboard/index.tsx
-                              <i className={"bx " + report.iconClass + " font-size-24"}/>
-=======
-                              <i
-                                className={
-                                  'bx ' + report.iconClass + ' font-size-24'
-                                }
-                              ></i>
->>>>>>> 02a7af8ddadb6797b6657b28f3bf501e469a68e7:src/routes/Dashboard/index.js
-                            </span>
-                          </div>
-                        </Media>
-                      </CardBody>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
-
-              <Card>
-                <CardBody>
-                  <div className="d-sm-flex flex-wrap">
-                    <h4 className="card-title mb-4">Customer Trends</h4>
-                    <div className="ms-auto">
-                      <ul className="nav nav-pills">
-                        <li className="nav-item">
-                          <Link
-                            to="#"
-                            className={classNames(
-                              { active: periodType === 'weekly' },
-                              'nav-link'
-                            )}
-                            onClick={() => {
-                              onChangeChartPeriod('weekly');
-                            }}
-                            id="one_month"
-                          >
-                            Week
-                          </Link>{' '}
-                        </li>
-                        <li className="nav-item">
-                          <Link
-                            to="#"
-                            className={classNames(
-                              { active: periodType === 'monthly' },
-                              'nav-link'
-                            )}
-                            onClick={() => {
-                              onChangeChartPeriod('monthly');
-                            }}
-                            id="one_month"
-                          >
-                            Month
-                          </Link>
-                        </li>
-                        <li className="nav-item">
-                          <Link
-                            to="#"
-                            className={classNames(
-                              { active: periodType === 'yearly' },
-                              'nav-link'
-                            )}
-                            onClick={() => {
-                              onChangeChartPeriod('yearly');
-                            }}
-                            id="one_month"
-                          >
-                            Year
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  {/* <div className="clearfix"></div> */}
-                  <StackedColumnChart periodData={periodData} />
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
-
-          {/*<Row>*/}
-          {/*  <Col xl="4">*/}
-          {/*    <SocialSource />*/}
-          {/*  </Col>*/}
-          {/*  <Col xl="4">*/}
-          {/*    <ActivityComp />*/}
-          {/*  </Col>*/}
-
-          {/*  <Col xl="4">*/}
-          {/*    <TopCities />*/}
-          {/*  </Col>*/}
-          {/*</Row>*/}
-
-          <Row>
-            <Col lg="12">
-              <LatestTranaction incomeData={dashboardData.topCustomers}/>
-            </Col>
-          </Row>
-        </Container>
-      </div>
-
-      {/* subscribe ModalHeader */}
-      <Modal
-        isOpen={subscribemodal}
-        role="dialog"
-        autoFocus={true}
-        centered
-        data-toggle="modal"
-        toggle={() => {
-          setSubscribemodal(!subscribemodal);
-        }}
-      >
-        <div className="modal-content">
-          <div className="modal-header border-bottom-0">
-            <ModalHeader
-              toggle={() => {
-                setSubscribemodal(!subscribemodal);
-              }}
+      <React.Fragment>
+        <div className="page-content">
+          {/*<MetaTags>*/}
+          {/*  <title>Dashboard | Skote - React Admin & Dashboard Template</title>*/}
+          {/*</MetaTags>*/}
+          <Container fluid>
+            {/* Render Breadcrumb */}
+            <Breadcrumbs
+                title={'Welcome to That Social App Premium Dashboard'}
+                breadcrumbItem={'Dashboard'}
             />
-          </div>
-          <div className="modal-body">
-            <div className="text-center mb-4">
-              <div className="avatar-md mx-auto mb-4">
-                <div className="avatar-title bg-light  rounded-circle text-primary h1">
-                  <i className="mdi mdi-email-open"/>
+
+            <Row>
+              <Col xl="4">
+                <WelcomeComp/>
+                <MonthlyEarning/>
+              </Col>
+              <Col xl="8">
+                <Row>
+                  {/* Reports Render */}
+                  {reports.map((report, key) => (
+                      <Col md="4" key={'_col_' + key}>
+                        <Card className="mini-stats-wid">
+                          <CardBody>
+                            <Media>
+                              <Media body>
+                                <p className="text-muted fw-medium">
+                                  {report.title}
+                                </p>
+                                <h4 className="mb-0">{report.description}</h4>
+                              </Media>
+                              <div className="avatar-sm rounded-circle bg-primary align-self-center mini-stat-icon">
+                          <span className="avatar-title rounded-circle bg-primary">
+                            <i className={"bx " + report.iconClass + " font-size-24"}/>
+                          </span>
+                              </div>
+                            </Media>
+                          </CardBody>
+                        </Card>
+                      </Col>
+                  ))}
+                </Row>
+
+                <Card>
+                  <CardBody>
+                    <div className="d-sm-flex flex-wrap">
+                      <h4 className="card-title mb-4">Customer Trends</h4>
+                      <div className="ms-auto">
+                        <ul className="nav nav-pills">
+                          <li className="nav-item">
+                            <Link
+                                to="#"
+                                className={classNames(
+                                    { active: periodType === 'weekly' },
+                                    'nav-link'
+                                )}
+                                onClick={() => {
+                                  onChangeChartPeriod('weekly');
+                                }}
+                                id="one_month"
+                            >
+                              Week
+                            </Link>{' '}
+                          </li>
+                          <li className="nav-item">
+                            <Link
+                                to="#"
+                                className={classNames(
+                                    { active: periodType === 'monthly' },
+                                    'nav-link'
+                                )}
+                                onClick={() => {
+                                  onChangeChartPeriod('monthly');
+                                }}
+                                id="one_month"
+                            >
+                              Month
+                            </Link>
+                          </li>
+                          <li className="nav-item">
+                            <Link
+                                to="#"
+                                className={classNames(
+                                    { active: periodType === 'yearly' },
+                                    'nav-link'
+                                )}
+                                onClick={() => {
+                                  onChangeChartPeriod('yearly');
+                                }}
+                                id="one_month"
+                            >
+                              Year
+                            </Link>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                    {/* <div className="clearfix"></div> */}
+                    <StackedColumnChart periodData={periodData}/>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
+
+            {/*<Row>*/}
+            {/*  <Col xl="4">*/}
+            {/*    <SocialSource />*/}
+            {/*  </Col>*/}
+            {/*  <Col xl="4">*/}
+            {/*    <ActivityComp />*/}
+            {/*  </Col>*/}
+
+            {/*  <Col xl="4">*/}
+            {/*    <TopCities />*/}
+            {/*  </Col>*/}
+            {/*</Row>*/}
+
+            <Row>
+              <Col lg="12">
+                <LatestTranaction incomeData={dashboardData.topCustomers}/>
+              </Col>
+            </Row>
+          </Container>
+        </div>
+
+        {/* subscribe ModalHeader */}
+        <Modal
+            isOpen={subscribemodal}
+            role="dialog"
+            autoFocus={true}
+            centered
+            data-toggle="modal"
+            toggle={() => {
+              setSubscribemodal(!subscribemodal);
+            }}
+        >
+          <div className="modal-content">
+            <div className="modal-header border-bottom-0">
+              <ModalHeader
+                  toggle={() => {
+                    setSubscribemodal(!subscribemodal);
+                  }}
+              />
+            </div>
+            <div className="modal-body">
+              <div className="text-center mb-4">
+                <div className="avatar-md mx-auto mb-4">
+                  <div className="avatar-title bg-light  rounded-circle text-primary h1">
+                    <i className="mdi mdi-email-open"/>
+                  </div>
                 </div>
-              </div>
 
-              <div className="row justify-content-center">
-                <div className="col-xl-10">
-                  <h4 className="text-primary">Subscribe !</h4>
-                  <p className="text-muted font-size-14 mb-4">
-                    Subscribe our newletter and get notification to stay update.
-                  </p>
+                <div className="row justify-content-center">
+                  <div className="col-xl-10">
+                    <h4 className="text-primary">Subscribe !</h4>
+                    <p className="text-muted font-size-14 mb-4">
+                      Subscribe our newletter and get notification to stay update.
+                    </p>
 
-                  <div className="input-group rounded bg-light">
-                    <Input
-                      type="email"
-                      className="form-control bg-transparent border-0"
-                      placeholder="Enter Email address"
-                    />
-                    <Button color="primary" type="button" id="button-addon2">
-                      <i className="bx bxs-paper-plane"/>
-                    </Button>
+                    <div className="input-group rounded bg-light">
+                      <Input
+                          type="email"
+                          className="form-control bg-transparent border-0"
+                          placeholder="Enter Email address"
+                      />
+                      <Button color="primary" type="button" id="button-addon2">
+                        <i className="bx bxs-paper-plane"/>
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </Modal>
+        </Modal>
 
-      <Modal
-        isOpen={modal}
-        role="dialog"
-        autoFocus={true}
-        centered={true}
-        className="exampleModal"
-        tabIndex={-1}
-        toggle={() => {
-          setmodal(!modal);
-        }}
-      >
-        <div className="modal-content">
-          <ModalHeader
+        <Modal
+            isOpen={modal}
+            role="dialog"
+            autoFocus={true}
+            centered={true}
+            className="exampleModal"
+            tabIndex={-1}
             toggle={() => {
               setmodal(!modal);
             }}
-          >
-            Order Details
-          </ModalHeader>
-          <ModalBody>
-            <p className="mb-2">
-              Product id: <span className="text-primary">#SK2540</span>
-            </p>
-            <p className="mb-4">
-              Billing Name: <span className="text-primary">Neal Matthews</span>
-            </p>
+        >
+          <div className="modal-content">
+            <ModalHeader
+                toggle={() => {
+                  setmodal(!modal);
+                }}
+            >
+              Order Details
+            </ModalHeader>
+            <ModalBody>
+              <p className="mb-2">
+                Product id: <span className="text-primary">#SK2540</span>
+              </p>
+              <p className="mb-4">
+                Billing Name: <span className="text-primary">Neal Matthews</span>
+              </p>
 
-            <div className="table-responsive">
-              <Table className="table table-centered table-nowrap">
-                <thead>
+              <div className="table-responsive">
+                <Table className="table table-centered table-nowrap">
+                  <thead>
                   <tr>
                     <th scope="col">Product</th>
                     <th scope="col">Product Name</th>
                     <th scope="col">Price</th>
                   </tr>
-                </thead>
-                <tbody>
+                  </thead>
+                  <tbody>
                   <tr>
                     <th scope="row">
                       <div>
-                        <img src={modalimage1} alt="" className="avatar-sm" />
+                        <img src={modalimage1} alt="" className="avatar-sm"/>
                       </div>
                     </th>
                     <td>
@@ -417,7 +364,7 @@ const Dashboard = () => {
                   <tr>
                     <th scope="row">
                       <div>
-                        <img src={modalimage2} alt="" className="avatar-sm" />
+                        <img src={modalimage2} alt="" className="avatar-sm"/>
                       </div>
                     </th>
                     <td>
@@ -448,31 +395,25 @@ const Dashboard = () => {
                     </td>
                     <td>$ 400</td>
                   </tr>
-                </tbody>
-              </Table>
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              type="button"
-              color="secondary"
-              onClick={() => {
-                setmodal(!modal);
-              }}
-            >
-              Close
-            </Button>
-          </ModalFooter>
-        </div>
-      </Modal>
-    </React.Fragment>
+                  </tbody>
+                </Table>
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                  type="button"
+                  color="secondary"
+                  onClick={() => {
+                    setmodal(!modal);
+                  }}
+              >
+                Close
+              </Button>
+            </ModalFooter>
+          </div>
+        </Modal>
+      </React.Fragment>
   );
-};
+}
 
-// Dashboard.propTypes = {
-//   t: PropTypes.any,
-//   chartsData: PropTypes.any,
-//   onGetChartsData: PropTypes.func,
-// };
-
-export default withTranslation()(Dashboard);
+export default Dashboard;

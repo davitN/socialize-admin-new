@@ -15,7 +15,7 @@ import {
   CardSubtitle,
 } from "reactstrap"
 import Breadcrumbs from '../../components/shared/Breadcrumb';
-import ImagesCard from './imagesCard';
+import ImagesCard from '../../components/add-venue/imagesCard';
 
 const provinceOptions = [
   { label: 'Vancouver', value: 'Vancouver' },

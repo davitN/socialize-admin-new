@@ -59,12 +59,13 @@ const LatestTranaction = ({ incomeData }: any) => {
       dataField: "lastVisitingTime",
       text: "Last Visit",
       sort: true,
+      // eslint-disable-next-line react/display-name
       formatter: (cellContent: any, row: any) => (
-          <>
+          <React.Fragment>
             {new Date(row.lastVisitingTime).toLocaleDateString('en-GB', {
               day: '2-digit', month: 'short'
             })}, {new Date(row.lastVisitingTime).getFullYear()}
-          </>
+          </React.Fragment>
       )
     },
     {
