@@ -19,7 +19,6 @@ const Header: React.FC<{}> = () => {
   const dispatch = useDispatch();
 
   const logOut = () => {
-    console.log('asdfasdf');
     dispatch(logoutAction());
   };
 
