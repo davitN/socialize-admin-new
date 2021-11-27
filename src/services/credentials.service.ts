@@ -1,5 +1,6 @@
 export const ENV = 'dev';
-export const backendUrl = 'https://aws-dev.thatsocialapp.com/admin/';
+export const backendUrl = 'https://aws.thatsocialapp.com/admin/'; // prod
+// export const backendUrl = 'https://aws-dev.thatsocialapp.com/admin/'; // dev
 // export const backendUrl = 'http://localhost:8080/api/';
 // export const backendUrl = 'http://192.168.1.5:8080/api/';
 
