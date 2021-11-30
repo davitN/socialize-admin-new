@@ -1,69 +1,13 @@
 import { AnyAction } from 'redux';
+import { DashboardData, InitialState } from '../../types/dashboard/index.d';
 import { CallBacks } from '../../types/main';
-
-export const GET_INITIAL_ROLES_SG = "socialize/main/getInitialRoles_sg";
-export const SET_INITIAL_ROLES_DATA = "socialize/main/setInitialRoles";
 
 export const GET_DASHBOARD_DATA_SG = "socialize/main/getDashboardData_sg";
 export const SET_DASHBOARD_DATA = "socialize/main/setDashboardData";
 
-
-const initialState: {dashboardData: DashboardDataModel, initialRoles: any} = {
-  dashboardData: {
-    newCustomersInThisMonth: null,
-    totalCustomersInThisMonth: null,
-    topCustomers: [],
-    latestPosts: [],
-    companySubscription: {
-      __v: null,
-      ordering: null,
-      name: '',
-      description: '',
-      _id: ''
-    },
-    customerTrendsThrowYear: []
-  },
-  initialRoles: []
+const initialState: InitialState = {
+  dashboardData: null
 };
-
-interface DashboardDataModel {
-  newCustomersInThisMonth: number,
-  totalCustomersInThisMonth: number,
-  totalVisitsCount: number,
-  totalVisitorsCount: number,
-  topCustomers: Array<{
-    _id: string,
-    isRealInfoHidden: boolean,
-    visitsCount: number,
-    lastVisitingTime: string,
-    username: string,
-    postsCount: number,
-    viewsOnPosts: number
-  }>,
-  latestPosts: Array<{
-    _id: string,
-    username: string,
-    createdAt: string,
-    commentsCount: number,
-    viewsCount: number,
-    customerType: string,
-    firstName: string,
-    lastName: string
-  }>,
-  companySubscription: {
-    _id: string,
-    name: string,
-    description: string,
-    __v: number,
-    ordering: number
-  },
-  customerTrendsThrowYear: Array<{
-    firstTimeVisitor: number,
-    secondTimeVisitor: number,
-    regular: number,
-    visitYearMonthDate: string
-  }>
-}
 
 export const dashboardReducer = (state = initialState, action: AnyAction) => {
   const { payload } = action;
@@ -71,29 +15,14 @@ export const dashboardReducer = (state = initialState, action: AnyAction) => {
     case SET_DASHBOARD_DATA:
       return {
         ...state,
-        dashboardData: payload,
-      };
-    case SET_INITIAL_ROLES_DATA:
-      return {
-        ...state,
-        initialRoles: payload,
+        dashboardData: (payload as DashboardData),
       };
     default:
       return state;
   }
 };
 
-export const setInitialRolesAction = (data: any) => ({
-  type: SET_INITIAL_ROLES_DATA,
-  payload: data,
-});
-
-export const getInitialRolesActionSG = (callbacks?: CallBacks) => ({
-  type: GET_INITIAL_ROLES_SG,
-  callbacks,
-});
-
-export const setDashboardDataAction = (data: any) => ({
+export const setDashboardDataAction = (data: DashboardData) => ({
   type: SET_DASHBOARD_DATA,
   payload: data,
 });

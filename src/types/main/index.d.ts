@@ -6,6 +6,13 @@ export interface IUserData {
   email: string;
   phone: string;
   companyCode: string;
+  role: UserRole,
+}
+
+export interface UserRole {
+  name: string,
+  description: string,
+  _id: string,
 }
 
 export interface NotificationManager {
