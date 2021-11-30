@@ -5,30 +5,8 @@ import { CallBacks } from '../../types/main';
 export const GET_DASHBOARD_DATA_SG = "socialize/main/getDashboardData_sg";
 export const SET_DASHBOARD_DATA = "socialize/main/setDashboardData";
 
-<<<<<<< HEAD
-
-const initialState: {dashboardData: DashboardDataModel, initialRoles: any} = {
-  dashboardData: {
-    newCustomersInThisMonth: null,
-    totalCustomersInThisMonth: null,
-    totalVisitsCount: null,
-    totalVisitorsCount: null,
-    topCustomers: [],
-    latestPosts: [],
-    companySubscription: {
-      __v: null,
-      ordering: null,
-      name: '',
-      description: '',
-      _id: ''
-    },
-    customerTrendsThrowYear: []
-  },
-  initialRoles: []
-=======
 const initialState: InitialState = {
   dashboardData: null
->>>>>>> bd0c17f552d5293d6c4af43b4ecba552e2de855c
 };
 
 export const dashboardReducer = (state = initialState, action: AnyAction) => {
