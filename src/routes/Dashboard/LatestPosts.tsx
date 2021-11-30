@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { isEmpty } from "lodash";
 import BootstrapTable from "react-bootstrap-table-next";
@@ -23,25 +23,20 @@ const getCustomerTypeColors = (type: string): string => {
   }
 }
 
-//redux
-import { useSelector, useDispatch } from "react-redux";
+import { Post } from "../../types/dashboard/index.d";
 
-const LatestPosts = ({ incomeData }: any) => {
-  const dispatch = useDispatch();
-
+const LatestPosts: React.FC<{posts: Post[]}> = ({posts}) => {
   const selectRow = {
     mode: "checkbox",
   };
 
   const [modal, setModal] = useState(false);
   const [modal1, setModal1] = useState(false);
-  const [tableData, setTableData] = useState([]);
-  const [isEdit, setIsEdit] = useState(false);
 
   //pagination customization
   const pageOptions = {
     sizePerPage: 6,
-    totalSize: incomeData.length, // replace later with size(orders),
+    totalSize: posts.length, // replace later with size(orders),
     custom: true,
   };
   const { SearchBar } = Search;
@@ -158,23 +153,8 @@ const LatestPosts = ({ incomeData }: any) => {
   //   }
   // }, [onGetOrders, orders]);
 
-  useEffect(() => {
-    setTableData(incomeData);
-  }, []);
-
-  useEffect(() => {
-    if (!isEmpty(incomeData) && !!isEdit) {
-      setTableData(incomeData);
-      setIsEdit(false);
-    }
-  }, [incomeData]);
-
   const toggle = () => {
     setModal(!modal);
-  };
-
-  const toLowerCase1 = (str: any) => {
-    return str.toLowerCase();
   };
 
   const defaultSorted = [
@@ -194,10 +174,10 @@ const LatestPosts = ({ incomeData }: any) => {
             pagination={paginationFactory(pageOptions)}
             // keyField="id"
             // columns={EcommerceOrderColumns(toggle)}
-            // data={incomeData}
+            // data={posts}
           >
             {({ paginationProps, paginationTableProps }: any) => (
-              <ToolkitProvider keyField="id" data={incomeData} columns={EcommerceOrderColumns(toggle)} bootstrap4>
+              <ToolkitProvider keyField="id" data={posts} columns={EcommerceOrderColumns(toggle)} bootstrap4>
                 {(toolkitProps: any) => (
                   <React.Fragment>
                     <Row className={'text-start'}>

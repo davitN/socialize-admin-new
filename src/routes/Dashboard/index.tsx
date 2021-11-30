@@ -35,9 +35,8 @@ import { withTranslation } from 'react-i18next';
 
 //redux
 import { useDispatch, useSelector } from "react-redux";
-import { getDashboardDataActionSG, getInitialRolesActionSG } from "../../store/ducks/dashboardDuck";
+import { getDashboardDataActionSG } from "../../store/ducks/dashboardDuck";
 import { RootState } from "../../store/configureStore";
-import PropTypes from 'prop-types';
 import TopCustomers from './TopCustomers';
 import LatestPosts from './LatestPosts';
 
@@ -103,37 +102,28 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const { dashboardData } = useSelector((state: RootState) => state.dashboardReducer);
   const { userData } = useSelector((state: RootState) => state.authReducer);
-  const reports = [
-    { title: "New Customers This Month", iconClass: "bx-copy-alt", description: dashboardData.newCustomersInThisMonth },
-    {
-      title: "Total Customers This Month",
-      iconClass: "bx-archive-in",
-      description: dashboardData.totalCustomersInThisMonth
-    },
-    {
-      title: "Busiest Day", iconClass: "bx-purchase-tag-alt", description: weekDays[new Date().getDay()],
-    },
-  ];
-  const [modal, setmodal] = useState(false);
-  const [subscribemodal, setSubscribemodal] = useState(false);
+  const [reports, setReports] = useState([]);
   const [periodData, setPeriodData] = useState([]);
   const [periodType, setPeriodType] = useState('yearly');
 
   useEffect(() => {
-    dispatch(getInitialRolesActionSG());
-    dispatch(getDashboardDataActionSG());
+    dispatch(getDashboardDataActionSG({success: () => {
+      setReports([
+        { title: "New Customers This Month", iconClass: "bx-copy-alt", description: dashboardData.newCustomersInThisMonth },
+        {
+          title: "Total Customers This Month",
+          iconClass: "bx-archive-in",
+          description: dashboardData.totalCustomersInThisMonth
+        },
+        {
+          title: "Busiest Day", iconClass: "bx-purchase-tag-alt", description: weekDays[new Date().getDay()],
+        },
+      ]);
+      const years = correctTrends(dashboardData.customerTrendsThrowYear);
+      setPeriodData(years);
+    }}));
   }, [dispatch]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setSubscribemodal(true);
-    }, 2000);
-  }, []);
-
-  useEffect(() => {
-    const years = correctTrends(dashboardData.customerTrendsThrowYear);
-    setPeriodData(years);
-  }, [dashboardData]);
 
   const onChangeChartPeriod = (pType: any) => {
     // setPeriodType(pType);
@@ -147,7 +137,8 @@ const Dashboard = () => {
   }
 
   return (
-      <React.Fragment>
+      <>
+      { dashboardData && 
         <div className="page-content">
           {/*<MetaTags>*/}
           {/*  <title>Dashboard | Skote - React Admin & Dashboard Template</title>*/}
@@ -271,168 +262,13 @@ const Dashboard = () => {
             </Row>
             <Row>
               <Col lg="12">
-                <LatestPosts incomeData={dashboardData.latestPosts}/>
+                <LatestPosts posts={dashboardData.latestPosts}/>
               </Col>
             </Row>
           </Container>
         </div>
-
-        {/* subscribe ModalHeader */}
-        <Modal
-            isOpen={subscribemodal}
-            role="dialog"
-            autoFocus={true}
-            centered
-            data-toggle="modal"
-            toggle={() => {
-              setSubscribemodal(!subscribemodal);
-            }}
-        >
-          <div className="modal-content">
-            <div className="modal-header border-bottom-0">
-              <ModalHeader
-                  toggle={() => {
-                    setSubscribemodal(!subscribemodal);
-                  }}
-              />
-            </div>
-            <div className="modal-body">
-              <div className="text-center mb-4">
-                <div className="avatar-md mx-auto mb-4">
-                  <div className="avatar-title bg-light  rounded-circle text-primary h1">
-                    <i className="mdi mdi-email-open"/>
-                  </div>
-                </div>
-
-                <div className="row justify-content-center">
-                  <div className="col-xl-10">
-                    <h4 className="text-primary">Subscribe !</h4>
-                    <p className="text-muted font-size-14 mb-4">
-                      Subscribe our newletter and get notification to stay update.
-                    </p>
-
-                    <div className="input-group rounded bg-light">
-                      <Input
-                          type="email"
-                          className="form-control bg-transparent border-0"
-                          placeholder="Enter Email address"
-                      />
-                      <Button color="primary" type="button" id="button-addon2">
-                        <i className="bx bxs-paper-plane"/>
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Modal>
-
-        <Modal
-            isOpen={modal}
-            role="dialog"
-            autoFocus={true}
-            centered={true}
-            className="exampleModal"
-            tabIndex={-1}
-            toggle={() => {
-              setmodal(!modal);
-            }}
-        >
-          <div className="modal-content">
-            <ModalHeader
-                toggle={() => {
-                  setmodal(!modal);
-                }}
-            >
-              Order Details
-            </ModalHeader>
-            <ModalBody>
-              <p className="mb-2">
-                Product id: <span className="text-primary">#SK2540</span>
-              </p>
-              <p className="mb-4">
-                Billing Name: <span className="text-primary">Neal Matthews</span>
-              </p>
-
-              <div className="table-responsive">
-                <Table className="table table-centered table-nowrap">
-                  <thead>
-                  <tr>
-                    <th scope="col">Product</th>
-                    <th scope="col">Product Name</th>
-                    <th scope="col">Price</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr>
-                    <th scope="row">
-                      <div>
-                        <img src={modalimage1} alt="" className="avatar-sm"/>
-                      </div>
-                    </th>
-                    <td>
-                      <div>
-                        <h5 className="text-truncate font-size-14">
-                          Wireless Headphone (Black)
-                        </h5>
-                        <p className="text-muted mb-0">$ 225 x 1</p>
-                      </div>
-                    </td>
-                    <td>$ 255</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">
-                      <div>
-                        <img src={modalimage2} alt="" className="avatar-sm"/>
-                      </div>
-                    </th>
-                    <td>
-                      <div>
-                        <h5 className="text-truncate font-size-14">
-                          Hoodie (Blue)
-                        </h5>
-                        <p className="text-muted mb-0">$ 145 x 1</p>
-                      </div>
-                    </td>
-                    <td>$ 145</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2}>
-                      <h6 className="m-0 text-end">Sub Total:</h6>
-                    </td>
-                    <td>$ 400</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2}>
-                      <h6 className="m-0 text-end">Shipping:</h6>
-                    </td>
-                    <td>Free</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2}>
-                      <h6 className="m-0 text-end">Total:</h6>
-                    </td>
-                    <td>$ 400</td>
-                  </tr>
-                  </tbody>
-                </Table>
-              </div>
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                  type="button"
-                  color="secondary"
-                  onClick={() => {
-                    setmodal(!modal);
-                  }}
-              >
-                Close
-              </Button>
-            </ModalFooter>
-          </div>
-        </Modal>
-      </React.Fragment>
+      }
+      </>
   );
 }
 

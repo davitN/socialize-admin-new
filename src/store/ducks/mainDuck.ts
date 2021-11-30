@@ -1,12 +1,14 @@
 import { AnyAction } from 'redux';
 import notificationService from '../../services/notification.service';
+import { CallBacks } from '../../types/main';
 // import navigationService from "../../services/navigation.service";
 // import notificationService from "../../services/notification.service";
 
 export const DEFAULT = 'socialize/main/default';
 export const RESET_STORE = 'socialize/main/resetStore';
 export const CHECKED_SIGNED_IN = 'socialize/main/checkedSignedIn';
-export const SET_DEVICE_TOKEN = 'socialize/main/setDeviceToken';
+export const GET_INITIAL_ROLES_SG = "socialize/main/getInitialRoles_sg";
+export const SET_INITIAL_ROLES_DATA = "socialize/main/setInitialRoles";
 
 const initialState = {
   isLoading: true,
@@ -40,40 +42,15 @@ export const resetStoreAction = (isLoading = false) => ({
   isLoading,
 });
 
-// export const navigateAction = (screen: string, params: Object) => {
-//   navigationService.navigate(screen, params);
-//   return {
-//     type: DEFAULT,
-//   };
-// };
+export const setInitialRolesAction = (data: any) => ({
+  type: SET_INITIAL_ROLES_DATA,
+  payload: data,
+});
 
-// export const navigateResetAction = (routes: any) => {
-//   navigationService.reset(routes);
-//   return {
-//     type: DEFAULT,
-//   };
-// };
-
-// export const navigateReplacerAction = (name: string, params: Object) => {
-//   navigationService.replace(name, params);
-//   return {
-//     type: DEFAULT,
-//   };
-// };
-
-// export const navigateGoBakAction = () => {
-//   navigationService.goBack();
-//   return {
-//     type: DEFAULT,
-//   };
-// };
-
-// export const goBackAction = () => {
-//   navigationService.goBack();
-//   return {
-//     type: DEFAULT,
-//   };
-// };
+export const getInitialRolesActionSG = (callbacks?: CallBacks) => ({
+  type: GET_INITIAL_ROLES_SG,
+  callbacks,
+});
 
 export const notifyAction = ({
   type,
