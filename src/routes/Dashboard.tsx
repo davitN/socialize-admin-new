@@ -1,50 +1,38 @@
-import React, { useEffect, useState } from "react";
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Row,
   Col,
-  Button,
   Card,
   CardBody,
-  Input,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Media,
-  Table,
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
-import StackedColumnChart from './StackedColumnChart';
+import StackedColumnChart from '../components/dashboard/StackedColumnChart';
 
 //import action
-import modalimage1 from '../../assets/images/product/img-7.png';
-import modalimage2 from '../../assets/images/product/img-4.png';
 
 // Pages Components
-import WelcomeComp from "./WelcomeComp";
-import MonthlyEarning from "./MonthlyEarning";
+import WelcomeComp from "../components/dashboard/WelcomeComp";
+import MonthlyEarning from "../components/dashboard/MonthlyEarning";
 
 //Import Breadcrumb
-import Breadcrumbs from '../../components/shared/Breadcrumb';
-
-//i18n
-import { withTranslation } from 'react-i18next';
+import Breadcrumbs from '../components/shared/Breadcrumb';
 
 //redux
 import { useDispatch, useSelector } from "react-redux";
-import { getDashboardDataActionSG } from "../../store/ducks/dashboardDuck";
-import { RootState } from "../../store/configureStore";
-import TopCustomers from './TopCustomers';
-import LatestPosts from './LatestPosts';
+import { getDashboardDataActionSG } from "../store/ducks/dashboardDuck";
+import { RootState } from "../store/configureStore";
+import TopCustomers from '../components/dashboard/TopCustomers';
+import Posts from '../components/dashboard/Posts';
 
 const correctTrends = (incomeArr: Array<{
   firstTimeVisitor: number,
   secondTimeVisitor: number,
   regular: number,
-  visitYearMonthDate: any
+  visitYearMonthDate: string
 }>) => {
   const yearData = [
     {
@@ -67,35 +55,7 @@ const correctTrends = (incomeArr: Array<{
   });
   return yearData;
 }
-const monthData = [
-  {
-    name: 'First Visit',
-    data: [34, 55, 21, 77, 32, 63, 86, 42, 34, 18, 16, 41],
-  },
-  {
-    name: 'Second Visit',
-    data: [10, 63, 40, 80, 52, 41, 11, 32, 30, 86, 44, 33],
-  },
-  {
-    name: 'Regular Customer',
-    data: [11, 17, 15, 85, 21, 14, 80, 58, 17, 12, 20, 18],
-  },
-];
 
-const weekData = [
-  {
-    name: 'First Visit',
-    data: [14, 52, 11, 57, 22, 33, 31, 22, 64, 14, 32, 68],
-  },
-  {
-    name: 'Second Visit',
-    data: [13, 23, 20, 8, 13, 27, 18, 22, 10, 16, 24, 22],
-  },
-  {
-    name: 'Regular Customer',
-    data: [11, 17, 15, 15, 34, 55, 21, 18, 17, 12, 20, 18],
-  },
-];
 const weekDays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
 const Dashboard = () => {
@@ -104,7 +64,6 @@ const Dashboard = () => {
   const { userData } = useSelector((state: RootState) => state.authReducer);
   const [reports, setReports] = useState([]);
   const [periodData, setPeriodData] = useState([]);
-  const [periodType, setPeriodType] = useState('yearly');
 
   useEffect(() => {
     dispatch(getDashboardDataActionSG({success: () => {
@@ -123,18 +82,6 @@ const Dashboard = () => {
       setPeriodData(years);
     }}));
   }, [dispatch]);
-
-
-  const onChangeChartPeriod = (pType: any) => {
-    // setPeriodType(pType);
-    // if (pType === "yearly") {
-    //   setPeriodData(yearData);
-    // } else if (pType === "monthly") {
-    //   setPeriodData(monthData);
-    // } else if (pType === "weekly") {
-    //   setPeriodData(weekData)
-    // }
-  }
 
   return (
       <>
@@ -221,12 +168,9 @@ const Dashboard = () => {
                             <Link
                                 to="#"
                                 className={classNames(
-                                    { active: periodType === 'yearly' },
+                                    { active: true },
                                     'nav-link'
                                 )}
-                                onClick={() => {
-                                  onChangeChartPeriod('yearly');
-                                }}
                                 id="one_month"
                             >
                               Year
@@ -262,7 +206,7 @@ const Dashboard = () => {
             </Row>
             <Row>
               <Col lg="12">
-                <LatestPosts posts={dashboardData.latestPosts}/>
+                <Posts posts={dashboardData.latestPosts}/>
               </Col>
             </Row>
           </Container>

@@ -13,6 +13,16 @@ const mainRoutes: Array<{ name: string; route: string; iconName: string }> = [
     route: '/add-venue',
     iconName: 'bx bx-home-circle',
   },
+  {
+    name: 'Latest Posts',
+    route: '/latest-posts',
+    iconName: 'bx bx-home-circle',
+  },
+  {
+    name: 'Top Customers',
+    route: '/top-customers',
+    iconName: 'bx bx-home-circle',
+  }
 ];
 const useStyles = createUseStyles({
   container: { width: '250px', backgroundColor: '#2A3042' },

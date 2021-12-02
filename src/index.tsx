@@ -10,10 +10,12 @@ import configureStore, { sagaMiddleware } from './store/configureStore';
 import rootSaga from './store/sagas';
 import storeRegistry from './store/storeRegistry';
 import Login from './routes/Login';
-import Dashboard from './routes/Dashboard';
-import AddVenue from './routes/AddVenue';
 import WithAuth from './components/shared/WithAuth';
 import WithoutAuth from './components/shared/WithoutAuth';
+import Dashboard from './routes/Dashboard';
+import AddVenue from './routes/AddVenue';
+import LatestPosts from './routes/LatestPosts';
+import TopCustomers from './routes/TopCustomers';
 
 export const store = configureStore();
 storeRegistry.register(store);
@@ -42,6 +44,22 @@ ReactDOM.render(
                   <AddVenue />
                 </WithAuth>
               }
+            />
+            <Route
+                path="/latest-posts"
+                element={
+                  <WithAuth>
+                    <LatestPosts />
+                  </WithAuth>
+                }
+            />
+            <Route
+                path="/top-customers"
+                element={
+                  <WithAuth>
+                    <TopCustomers />
+                  </WithAuth>
+                }
             />
             <Route
               path="auth"

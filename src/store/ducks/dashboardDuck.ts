@@ -1,5 +1,5 @@
 import { AnyAction } from 'redux';
-import { DashboardData, InitialState } from '../../types/dashboard/index.d';
+import { DashboardData, InitialState } from '../../types/dashboard';
 import { CallBacks } from '../../types/main';
 
 export const GET_DASHBOARD_DATA_SG = "socialize/main/getDashboardData_sg";
