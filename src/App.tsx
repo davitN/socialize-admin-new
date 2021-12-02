@@ -1,4 +1,8 @@
 import './App.css';
+import 'primeicons/primeicons.css';
+import 'primereact/resources/themes/lara-light-indigo/theme.css'; // theme
+import 'primereact/resources/primereact.min.css'; // core css
+import 'primeflex/primeflex.css';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoaderRef } from './services/loader.service';
