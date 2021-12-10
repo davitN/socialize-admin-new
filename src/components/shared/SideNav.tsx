@@ -9,8 +9,8 @@ const mainRoutes: Array<{ name: string; route: string; iconName: string }> = [
     iconName: 'bx bx-home-circle',
   },
   {
-    name: 'Add Vanue',
-    route: '/add-venue',
+    name: 'Venues',
+    route: '/venues',
     iconName: 'bx bx-home-circle',
   },
   {

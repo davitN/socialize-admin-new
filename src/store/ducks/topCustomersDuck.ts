@@ -1,6 +1,6 @@
 import { AnyAction } from 'redux';
 import { CallBacks } from '../../types/main';
-import { TableQueryParams } from '../../types/table-query-params';
+import { TableQueryParams } from '../../types/table';
 import { TopCustomersModel } from '../../types/top-customers';
 
 export const GET_TOP_CUSTOMERS_SG = "socialize/main/getTopCustomers_sg";

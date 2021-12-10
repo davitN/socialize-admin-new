@@ -8,7 +8,14 @@ import {
 import createSagaMiddleware from 'redux-saga';
 import { composeWithDevTools } from 'redux-devtools-extension';
 
-import { authReducer, mainReducer, dashboardReducer, latestPostsReducer, topCustomersReducer } from './ducks';
+import {
+  authReducer,
+  mainReducer,
+  dashboardReducer,
+  latestPostsReducer,
+  topCustomersReducer,
+  venueReducer
+} from './ducks';
 import { RESET_STORE } from './ducks/mainDuck';
 
 export const sagaMiddleware = createSagaMiddleware();
@@ -18,7 +25,8 @@ const appReducer = combineReducers({
   authReducer,
   dashboardReducer,
   latestPostsReducer,
-  topCustomersReducer
+  topCustomersReducer,
+  venueReducer
 });
 
 export type RootState = ReturnType<typeof appReducer>;
@@ -43,15 +51,15 @@ export default function configureStore() {
     // Specify name here, actionsBlacklist, actionsCreators and other options if needed
   });
   const composedEnhancers = composeEnhancers(
-    middlewareEnhancer
-    // other store enhancers if any
+      middlewareEnhancer
+      // other store enhancers if any
   );
 
   const store = createStore(rootReducer, {}, composedEnhancers);
 
   if (process.env.NODE_ENV !== 'production' && (module as any).hot) {
     (module as any).hot.accept('./ducks', () =>
-      store.replaceReducer(rootReducer)
+        store.replaceReducer(rootReducer)
     );
   }
 

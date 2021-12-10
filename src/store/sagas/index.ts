@@ -19,6 +19,8 @@ import {
 } from '../ducks/authDuck';
 import { GET_TOP_CUSTOMERS_SG } from '../ducks/topCustomersDuck';
 import { getTopCustomersSaga } from './topCustomersSaga';
+import { getVenuesSaga, putVenueSaga, saveVenueSaga } from './VenuesSaga';
+import { GET_VENUES_SG, PUT_VENUE, SAVE_VENUE } from '../ducks/VenueDuck';
 
 function* actionWatcher() {
   yield takeLatest(CHECK_SIGNED_IN, checkSignedInSaga);
@@ -29,6 +31,9 @@ function* actionWatcher() {
   yield takeLatest(GET_DASHBOARD_DATA_SG, getDashboardDataSaga);
   yield takeLatest(GET_LATEST_POSTS_SG, getLatestPostsSaga);
   yield takeLatest(GET_TOP_CUSTOMERS_SG, getTopCustomersSaga);
+  yield takeLatest(SAVE_VENUE, saveVenueSaga);
+  yield takeLatest(PUT_VENUE, putVenueSaga);
+  yield takeLatest(GET_VENUES_SG, getVenuesSaga);
 }
 
 export default function* rootSaga() {

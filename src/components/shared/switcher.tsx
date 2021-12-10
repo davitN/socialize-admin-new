@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 
-const CvSwitcher: React.FC<{ onChange: Function }> = ({ onChange }) => {
+const CvSwitcher: React.FC<{ onChange: Function, defaultValue: boolean }> = ({ onChange, defaultValue }) => {
   const [active, setActive] = useState(false);
   const onSwitch = () => {
     onChange(!active);
     setActive(!active);
   };
+  useEffect(() => {
+    setActive(defaultValue);
+  }, [defaultValue]);
+
   return (
     <div
       className={`cv-switcher-wrapper ${active ? 'active' : ''}`}
