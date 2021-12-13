@@ -116,7 +116,7 @@ const VenueForm: React.FC<{}> = () => {
     }
   }
   const submitButton = () => {
-    console.log(sendData);
+    console.log();
     if (newMode) {
       dispatch(saveVenueAction(sendData, {
         success: () => {
