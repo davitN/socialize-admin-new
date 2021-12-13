@@ -1,7 +1,7 @@
-import { all, takeLatest } from "redux-saga/effects";
-import { checkSignedInSaga } from "./mainSaga";
-import { GET_DASHBOARD_DATA_SG} from "../ducks/dashboardDuck";
-import { getDashboardDataSaga } from "./dashboardSaga";
+import { all, takeLatest } from 'redux-saga/effects';
+import { checkSignedInSaga } from './mainSaga';
+import { GET_DASHBOARD_DATA_SG } from '../ducks/dashboardDuck';
+import { getDashboardDataSaga } from './dashboardSaga';
 import { GET_LATEST_POSTS_SG } from '../ducks/latestPostsDuck';
 import { getLatestPostsSaga } from './latestPostsSaga';
 import {
@@ -21,6 +21,16 @@ import { GET_TOP_CUSTOMERS_SG } from '../ducks/topCustomersDuck';
 import { getTopCustomersSaga } from './topCustomersSaga';
 import { getVenuesSaga, putVenueSaga, saveVenueSaga } from './VenuesSaga';
 import { GET_VENUES_SG, PUT_VENUE, SAVE_VENUE } from '../ducks/VenueDuck';
+import {
+  getCompaniesSaga,
+  putCompanySaga,
+  saveCompanySaga,
+} from './companySaga';
+import {
+  GET_COMPANIES_SG,
+  PUT_COMPANY,
+  SAVE_COMPANY,
+} from '../ducks/companyDuck';
 
 function* actionWatcher() {
   yield takeLatest(CHECK_SIGNED_IN, checkSignedInSaga);
@@ -34,6 +44,9 @@ function* actionWatcher() {
   yield takeLatest(SAVE_VENUE, saveVenueSaga);
   yield takeLatest(PUT_VENUE, putVenueSaga);
   yield takeLatest(GET_VENUES_SG, getVenuesSaga);
+  yield takeLatest(SAVE_COMPANY, saveCompanySaga);
+  yield takeLatest(PUT_COMPANY, putCompanySaga);
+  yield takeLatest(GET_COMPANIES_SG, getCompaniesSaga);
 }
 
 export default function* rootSaga() {
