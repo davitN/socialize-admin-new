@@ -40,14 +40,17 @@ ReactDOM.render(
                 </WithAuth>
               }
             />
-            <Route
-              path="/venues"
-              element={
-                <WithAuth>
-                  <Venues />
-                </WithAuth>
-              }
-            />
+            {
+              store.getState().authReducer?.userData?.role?.name === 'SuperAdmin' ? 
+              <Route
+                path="/venues"
+                element={
+                  <WithAuth>
+                    <Venues />
+                  </WithAuth>
+                }
+              /> : null
+            }
             <Route
               path="/venues/:id"
               element={
