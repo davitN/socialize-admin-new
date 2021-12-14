@@ -3,7 +3,7 @@ import { put } from 'redux-saga/effects';
 import axiosInstance from '../../services/interceptor.service';
 import { CallBacks } from '../../types/main';
 import { notifyAction } from '../ducks/mainDuck';
-import { TableQueryParams } from '../../types/table-query-params';
+import { TableQueryParams } from '../../types/table';
 import { TopCustomersModel } from '../../types/top-customers';
 import { setTopCustomersAction } from '../ducks/topCustomersDuck';
 

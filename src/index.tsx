@@ -13,9 +13,11 @@ import Login from './routes/Login';
 import WithAuth from './components/shared/WithAuth';
 import WithoutAuth from './components/shared/WithoutAuth';
 import Dashboard from './routes/Dashboard';
-import AddVenue from './routes/AddVenue';
+import Venues from './routes/Venues';
 import LatestPosts from './routes/LatestPosts';
 import TopCustomers from './routes/TopCustomers';
+import VenueForm from './routes/VenueForm';
+import Companies from './routes/Companies';
 
 export const store = configureStore();
 storeRegistry.register(store);
@@ -38,28 +40,44 @@ ReactDOM.render(
               }
             />
             <Route
-              path="/add-venue"
+              path="/venues"
               element={
                 <WithAuth>
-                  <AddVenue />
+                  <Venues />
                 </WithAuth>
               }
             />
             <Route
-                path="/latest-posts"
-                element={
-                  <WithAuth>
-                    <LatestPosts />
-                  </WithAuth>
-                }
+              path="/venues/:id"
+              element={
+                <WithAuth>
+                  <VenueForm />
+                </WithAuth>
+              }
             />
             <Route
-                path="/top-customers"
-                element={
-                  <WithAuth>
-                    <TopCustomers />
-                  </WithAuth>
-                }
+              path="/company"
+              element={
+                <WithAuth>
+                  <Companies />
+                </WithAuth>
+              }
+            />
+            <Route
+              path="/latest-posts"
+              element={
+                <WithAuth>
+                  <LatestPosts />
+                </WithAuth>
+              }
+            />
+            <Route
+              path="/top-customers"
+              element={
+                <WithAuth>
+                  <TopCustomers />
+                </WithAuth>
+              }
             />
             <Route
               path="auth"

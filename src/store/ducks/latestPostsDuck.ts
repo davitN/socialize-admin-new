@@ -1,7 +1,6 @@
 import { AnyAction } from 'redux';
 import { CallBacks } from '../../types/main';
-import { Post } from '../../types/dashboard';
-import { TableQueryParams } from '../../types/table-query-params';
+import { TableQueryParams } from '../../types/table';
 import { LatestPostsModel } from '../../types/latest-posts';
 
 export const GET_LATEST_POSTS_SG = "socialize/main/getLatestPosts_sg";

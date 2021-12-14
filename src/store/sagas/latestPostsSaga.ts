@@ -3,7 +3,7 @@ import { put } from 'redux-saga/effects';
 import axiosInstance from '../../services/interceptor.service';
 import { CallBacks } from '../../types/main';
 import { notifyAction } from '../ducks/mainDuck';
-import { TableQueryParams } from '../../types/table-query-params';
+import { TableQueryParams } from '../../types/table';
 import { setLatestPostsAction } from '../ducks/latestPostsDuck';
 import { LatestPostsModel } from '../../types/latest-posts';
 

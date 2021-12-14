@@ -8,7 +8,15 @@ import {
 import createSagaMiddleware from 'redux-saga';
 import { composeWithDevTools } from 'redux-devtools-extension';
 
-import { authReducer, mainReducer, dashboardReducer, latestPostsReducer, topCustomersReducer } from './ducks';
+import {
+  authReducer,
+  mainReducer,
+  dashboardReducer,
+  latestPostsReducer,
+  topCustomersReducer,
+  venueReducer,
+  companyReducer,
+} from './ducks';
 import { RESET_STORE } from './ducks/mainDuck';
 
 export const sagaMiddleware = createSagaMiddleware();
@@ -18,7 +26,9 @@ const appReducer = combineReducers({
   authReducer,
   dashboardReducer,
   latestPostsReducer,
-  topCustomersReducer
+  topCustomersReducer,
+  venueReducer,
+  companyReducer,
 });
 
 export type RootState = ReturnType<typeof appReducer>;
