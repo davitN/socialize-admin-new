@@ -134,9 +134,6 @@ const VenueForm: React.FC<{}> = () => {
     if (!values.location.city) {
       return true;
     }
-    if (!values.location.state) {
-      return true;
-    }
     if (!values.location.country) {
       return true;
     }
@@ -300,7 +297,7 @@ const VenueForm: React.FC<{}> = () => {
                   required
               />
               <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.location.state) ? classes.inputError : ''}`}
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
                   value={values.location.state}
                   handleChange={(state) => setValues({ ...values, location: { ...values.location, state } })}
                   label="Province"
