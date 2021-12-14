@@ -3,7 +3,7 @@ export interface VenueStateModel {
   allowUsersToAccessAfterLeaving: boolean,
   accessDaysAfter: number,
   inObjectRadiusInMeters: number,
-  allTimeVisitorsCount: number,
+  allTimeVisitorsCount?: number,
   logo: VenueImageModel,
   cover: VenueImageModel,
   coverThumbnail: VenueImageModel,
