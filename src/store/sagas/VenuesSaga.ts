@@ -3,7 +3,7 @@ import { put } from 'redux-saga/effects';
 import axiosInstance from '../../services/interceptor.service';
 import { CallBacks } from '../../types/main';
 import { notifyAction } from '../ducks/mainDuck';
-import { VenueSendModel, VenueStateModel } from '../../types/venue';
+import { VenueSendModel, VenuesTableModel } from '../../types/venue';
 import { TableQueryParams } from '../../types/table';
 import { setVenuesAction } from '../ducks/VenueDuck';
 
@@ -13,7 +13,7 @@ export function* getVenuesSaga({ params, callbacks }: {
   type: string;
 }) {
   try {
-    const res: VenueStateModel[] = yield axiosInstance.get("/place/get_places", { params });
+    const res: VenuesTableModel = yield axiosInstance.get("/place/get_places", { params });
     yield put(setVenuesAction(res));
     callbacks?.success && callbacks.success();
   } catch (error: any) {

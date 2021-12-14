@@ -68,7 +68,7 @@ const VenueForm: React.FC<{}> = () => {
   const [values, setValues] = useState<VenueStateModel>({
     accessDaysAfter: null,
     allowUsersToAccessAfterLeaving: false,
-    allTimeVisitorsCount: null,
+    allTimeVisitorsCount: 0,
     cover: {
       width: null,
       height: null,
@@ -162,16 +162,12 @@ const VenueForm: React.FC<{}> = () => {
     if (!values.accessDaysAfter) {
       return true;
     }
-    if (!values.allTimeVisitorsCount) {
-      return true;
-    }
     return false;
   }
 
   const submitButton = (event: any) => {
     event.preventDefault();
     setIsSubmitted(true);
-    console.log(values)
     if (formNotValid()) {
       return;
     }
@@ -680,7 +676,7 @@ const VenueForm: React.FC<{}> = () => {
                 <Col md="9">
                   <Input
                       type="number"
-                      value={values.accessDaysAfter || 0}
+                      value={values.accessDaysAfter}
                       className={`form-control ${(isSubmitted && !values.accessDaysAfter) ? classes.errorBorder : ''}`}
                       id="days-after"
                       onChange={event => setValues({
@@ -689,23 +685,24 @@ const VenueForm: React.FC<{}> = () => {
                       })}/>
                 </Col>
               </FormGroup>
-              <FormGroup className="mb-3" row>
-                <Label
-                    htmlFor="admin-accounts"
-                    md="3"
-                    className="col-form-label text-start"
-                >
-                  All time visitors count
-                </Label>
-                <Col md="9">
-                  <Input type="number" value={values.allTimeVisitorsCount || 0}
-                         className={`form-control ${(isSubmitted && !values.allTimeVisitorsCount) ? classes.errorBorder : ''}`}
-                         id="all-time-visitors-count" onChange={event => setValues({
-                    ...values,
-                    allTimeVisitorsCount: parseInt(event.target.value)
-                  })}/>
-                </Col>
-              </FormGroup>
+              {!newMode && (
+                  <FormGroup className="mb-3" row>
+                    <Label
+                        htmlFor="admin-accounts"
+                        md="3"
+                        className="col-form-label text-start"
+                    >
+                      All time visitors count
+                    </Label>
+                    <Col md="9">
+                      <Input type="number" value={values.allTimeVisitorsCount}
+                             className={`form-control`}
+                             readOnly={true}
+                             id="all-time-visitors-count"
+                      />
+                    </Col>
+                  </FormGroup>
+              )}
               <Button label={'Submit'} type={'submit'} onClick={(event) => submitButton(event)}/>
             </CardBody>
           </Card>
