@@ -68,7 +68,6 @@ const VenueForm: React.FC<{}> = () => {
   const [values, setValues] = useState<VenueStateModel>({
     accessDaysAfter: null,
     allowUsersToAccessAfterLeaving: false,
-    allTimeVisitorsCount: 0,
     cover: {
       width: null,
       height: null,
