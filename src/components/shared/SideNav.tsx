@@ -13,11 +13,11 @@ const mainRoutes: Array<{ name: string; route: string; iconName: string }> = [
     route: '/venues',
     iconName: 'bx bx-home-circle',
   },
-  {
-    name: 'Companies',
-    route: '/company',
-    iconName: 'bx bx-home-circle',
-  },
+  // {
+  //   name: 'Companies',
+  //   route: '/company',
+  //   iconName: 'bx bx-home-circle',
+  // },
   {
     name: 'Latest Posts',
     route: '/latest-posts',

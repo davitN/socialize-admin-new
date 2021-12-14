@@ -82,7 +82,7 @@ const TopCustomers = () => {
   const handlePageChange = (event: PaginationEventModel) => {
     setCurrentPage(event.first)
     setDataLoading(true);
-    dispatch(getTopCustomersActionSG({ offset: event.first / LIMIT, limit: LIMIT }, {
+    dispatch(getTopCustomersActionSG({ offset: event.first, limit: LIMIT }, {
       success: () => {
         setDataLoading(false);
       },
