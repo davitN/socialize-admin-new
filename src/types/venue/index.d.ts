@@ -29,6 +29,11 @@ export interface VenueStateModel {
   type: string
 }
 
+export interface VenuesTableModel {
+  count: number,
+  data: Array<VenueStateModel>
+}
+
 export interface VenueImageModel {
   height: number,
   width: number

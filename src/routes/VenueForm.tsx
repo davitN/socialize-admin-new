@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
+import React, { isValidElement, useEffect, useState } from 'react';
 
 import { Card, CardBody, CardSubtitle, CardTitle, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 import { VenueImages, VenueSendModel, VenueStateModel } from '../types/venue';
@@ -14,6 +14,7 @@ import { Button } from 'primereact/button';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/configureStore';
 import { putVenueAction, saveVenueAction } from '../store/ducks/VenueDuck';
+import venues from './Venues';
 
 const useStyles = createUseStyles({
   inputBlock: {
@@ -25,8 +26,15 @@ const useStyles = createUseStyles({
     '& input': {
       width: 'calc(100% - 200px)',
       borderRadius: '0.25rem',
-
     }
+  },
+  inputError: {
+    '& input': {
+      borderColor: '#ff4a4a'
+    }
+  },
+  errorBorder: {
+    borderColor: '#ff4a4a'
   },
   formLabel: {
     width: '200px',
@@ -48,6 +56,7 @@ const useStyles = createUseStyles({
 })
 
 const VenueForm: React.FC<{}> = () => {
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const classes = useStyles();
   const [newMode, setNewMode] = useState(false);
   const dispatch = useDispatch();
@@ -97,6 +106,7 @@ const VenueForm: React.FC<{}> = () => {
     },
     type: 'Restaurant'
   })
+
   const sendData: VenueSendModel = { data: null, coverThumbnail: null, cover: null, logo: null };
   const { venuesData } = useSelector((state: RootState) => state.venueReducer);
 
@@ -115,8 +125,56 @@ const VenueForm: React.FC<{}> = () => {
       sendData.coverThumbnail = changedFiles.coverThumbnail[0];
     }
   }
-  const submitButton = () => {
-    console.log();
+  const formNotValid = () => {
+    if (!values.profile.name) {
+      return true;
+    }
+    if (!values.location.address) {
+      return true;
+    }
+    if (!values.location.city) {
+      return true;
+    }
+    if (!values.location.state) {
+      return true;
+    }
+    if (!values.location.country) {
+      return true;
+    }
+    if (!values.profile.webSite) {
+      return true;
+    }
+    if (!values.profile.phoneNumber) {
+      return true;
+    }
+    if (!values.profile.description) {
+      return true;
+    }
+    if (!values.logo.imgURL && logoImg.length === 0) {
+      return true;
+    }
+    if (!values.cover.imgURL && coverImg.length === 0) {
+      return true;
+    }
+    if (newMode && coverThumbnailImg.length === 0) {
+      return true;
+    }
+    if (!values.accessDaysAfter) {
+      return true;
+    }
+    if (!values.allTimeVisitorsCount) {
+      return true;
+    }
+    return false;
+  }
+
+  const submitButton = (event: any) => {
+    event.preventDefault();
+    setIsSubmitted(true);
+    console.log(values)
+    if (formNotValid()) {
+      return;
+    }
     if (newMode) {
       dispatch(saveVenueAction(sendData, {
         success: () => {
@@ -145,7 +203,7 @@ const VenueForm: React.FC<{}> = () => {
       setNewMode(true)
     } else if (venueId) {
       setNewMode(false);
-      const selectedVenue: VenueStateModel = venuesData.find(item => item._id === venueId);
+      const selectedVenue: VenueStateModel = venuesData.data.find(item => item._id === venueId);
       if (!selectedVenue) {
         navigate('/venues')
       }
@@ -215,15 +273,15 @@ const VenueForm: React.FC<{}> = () => {
             title={'Welcome to That Social App Premium Dashboard'}
             breadcrumbItem={'VOLLEYBOX SETTINGS'}
         />
-        <Card>
-          <CardBody>
-            <CardTitle className={'text-start'}>Location Information</CardTitle>
-            <CardSubtitle className="mb-4 text-start">
-              Make sure your location information is accurate.
-            </CardSubtitle>
-            <Form>
+        <Form>
+          <Card>
+            <CardBody>
+              <CardTitle className={'text-start'}>Location Information</CardTitle>
+              <CardSubtitle className="mb-4 text-start">
+                Make sure your location information is accurate.
+              </CardSubtitle>
               <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.profile.name) ? classes.inputError : ''}`}
                   value={values.profile.name}
                   handleChange={(name) => setValues({ ...values, profile: { ...values.profile, name } })}
                   label="Business Name"
@@ -231,7 +289,7 @@ const VenueForm: React.FC<{}> = () => {
                   required
               />
               <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.location.address) ? classes.inputError : ''}`}
                   value={values.location.address}
                   handleChange={(address) => setValues({ ...values, location: { ...values.location, address } })}
                   label="Address"
@@ -239,7 +297,7 @@ const VenueForm: React.FC<{}> = () => {
                   required
               />
               <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.location.city) ? classes.inputError : ''}`}
                   value={values.location.city}
                   handleChange={(city) => setValues({ ...values, location: { ...values.location, city } })}
                   label="City"
@@ -247,7 +305,7 @@ const VenueForm: React.FC<{}> = () => {
                   required
               />
               <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.location.state) ? classes.inputError : ''}`}
                   value={values.location.state}
                   handleChange={(state) => setValues({ ...values, location: { ...values.location, state } })}
                   label="Province"
@@ -255,7 +313,7 @@ const VenueForm: React.FC<{}> = () => {
                   required
               />
               <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.location.country) ? classes.inputError : ''}`}
                   value={values.location.country}
                   handleChange={(country) => setValues({ ...values, location: { ...values.location, country } })}
                   label="Country"
@@ -263,7 +321,7 @@ const VenueForm: React.FC<{}> = () => {
                   required
               />
               <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.profile.webSite) ? classes.inputError : ''}`}
                   value={values.profile.webSite}
                   handleChange={(webSite) => setValues({ ...values, profile: { ...values.profile, webSite } })}
                   label="Website"
@@ -271,7 +329,7 @@ const VenueForm: React.FC<{}> = () => {
                   required
               />
               <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.profile.phoneNumber) ? classes.inputError : ''}`}
                   value={values.profile.phoneNumber}
                   handleChange={(phoneNumber) => setValues({ ...values, profile: { ...values.profile, phoneNumber } })}
                   label="Public Phone Number"
@@ -288,7 +346,7 @@ const VenueForm: React.FC<{}> = () => {
                 <Col className={classes.formValue}>
                   <textarea
                       value={values.profile.description}
-                      className="form-control"
+                      className={`form-control ${(isSubmitted && !values.profile.description) ? classes.errorBorder : ''}`}
                       id="description"
                       rows={3}
                       placeholder="Write some note.."
@@ -299,18 +357,16 @@ const VenueForm: React.FC<{}> = () => {
                   />
                 </Col>
               </FormGroup>
-            </Form>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody>
-            <CardTitle className={'text-start'}>
-              Premium Business Settings
-            </CardTitle>
-            <CardSubtitle className="mb-4 text-start">
-              Please feel free to change these settings for your business listing.
-            </CardSubtitle>
-            <Form>
+            </CardBody>
+          </Card>
+          <Card>
+            <CardBody>
+              <CardTitle className={'text-start'}>
+                Premium Business Settings
+              </CardTitle>
+              <CardSubtitle className="mb-4 text-start">
+                Please feel free to change these settings for your business listing.
+              </CardSubtitle>
               <FormGroup className="mb-3" row>
                 <Label md="3" className="col-form-label text-start">
                   Logo Image
@@ -325,7 +381,8 @@ const VenueForm: React.FC<{}> = () => {
                       }}
                   >
                     {({ getRootProps, getInputProps }) => (
-                        <div className={`dropzone`}>
+                        <div
+                            className={`dropzone ${(isSubmitted && !values.logo.imgURL && logoImg.length === 0) ? classes.errorBorder : ''}`}>
                           <div className="dz-message needsclick" {...getRootProps()}>
                             <input {...getInputProps()} />
                             <div className="dz-message needsclick">
@@ -421,7 +478,8 @@ const VenueForm: React.FC<{}> = () => {
                       }}
                   >
                     {({ getRootProps, getInputProps }) => (
-                        <div className={`dropzone`}>
+                        <div
+                            className={`dropzone ${(isSubmitted && newMode && coverThumbnailImg.length === 0) ? classes.errorBorder : ''}`}>
                           <div className="dz-message needsclick" {...getRootProps()}>
                             <input {...getInputProps()} />
                             <div className="dz-message needsclick">
@@ -517,7 +575,8 @@ const VenueForm: React.FC<{}> = () => {
                       }}
                   >
                     {({ getRootProps, getInputProps }) => (
-                        <div className={`dropzone`}>
+                        <div
+                            className={`dropzone ${(isSubmitted && !values.cover.imgURL && coverImg.length === 0) ? classes.errorBorder : ''}`}>
                           <div className="dz-message needsclick" {...getRootProps()}>
                             <input {...getInputProps()} />
                             <div className="dz-message needsclick">
@@ -619,10 +678,15 @@ const VenueForm: React.FC<{}> = () => {
                   How Many Days After?
                 </Label>
                 <Col md="9">
-                  <Input type="number" value={values.accessDaysAfter || 0} className="form-control" id="days-after" onChange={event => setValues({
-                    ...values,
-                    accessDaysAfter: parseInt(event.target.value)
-                  })}/>
+                  <Input
+                      type="number"
+                      value={values.accessDaysAfter || 0}
+                      className={`form-control ${(isSubmitted && !values.accessDaysAfter) ? classes.errorBorder : ''}`}
+                      id="days-after"
+                      onChange={event => setValues({
+                        ...values,
+                        accessDaysAfter: parseInt(event.target.value)
+                      })}/>
                 </Col>
               </FormGroup>
               <FormGroup className="mb-3" row>
@@ -634,16 +698,18 @@ const VenueForm: React.FC<{}> = () => {
                   All time visitors count
                 </Label>
                 <Col md="9">
-                  <Input type="number" value={values.allTimeVisitorsCount || 0} className="form-control" id="all-time-visitors-count" onChange={event => setValues({
+                  <Input type="number" value={values.allTimeVisitorsCount || 0}
+                         className={`form-control ${(isSubmitted && !values.allTimeVisitorsCount) ? classes.errorBorder : ''}`}
+                         id="all-time-visitors-count" onChange={event => setValues({
                     ...values,
                     allTimeVisitorsCount: parseInt(event.target.value)
                   })}/>
                 </Col>
               </FormGroup>
-            </Form>
-            <Button label={'Submit'} onClick={() => submitButton()} type={'submit'}/>
-          </CardBody>
-        </Card>
+              <Button label={'Submit'} type={'submit'} onClick={(event) => submitButton(event)}/>
+            </CardBody>
+          </Card>
+        </Form>
       </div>
   );
 };

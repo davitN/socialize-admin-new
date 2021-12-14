@@ -17,9 +17,9 @@ import { createUseStyles } from 'react-jss';
 import TextInput from '../components/shared/form-elements/TextInput';
 import { useNavigate } from 'react-router-dom';
 
-const queryParams: TableQueryParams = {
-  limit: 0,
-  offset: 10,
+let queryParams: TableQueryParams = {
+  limit: 10,
+  offset: 0,
   searchWord: ''
 }
 
@@ -85,12 +85,17 @@ const Venues: React.FC<{}> = () => {
     }));
   }
   useEffect(() => {
+    queryParams = {
+      limit: 10,
+      offset: 0,
+      searchWord: ''
+    }
     getData();
   }, [dispatch]);
 
   const handlePageChange = (event: PaginationEventModel) => {
     setCurrentPage(event.first)
-    queryParams.offset = event.first / LIMIT;
+    queryParams.offset = event.first;
     queryParams.limit = LIMIT;
     getData();
   }
@@ -129,7 +134,7 @@ const Venues: React.FC<{}> = () => {
               </Button>
             </div>
             <DataTable className={'fs-6'}
-                       value={venuesData.length > 0 ? venuesData : []}
+                       value={venuesData.data.length > 0 ? venuesData.data : []}
                        responsiveLayout="scroll"
                        rows={LIMIT}
                 // tableClassName={classes.table}
@@ -153,7 +158,7 @@ const Venues: React.FC<{}> = () => {
                 className='justify-content-end'
                 template="PrevPageLink PageLinks NextPageLink"
                 first={currentPage}
-                totalRecords={Infinity}
+                totalRecords={venuesData.count}
                 rows={LIMIT}
                 onPageChange={handlePageChange}
             />

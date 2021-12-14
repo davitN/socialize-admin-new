@@ -113,7 +113,7 @@ const LatestPosts = () => {
   const handlePageChange = (event: PaginationEventModel) => {
     setCurrentPage(event.first)
     setDataLoading(true);
-    dispatch(getLatestPostsActionSG({ offset: event.first / LIMIT, limit: LIMIT }, {
+    dispatch(getLatestPostsActionSG({ offset: event.first, limit: LIMIT }, {
       success: () => {
         setDataLoading(false);
       },
@@ -121,7 +121,7 @@ const LatestPosts = () => {
         setDataLoading(false);
       }
     }));
-  }
+  };
 
   return (
       <div className="page-content">

@@ -18,6 +18,7 @@ import LatestPosts from './routes/LatestPosts';
 import TopCustomers from './routes/TopCustomers';
 import VenueForm from './routes/VenueForm';
 import Companies from './routes/Companies';
+import CompanyForm from './routes/CompanyForm';
 
 export const store = configureStore();
 storeRegistry.register(store);
@@ -62,6 +63,14 @@ ReactDOM.render(
                   <Companies />
                 </WithAuth>
               }
+            />
+            <Route
+                path="/company/:id"
+                element={
+                  <WithAuth>
+                    <CompanyForm />
+                  </WithAuth>
+                }
             />
             <Route
               path="/latest-posts"
