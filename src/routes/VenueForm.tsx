@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { isValidElement, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Card, CardBody, CardSubtitle, CardTitle, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 import { VenueImages, VenueSendModel, VenueStateModel } from '../types/venue';
@@ -14,7 +14,6 @@ import { Button } from 'primereact/button';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/configureStore';
 import { putVenueAction, saveVenueAction } from '../store/ducks/VenueDuck';
-import venues from './Venues';
 
 const useStyles = createUseStyles({
   inputBlock: {
