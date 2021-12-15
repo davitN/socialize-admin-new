@@ -48,7 +48,7 @@ const Posts: React.FC<{ posts: Post[] }> = ({ posts }) => {
             className={'rounded'}
             alt={row.username}
             src={row.profileImage.imgURL}
-          /> {' '}
+          />{' '}
           {row._id}
         </Link>
       ),

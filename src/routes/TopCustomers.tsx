@@ -18,7 +18,18 @@ const tableHeader = [
     name: 'Customer',
     field: 'username',
     haveTemplate: true,
-    template: (row: Customer) => <>{row.username}</>,
+    template: (row: Customer) => (
+      <>
+        <img
+          data-dz-thumbnail=""
+          height="30"
+          className={'rounded'}
+          alt={row.username}
+          src={row.profileImage.imgURL}
+        />{'   '}
+        {row.firstName} {row.lastName}
+      </>
+    ),
   },
   {
     name: '# of Visits',
@@ -46,18 +57,18 @@ const tableHeader = [
     name: 'Views on Posts',
     field: 'viewsOnPosts',
   },
-  {
-    name: 'Send Offer',
-    field: 'viewDetails',
-    haveTemplate: true,
-    template: () => {
-      return (
-        <Button type="button" color="primary" className="btn-sm btn-rounded">
-          Send Offer
-        </Button>
-      );
-    },
-  },
+  // {
+  //   name: 'Send Offer',
+  //   field: 'viewDetails',
+  //   haveTemplate: true,
+  //   template: () => {
+  //     return (
+  //       <Button type="button" color="primary" className="btn-sm btn-rounded">
+  //         Send Offer
+  //       </Button>
+  //     );
+  //   },
+  // },
 ];
 const TopCustomers = () => {
   const [dataLoading, setDataLoading] = useState<boolean>(true);

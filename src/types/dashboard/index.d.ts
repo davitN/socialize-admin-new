@@ -17,8 +17,15 @@ export interface Customer {
   visitsCount: number;
   lastVisitingTime: string;
   username: string;
+  firstName: string;
+  lastName: string;
   postsCount: number;
   viewsOnPosts: number;
+  profileImage: {
+    height: number;
+    width: number;
+    imgURL: string;
+  };
 }
 
 export interface Post {
