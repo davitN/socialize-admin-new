@@ -78,7 +78,7 @@ const CompanyForm: React.FC<{}> = () => {
       setNewMode(true)
     } else if (companyId) {
       setNewMode(false);
-      const selectedCompany: CompanyModel = companiesData.find(item => item._id === companyId);
+      const selectedCompany: CompanyModel = companiesData.data.find(item => item._id === companyId);
       if (!selectedCompany) {
         navigate('/company')
       }

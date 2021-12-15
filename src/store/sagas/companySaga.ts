@@ -4,31 +4,41 @@ import axiosInstance from '../../services/interceptor.service';
 import { CallBacks } from '../../types/main';
 import { notifyAction } from '../ducks/mainDuck';
 import { VenueSendModel, VenueStateModel } from '../../types/venue';
+import { CompanyTableModel } from '../../types/company';
 import { TableQueryParams } from '../../types/table';
 import { setCompaniesAction } from '../ducks/companyDuck';
 
-export function* getCompaniesSaga({ params, callbacks }: {
+export function* getCompaniesSaga({
+  params,
+  callbacks,
+}: {
   params: TableQueryParams;
   callbacks: CallBacks;
   type: string;
 }) {
   try {
-    const res: VenueStateModel[] = yield axiosInstance.get("/company/get_companies", { params });
+    const res: CompanyTableModel = yield axiosInstance.get(
+      '/company/get_companies',
+      { params }
+    );
     yield put(setCompaniesAction(res));
     callbacks?.success && callbacks.success();
   } catch (error: any) {
     callbacks?.error && callbacks.error(error.response?.data.message);
     yield put(
-        notifyAction({
-          type: 'error',
-          message: error.response?.data.message,
-          showError: false,
-        })
+      notifyAction({
+        type: 'error',
+        message: error.response?.data.message,
+        showError: false,
+      })
     );
   }
 }
 
-export function* saveCompanySaga({ data, callbacks }: {
+export function* saveCompanySaga({
+  data,
+  callbacks,
+}: {
   data: VenueSendModel;
   callbacks: CallBacks;
   type: string;
@@ -40,26 +50,30 @@ export function* saveCompanySaga({ data, callbacks }: {
     formData.append('logo', data.logo);
     formData.append('cover', data.cover);
     formData.append('coverThumbnail', data.coverThumbnail);
-    yield axiosInstance.post("place/create_place", formData);
+    yield axiosInstance.post('place/create_place', formData);
     // yield put(setLatestPostsAction(res));
     callbacks?.success && callbacks.success();
   } catch (error: any) {
     callbacks?.error && callbacks.error(error.response?.data.message);
     yield put(
-        notifyAction({
-          type: 'error',
-          message: error.response?.data.message,
-          showError: false,
-        })
+      notifyAction({
+        type: 'error',
+        message: error.response?.data.message,
+        showError: false,
+      })
     );
   }
 }
 
-export function* putCompanySaga({ id, data, callbacks }: {
-  id: string
-  data: VenueSendModel,
-  callbacks: CallBacks,
-  type: string
+export function* putCompanySaga({
+  id,
+  data,
+  callbacks,
+}: {
+  id: string;
+  data: VenueSendModel;
+  callbacks: CallBacks;
+  type: string;
 }) {
   try {
     const formData = new FormData();
@@ -78,12 +92,11 @@ export function* putCompanySaga({ id, data, callbacks }: {
   } catch (error: any) {
     callbacks?.error && callbacks.error(error.response?.data.message);
     yield put(
-        notifyAction({
-          type: 'error',
-          message: error.response?.data.message,
-          showError: false,
-        })
+      notifyAction({
+        type: 'error',
+        message: error.response?.data.message,
+        showError: false,
+      })
     );
   }
 }
-
