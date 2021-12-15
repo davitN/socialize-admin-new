@@ -60,6 +60,16 @@ const Companies: React.FC<{}> = () => {
         </React.Fragment>
       ),
     },
+    {
+      name: 'View',
+      field: 'view',
+      haveTemplate: true,
+      template: (row: CompanyModel) => (
+          <Button onClick={() => navigate(row._id)}>
+            <i className="pi pi-cog"/>
+          </Button>
+      )
+    }
   ];
 
   //   const classes = useStyles();
