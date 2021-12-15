@@ -1,15 +1,18 @@
 import { AnyAction } from 'redux';
 import { CallBacks } from '../../types/main';
 import { TableQueryParams } from '../../types/table';
-import { CompanyModel } from '../../types/company';
+import { CompanyModel, CompanyTableModel } from '../../types/company';
 
-export const SAVE_COMPANY = "socialize/main/saveCompany";
-export const PUT_COMPANY = "socialize/main/putCompany";
-export const GET_COMPANIES_SG = "socialize/main/getCompanies_sg";
-export const SET_COMPANIES = "socialize/main/setCompanies";
+export const SAVE_COMPANY = 'socialize/main/saveCompany';
+export const PUT_COMPANY = 'socialize/main/putCompany';
+export const GET_COMPANIES_SG = 'socialize/main/getCompanies_sg';
+export const SET_COMPANIES = 'socialize/main/setCompanies';
 
-const initialState: { companiesData: CompanyModel[] } = {
-  companiesData: []
+const initialState: { companiesData: CompanyTableModel } = {
+  companiesData: {
+    count: 0,
+    data: [],
+  },
 };
 
 export const companyReducer = (state = initialState, action: AnyAction) => {
@@ -18,33 +21,43 @@ export const companyReducer = (state = initialState, action: AnyAction) => {
     case SET_COMPANIES:
       return {
         ...state,
-        companiesData: (payload as CompanyModel[]),
+        companiesData: payload as CompanyTableModel,
       };
     default:
       return state;
   }
 };
 
-export const setCompaniesAction = (companies: CompanyModel[]) => ({
+export const setCompaniesAction = (companies: CompanyTableModel) => ({
   type: SET_COMPANIES,
   payload: companies,
 });
 
-export const getCompaniesActionSG = (params: TableQueryParams, callbacks?: CallBacks) => ({
+export const getCompaniesActionSG = (
+  params: TableQueryParams,
+  callbacks?: CallBacks
+) => ({
   params,
   type: GET_COMPANIES_SG,
   callbacks,
 });
 
-export const saveCompanyAction = (data: CompanyModel, callbacks?: CallBacks) => ({
+export const saveCompanyAction = (
+  data: CompanyModel,
+  callbacks?: CallBacks
+) => ({
   type: SAVE_COMPANY,
   data,
-  callbacks
+  callbacks,
 });
 
-export const putCompanyAction = (id: string, data: CompanyModel, callbacks?: CallBacks) => ({
+export const putCompanyAction = (
+  id: string,
+  data: CompanyModel,
+  callbacks?: CallBacks
+) => ({
   type: PUT_COMPANY,
   id,
   data,
-  callbacks
+  callbacks,
 });

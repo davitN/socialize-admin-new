@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import Breadcrumbs from '../components/shared/Breadcrumb';
-import { VenueStateModel } from '../types/venue';
-import { getVenuesActionSG } from '../store/ducks/VenueDuck';
 import { getCompaniesActionSG } from '../store/ducks/companyDuck';
 import { useDispatch, useSelector } from 'react-redux';
 import { Card, CardBody } from 'reactstrap';
@@ -16,8 +14,9 @@ import { PaginationEventModel } from '../types/pagination/pagination';
 import { Button } from 'primereact/button';
 import { createUseStyles } from 'react-jss';
 import { useNavigate } from 'react-router-dom';
+import { CompanyModel } from '../types/company';
 
-const queryParams: TableQueryParams = {
+let queryParams: TableQueryParams = {
   offset: 0,
   limit: 10,
 };
@@ -32,38 +31,48 @@ const queryParams: TableQueryParams = {
 const Companies: React.FC<{}> = () => {
   const tableHeader: TableHeaderModel[] = [
     {
-      name: 'Company Name',
-      field: 'profile.name',
+      name: 'Name',
+      field: 'name',
     },
     {
-      name: 'Rating',
-      field: 'profile.rating',
+      name: 'Active Status',
+      field: 'isActive',
+      haveTemplate: true,
+      template: (row: CompanyModel) => (
+        <React.Fragment>{row.isActive ? 'Active' : 'Inactive'}</React.Fragment>
+      ),
     },
     {
-      name: 'Business Type',
-      field: 'type',
+      name: 'Package Type',
+      field: 'companySubscription.name',
     },
     {
-      name: 'City',
-      field: 'location.city',
-    },
-    {
-      name: 'Country',
-      field: 'location.country',
+      name: 'Paid Until',
+      field: 'paidTill',
+      haveTemplate: true,
+      template: (row: CompanyModel) => (
+        <React.Fragment>
+          {new Date(row.paidTill).toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+          })}
+          , {new Date(row.paidTill).getFullYear()}
+        </React.Fragment>
+      ),
     },
     {
       name: 'View',
       field: 'view',
       haveTemplate: true,
-      template: (row: VenueStateModel) => (
-        <Button onClick={() => navigate(row._id)}>
-          <i className="pi pi-cog" />
-        </Button>
-      ),
-    },
+      template: (row: CompanyModel) => (
+          <Button onClick={() => navigate(row._id)}>
+            <i className="pi pi-cog"/>
+          </Button>
+      )
+    }
   ];
 
-//   const classes = useStyles();
+  //   const classes = useStyles();
   const navigate = useNavigate();
   const [dataLoading, setDataLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(0);
@@ -87,6 +96,10 @@ const Companies: React.FC<{}> = () => {
     );
   };
   useEffect(() => {
+    queryParams = {
+      limit: 10,
+      offset: 0,
+    };
     getData();
   }, [dispatch]);
 
@@ -121,7 +134,7 @@ const Companies: React.FC<{}> = () => {
           </div>
           <DataTable
             className={'fs-6'}
-            value={companiesData.length > 0 ? companiesData : []}
+            value={companiesData.data.length > 0 ? companiesData.data : []}
             responsiveLayout="scroll"
             rows={LIMIT}
             // tableClassName={classes.table}
@@ -139,9 +152,21 @@ const Companies: React.FC<{}> = () => {
             {!dataLoading &&
               tableHeader.map((item) => {
                 if (item.haveTemplate) {
-                  return <Column header={item.name} body={item.template} />;
+                  return (
+                    <Column
+                      header={item.name}
+                      body={item.template}
+                      key={item.field}
+                    />
+                  );
                 } else {
-                  return <Column field={item.field} header={item.name} />;
+                  return (
+                    <Column
+                      field={item.field}
+                      header={item.name}
+                      key={item.field}
+                    />
+                  );
                 }
               })}
           </DataTable>
@@ -149,7 +174,7 @@ const Companies: React.FC<{}> = () => {
             className="justify-content-end"
             template="PrevPageLink PageLinks NextPageLink"
             first={currentPage}
-            totalRecords={Infinity}
+            totalRecords={companiesData.count}
             rows={LIMIT}
             onPageChange={handlePageChange}
           />
