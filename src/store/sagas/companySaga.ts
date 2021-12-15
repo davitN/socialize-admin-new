@@ -6,6 +6,7 @@ import { notifyAction } from '../ducks/mainDuck';
 import { VenueSendModel, VenueStateModel } from '../../types/venue';
 import { TableQueryParams } from '../../types/table';
 import { setCompaniesAction } from '../ducks/companyDuck';
+import { CompanyModel } from '../../types/company';
 
 export function* getCompaniesSaga({ params, callbacks }: {
   params: TableQueryParams;
@@ -29,18 +30,13 @@ export function* getCompaniesSaga({ params, callbacks }: {
 }
 
 export function* saveCompanySaga({ data, callbacks }: {
-  data: VenueSendModel;
+  data: CompanyModel;
   callbacks: CallBacks;
   type: string;
 }) {
   try {
     console.log(data);
-    const formData = new FormData();
-    formData.append('data', JSON.stringify(data.data));
-    formData.append('logo', data.logo);
-    formData.append('cover', data.cover);
-    formData.append('coverThumbnail', data.coverThumbnail);
-    yield axiosInstance.post("place/create_place", formData);
+    yield axiosInstance.post("company/create_company", data);
     // yield put(setLatestPostsAction(res));
     callbacks?.success && callbacks.success();
   } catch (error: any) {

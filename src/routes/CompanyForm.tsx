@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 
 import { Card, CardBody, CardSubtitle, CardTitle, Col, Form, FormGroup, Label } from 'reactstrap';
 import Breadcrumbs from '../components/shared/Breadcrumb';
-import TextInput from '../components/shared/form-elements/TextInput';
 
 import { createUseStyles } from 'react-jss';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -13,8 +12,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/configureStore';
 import { CompanyModel } from '../types/company';
 import { putCompanyAction, saveCompanyAction } from '../store/ducks/companyDuck';
+import { Dropdown, DropdownChangeParams } from 'primereact/dropdown';
+import { getVenuesActionSG } from '../store/ducks/VenueDuck';
+import { TableQueryParams } from '../types/table';
+import { VenueStateModel } from '../types/venue';
+import TextInput from '../components/shared/form-elements/TextInput';
 
 const useStyles = createUseStyles({
+  inputError: {
+    '& input': {
+      borderColor: '#ff4a4a'
+    }
+  },
   inputBlock: {
     '& label': {
       width: '200px',
@@ -24,7 +33,21 @@ const useStyles = createUseStyles({
     '& input': {
       width: 'calc(100% - 200px)',
       borderRadius: '0.25rem',
-
+    }
+  },
+  dropdownClass: {
+    height: '40px',
+    '& label': {
+      width: '200px',
+      textAlign: 'start'
+    },
+    '& .p-dropdown': {
+      width: 'calc(100% - 200px)',
+      borderRadius: '0.25rem',
+      height: '100%'
+    },
+    '& .p-dropdown-label': {
+      fontSize: '0.8125rem'
     }
   },
   formLabel: {
@@ -37,10 +60,14 @@ const useStyles = createUseStyles({
 
 const CompanyForm: React.FC<{}> = () => {
   const classes = useStyles();
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [dataLoading, setDataLoading] = useState(false);
+  const [venueSearchWord, setVenueSearchWord] = useState('');
   const [newMode, setNewMode] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id: companyId } = useParams();
+  const { venuesData } = useSelector((state: RootState) => state.venueReducer);
   const [values, setValues] = useState<CompanyModel>({
     _id: '',
     placeId: '',
@@ -53,9 +80,28 @@ const CompanyForm: React.FC<{}> = () => {
     isActive: false,
     __v: null
   })
+  const queryParams: TableQueryParams = {
+    limit: 5,
+    offset: 0,
+    searchWord: ''
+  }
   const { companiesData } = useSelector((state: RootState) => state.companyReducer);
 
+  const getVenues = () => {
+    setDataLoading(true);
+    queryParams.searchWord = venueSearchWord;
+    dispatch(getVenuesActionSG(queryParams, {
+      success: () => {
+        setDataLoading(false);
+      },
+      error: () => {
+        setDataLoading(false);
+      }
+    }));
+  }
+
   const submitButton = () => {
+    setIsSubmitted(true);
     if (newMode) {
       dispatch(saveCompanyAction(values, {
         success: () => {
@@ -73,6 +119,20 @@ const CompanyForm: React.FC<{}> = () => {
     }
   }
 
+  const onSelectVenue = (event: DropdownChangeParams | { value: string | VenueStateModel }) => {
+    if (typeof event.value === 'string') {
+      setVenueSearchWord(event.value)
+    } else {
+      setVenueSearchWord(event.value.profile.name)
+      setValues({...values, placeId: event.value._id})
+    }
+  }
+
+  useEffect(() => {
+    getVenues();
+  }, [venueSearchWord]);
+
+
   useEffect(() => {
     if (companyId === 'new') {
       setNewMode(true)
@@ -84,6 +144,7 @@ const CompanyForm: React.FC<{}> = () => {
       }
       setValues({ ...values, ...selectedCompany })
     }
+    getVenues();
   }, [companyId]);
 
   function onSwitch(active: boolean) {
@@ -98,30 +159,45 @@ const CompanyForm: React.FC<{}> = () => {
         />
         <Card>
           <CardBody>
-            <CardTitle className={'text-start'}>Location Information</CardTitle>
-            <CardSubtitle className="mb-4 text-start">
-              Make sure your location information is accurate.
-            </CardSubtitle>
+            {/*<CardTitle className={'text-start'}>Location Information</CardTitle>*/}
+            {/*<CardSubtitle className="mb-4 text-start">*/}
+            {/*  Make sure your location information is accurate.*/}
+            {/*</CardSubtitle>*/}
             <Form>
               <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.name) ? classes.inputError : ''}`}
                   value={values.name}
                   handleChange={(name) => setValues({ ...values, name })}
                   label="Company Name"
                   placeholder="Enter your Company Name"
                   required
               />
-              <FormGroup className="mb-3" row>
-                <Label md="3" className="col-form-label text-start">
-                  Active
-                </Label>
-                <Col md="9" className={'flex-horizontal'}>
-                  <CvSwitcher
-                      defaultValue={values.isActive}
-                      onChange={(event: boolean) => onSwitch(event)}
-                  />
-                </Col>
-              </FormGroup>
+              <div className={`flex-horizontal mb-3 ${classes.dropdownClass}`}>
+                <label>Venue</label>
+                <Dropdown
+                    showOnFocus={true}
+                    value={venueSearchWord}
+                    editable={true}
+                    required={true}
+                    optionLabel={'profile.name'}
+                    options={venuesData.data}
+                    onChange={(e) => onSelectVenue(e)}
+                    placeholder="Select a Venue"
+                />
+              </div>
+              {!newMode && (
+                  <FormGroup className="mb-3" row>
+                    <Label md="3" className="col-form-label text-start">
+                      Active
+                    </Label>
+                    <Col md="9" className={'flex-horizontal'}>
+                      <CvSwitcher
+                          defaultValue={values.isActive}
+                          onChange={(event: boolean) => onSwitch(event)}
+                      />
+                    </Col>
+                  </FormGroup>
+              )}
               <Button label={'Submit'} onClick={() => submitButton()} type={'submit'}/>
             </Form>
           </CardBody>
