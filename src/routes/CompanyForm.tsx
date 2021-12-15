@@ -12,11 +12,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/configureStore';
 import { CompanyModel } from '../types/company';
 import { putCompanyAction, saveCompanyAction } from '../store/ducks/companyDuck';
-import { Dropdown, DropdownChangeParams } from 'primereact/dropdown';
 import { getVenuesActionSG } from '../store/ducks/VenueDuck';
 import { TableQueryParams } from '../types/table';
 import { VenueStateModel } from '../types/venue';
 import TextInput from '../components/shared/form-elements/TextInput';
+import { MultiSelect, MultiSelectChangeParams, MultiSelectFilterParams } from 'primereact/multiselect';
 
 const useStyles = createUseStyles({
   inputError: {
@@ -62,7 +62,7 @@ const CompanyForm: React.FC<{}> = () => {
   const classes = useStyles();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [dataLoading, setDataLoading] = useState(false);
-  const [venueSearchWord, setVenueSearchWord] = useState('');
+  const [selectedVenues, setSelectedVenues] = useState<Array<VenueStateModel>>([]);
   const [newMode, setNewMode] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -87,9 +87,9 @@ const CompanyForm: React.FC<{}> = () => {
   }
   const { companiesData } = useSelector((state: RootState) => state.companyReducer);
 
-  const getVenues = () => {
+  const getVenues = (searchWord?: string) => {
     setDataLoading(true);
-    queryParams.searchWord = venueSearchWord;
+    queryParams.searchWord = searchWord || '';
     dispatch(getVenuesActionSG(queryParams, {
       success: () => {
         setDataLoading(false);
@@ -102,6 +102,7 @@ const CompanyForm: React.FC<{}> = () => {
 
   const submitButton = () => {
     setIsSubmitted(true);
+    setValues({...values, placeId: selectedVenues[0]._id})
     if (newMode) {
       dispatch(saveCompanyAction(values, {
         success: () => {
@@ -119,19 +120,13 @@ const CompanyForm: React.FC<{}> = () => {
     }
   }
 
-  const onSelectVenue = (event: DropdownChangeParams | { value: string | VenueStateModel }) => {
-    if (typeof event.value === 'string') {
-      setVenueSearchWord(event.value)
-    } else {
-      setVenueSearchWord(event.value.profile.name)
-      setValues({...values, placeId: event.value._id})
-    }
+  const onSelectVenue = (event: MultiSelectChangeParams) => {
+    setSelectedVenues([event.value[event.value.length - 1]]);
+  };
+
+  const onFilterVenues = (event: MultiSelectFilterParams) => {
+    getVenues(event.filter);
   }
-
-  useEffect(() => {
-    getVenues();
-  }, [venueSearchWord]);
-
 
   useEffect(() => {
     if (companyId === 'new') {
@@ -174,15 +169,15 @@ const CompanyForm: React.FC<{}> = () => {
               />
               <div className={`flex-horizontal mb-3 ${classes.dropdownClass}`}>
                 <label>Venue</label>
-                <Dropdown
-                    showOnFocus={true}
-                    value={venueSearchWord}
-                    editable={true}
-                    required={true}
+                <MultiSelect
+                    showSelectAll={false}
+                    value={selectedVenues}
                     optionLabel={'profile.name'}
                     options={venuesData.data}
                     onChange={(e) => onSelectVenue(e)}
                     placeholder="Select a Venue"
+                    onFilter={(event) => onFilterVenues(event)}
+                    filter={true}
                 />
               </div>
               {!newMode && (
