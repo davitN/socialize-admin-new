@@ -31,11 +31,11 @@ let queryParams: TableQueryParams = {
 const Companies: React.FC<{}> = () => {
   const tableHeader: TableHeaderModel[] = [
     {
-      name: 'Company Name',
+      name: 'Name',
       field: 'name',
     },
     {
-      name: 'Status',
+      name: 'Active Status',
       field: 'isActive',
       haveTemplate: true,
       template: (row: CompanyModel) => (
@@ -43,21 +43,11 @@ const Companies: React.FC<{}> = () => {
       ),
     },
     {
-      name: 'Created',
-      field: 'createdAt',
-      haveTemplate: true,
-      template: (row: CompanyModel) => (
-        <React.Fragment>
-          {new Date(row.createdAt).toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-          })}
-          , {new Date(row.createdAt).getFullYear()}
-        </React.Fragment>
-      ),
+      name: 'Package Type',
+      field: 'companySubscription.name',
     },
     {
-      name: 'Valid Until',
+      name: 'Paid Until',
       field: 'paidTill',
       haveTemplate: true,
       template: (row: CompanyModel) => (
