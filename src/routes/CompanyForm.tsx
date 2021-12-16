@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { Fragment, useEffect, useState } from 'react';
 
-import { Card, CardBody, CardSubtitle, CardTitle, Col, Form, FormGroup, Label } from 'reactstrap';
+import { Card, CardBody, Form } from 'reactstrap';
 import Breadcrumbs from '../components/shared/Breadcrumb';
 
 import { createUseStyles } from 'react-jss';
@@ -46,9 +46,6 @@ const useStyles = createUseStyles({
       width: 'calc(100% - 200px)',
       borderRadius: '0.25rem',
       height: '100%'
-    },
-    '& .p-inputtext': {
-      height: '36px'
     }
   },
   formLabel: {
@@ -120,14 +117,25 @@ const CompanyForm: React.FC<{}> = () => {
     }))
   }
 
+  const formNotValid = () => {
+    if (selectedVenues.length === 0 && !values.placeId) {
+      return true;
+    }
+    if (!values.name) {
+      return true;
+    }
+    return false;
+  }
+
   const submitButton = (event: Event) => {
     event.preventDefault();
     setIsSubmitted(true);
-    setValues({
-      ...values,
-      placeId: selectedVenues[0]._id,
-      paidTill: paidTillDate.toISOString()
-    })
+    if (formNotValid()) {
+      return;
+    }
+    const sendData: any = values;
+    sendData.placeId = selectedVenues[0] ? selectedVenues[0]._id : values.placeId;
+    sendData.paidTill = paidTillDate.toISOString();
     if (newMode) {
       dispatch(saveCompanyAction(values, {
         success: () => {
@@ -136,7 +144,8 @@ const CompanyForm: React.FC<{}> = () => {
         error: (error: any) => console.log(error),
       }))
     } else {
-      dispatch(putCompanyAction(values._id, values, {
+      sendData.companySubscription = values.companySubscription._id;
+      dispatch(putCompanyAction(values._id, sendData, {
         success: () => {
           navigate('/company')
         },
@@ -218,22 +227,19 @@ const CompanyForm: React.FC<{}> = () => {
                     <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
                       <label>Paid till</label>
                       <Calendar
+                          showIcon={true}
                           value={paidTillDate}
                           dateFormat={'dd/mm/yy'}
                           onChange={(e) => setPaidTillDate(e.value)}
                       />
                     </div>
-                    <FormGroup className="mb-3" row>
-                      <Label md="3" className="col-form-label text-start">
-                        Active
-                      </Label>
-                      <Col md="9" className={'flex-horizontal'}>
-                        <CvSwitcher
-                            defaultValue={values.isActive}
-                            onChange={(event: boolean) => onSwitch(event)}
-                        />
-                      </Col>
-                    </FormGroup>
+                    <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
+                      <label>Active</label>
+                      <CvSwitcher
+                          defaultValue={values.isActive}
+                          onChange={(event: boolean) => onSwitch(event)}
+                      />
+                    </div>
                   </Fragment>
               )}
               <Button label={'Submit'} onClick={() => submitButton(event)} type={'submit'}/>

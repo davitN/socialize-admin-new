@@ -3,7 +3,6 @@ import { put } from 'redux-saga/effects';
 import axiosInstance from '../../services/interceptor.service';
 import { CallBacks } from '../../types/main';
 import { notifyAction } from '../ducks/mainDuck';
-import { VenueSendModel, VenueStateModel } from '../../types/venue';
 import { TableQueryParams } from '../../types/table';
 import { setCompaniesAction, setCompanySubscriptionAction } from '../ducks/companyDuck';
 import { CompanyModel, CompanySubscriptionModel, CompanyTableModel } from '../../types/company';
@@ -81,23 +80,12 @@ export function* putCompanySaga({
                                   callbacks,
                                 }: {
   id: string;
-  data: VenueSendModel;
+  data: CompanyModel;
   callbacks: CallBacks;
   type: string;
 }) {
   try {
-    const formData = new FormData();
-    formData.append('data', JSON.stringify(data.data));
-    if (data.logo) {
-      formData.append('logo', data.logo);
-    }
-    if (data.cover) {
-      formData.append('cover', data.cover);
-    }
-    if (data.coverThumbnail) {
-      formData.append('coverThumbnail', data.coverThumbnail);
-    }
-    yield axiosInstance.put(`place/edit/${id}`, formData);
+    yield axiosInstance.put(`company/edit_company/${id}`, data);
     callbacks?.success && callbacks.success();
   } catch (error: any) {
     callbacks?.error && callbacks.error(error.response?.data.message);
