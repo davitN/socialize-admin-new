@@ -39,6 +39,7 @@ const TextInput: FC<PropsTypes> = ({
         onChange={({ target }) => handleChange && handleChange(target.value)}
         type={type}
         className={'form-control'}
+        required={required || false}
       />
     </span>
   );
