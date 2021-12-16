@@ -41,7 +41,7 @@ ReactDOM.render(
               }
             />
             {
-              store.getState().authReducer?.userData?.role?.name === 'SuperAdmin' ? 
+              store.getState().authReducer?.userData?.role?.name === 'SuperAdmin' ?
               <Route
                 path="/venues"
                 element={
