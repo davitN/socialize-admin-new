@@ -12,6 +12,7 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Customer } from '../types/dashboard';
 import { getTopCustomersActionSG } from '../store/ducks/topCustomersDuck';
+import altImg from '../assets/images/alt-profile-img.jpg';
 
 const tableHeader = [
   {
@@ -25,7 +26,7 @@ const tableHeader = [
           height="30"
           className={'rounded'}
           alt={row.username}
-          src={row.profileImage.imgURL}
+          src={row?.profileImage?.imgURL || altImg}
         />{'   '}
         {row.firstName} {row.lastName}
       </>

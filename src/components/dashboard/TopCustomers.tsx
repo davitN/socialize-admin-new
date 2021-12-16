@@ -5,16 +5,10 @@ import { isEmpty } from 'lodash';
 import BootstrapTable from 'react-bootstrap-table-next';
 import ToolkitProvider from 'react-bootstrap-table2-toolkit';
 
-import {
-  Card,
-  CardBody,
-  Col,
-  Row,
-  CardTitle,
-  CardSubtitle,
-} from 'reactstrap';
+import { Card, CardBody, Col, Row, CardTitle, CardSubtitle } from 'reactstrap';
 import { Customer } from '../../types/dashboard';
 import PropTypes from 'prop-types';
+import altImg from '../../assets/images/alt-profile-img.jpg';
 
 //შესამოწმებელია რაშია ზუსტად საჭირო
 // import EcommerceOrdersModal from "../Ecommerce/EcommerceOrders/EcommerceOrdersModal";
@@ -40,7 +34,7 @@ const TopCustomers: React.FC<{ incomeData: Customer[] }> = ({ incomeData }) => {
               height="30"
               className={'rounded'}
               alt={row.username}
-              src={row?.profileImage?.imgURL}
+              src={row?.profileImage?.imgURL || altImg}
             />
             {'   '}
             {row.firstName} {row.lastName}

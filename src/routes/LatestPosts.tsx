@@ -12,6 +12,7 @@ import { Skeleton } from 'primereact/skeleton';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Post } from '../types/dashboard';
+import altImg from '../assets/images/alt-profile-img.jpg';
 
 const getCustomerTypeColors = (type: string): string => {
   switch (type) {
@@ -39,7 +40,7 @@ const tableHeader = [
             height="30"
             className={'rounded'}
             alt={rowData.username}
-            src={rowData.profileImage.imgURL}
+            src={rowData?.profileImage?.imgURL || altImg}
           />
         }{' '}
         {rowData._id}
