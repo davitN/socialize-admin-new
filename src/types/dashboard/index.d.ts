@@ -21,10 +21,10 @@ export interface Customer {
   lastName: string;
   postsCount: number;
   viewsOnPosts: number;
-  profileImage: {
-    height: number;
-    width: number;
-    imgURL: string;
+  profileImage?: {
+    height?: number;
+    width?: number;
+    imgURL?: string;
   };
 }
 
@@ -37,10 +37,10 @@ export interface Post {
   customerType: string;
   firstName: string;
   lastName: string;
-  profileImage: {
-    width: number;
-    height: number;
-    imgURL: string;
+  profileImage?: {
+    width?: number;
+    height?: number;
+    imgURL?: string;
   };
 }
 

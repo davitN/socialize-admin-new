@@ -5,6 +5,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import ToolkitProvider from 'react-bootstrap-table2-toolkit';
 
 import { Button, Card, CardBody, Col, Row, CardTitle, Badge } from 'reactstrap';
+import altImg from '../../assets/images/alt-profile-img.jpg';
 
 //შესამოწმებელია რაშია ზუსტად საჭირო
 // import EcommerceOrdersModal from "../Ecommerce/EcommerceOrders/EcommerceOrdersModal";
@@ -47,7 +48,7 @@ const Posts: React.FC<{ posts: Post[] }> = ({ posts }) => {
             height="30"
             className={'rounded'}
             alt={row.username}
-            src={row?.profileImage?.imgURL}
+            src={row?.profileImage?.imgURL || altImg}
           />{' '}
           {row._id}
         </Link>
