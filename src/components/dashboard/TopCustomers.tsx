@@ -40,7 +40,7 @@ const TopCustomers: React.FC<{ incomeData: Customer[] }> = ({ incomeData }) => {
               height="30"
               className={'rounded'}
               alt={row.username}
-              src={row.profileImage.imgURL}
+              src={row?.profileImage?.imgURL}
             />
             {'   '}
             {row.firstName} {row.lastName}
