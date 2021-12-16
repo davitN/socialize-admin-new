@@ -2,23 +2,20 @@
 import { put } from 'redux-saga/effects';
 import axiosInstance from '../../services/interceptor.service';
 import { CallBacks } from '../../types/main';
-import { setDashboardDataAction } from '../ducks/dashboardDuck';
 import { notifyAction } from '../ducks/mainDuck';
-import { DashboardData } from '../../types/dashboard';
+import { setInitialDataAction } from '../ducks/initialDataDuck';
+import { InitialDataModel } from '../../types/initial-data';
 
-export function* getDashboardDataSaga({
-  placeId,
+export function* getInitialDataSaga({
   callbacks,
 }: {
-  placeId: string
   callbacks: CallBacks;
   type: string;
 }) {
   try {
-    const params = {placeId}
-    const res: DashboardData = yield axiosInstance.get(`/dashboard/get_dashboard`, {params});
-    yield put(setDashboardDataAction(res));
-    callbacks?.success && callbacks.success();
+    const res: InitialDataModel = yield axiosInstance.get("/initial/get_initial_data");
+    yield put(setInitialDataAction(res));
+    callbacks?.success && callbacks.success(res);
   } catch (error: any) {
     callbacks?.error && callbacks.error(error.response?.data.message);
     yield put(

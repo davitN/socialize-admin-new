@@ -131,7 +131,7 @@ const Posts: React.FC<{ posts: Post[] }> = ({ posts }) => {
         <CardBody>
           <CardTitle className={'mb-3 text-start'}>Latest Posts</CardTitle>
           <ToolkitProvider
-            keyField="id"
+            keyField="dataField"
             data={posts}
             columns={EcommerceOrderColumns()}
             bootstrap4
@@ -142,7 +142,7 @@ const Posts: React.FC<{ posts: Post[] }> = ({ posts }) => {
                   <Col xl="12">
                     <div className="table-responsive">
                       <BootstrapTable
-                        keyField="id"
+                        keyField="dataField"
                         responsive
                         bordered={false}
                         striped={false}

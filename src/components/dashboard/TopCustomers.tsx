@@ -78,72 +78,13 @@ const TopCustomers: React.FC<{ incomeData: Customer[] }> = ({ incomeData }) => {
       text: 'Views on Posts',
       sort: true,
     },
-    // {
-    //   dataField: "paymentStatus",
-    //   text: "Payment Status",
-    //   sort: true,
-    //   // eslint-disable-next-line react/display-name
-    //   formatter: (cellContent, row) => (
-    //     <Badge className={"font-size-12 badge-soft-" + row.badgeclass} color={row.badgeClass} pill>
-    //       {row.paymentStatus}
-    //     </Badge>
-    //   ),
-    // },
-    // {
-    //   dataField: "paymentMethod",
-    //   isDummyField: true,
-    //   text: "Payment Method",
-    //   sort: true,
-    //   // eslint-disable-next-line react/display-name
-    //   formatter: (cellContent: any, row: any) => (
-    //     <>
-    //       <i
-    //         className={
-    //           row.paymentMethod !== "COD"
-    //             ? "fab fa-cc-" + toLowerCase1(row.paymentMethod) + " me-1"
-    //             : "fab fas fa-money-bill-alt me-1"
-    //         }
-    //       />{" "}
-    //       {row.paymentMethod}
-    //     </>
-    //   ),
-    // },
-    // {
-    //   dataField: 'view',
-    //   isDummyField: true,
-    //   text: 'Send Offer',
-    //   // eslint-disable-next-line react/display-name
-    //   formatter: () => (
-    //     <Button
-    //       type="button"
-    //       color="primary"
-    //       className="btn-sm btn-rounded"
-    //       onClick={toggleViewModal}
-    //     >
-    //       Send Offer
-    //     </Button>
-    //   ),
-    // },
   ];
-
-  // useEffect(() => {
-  //   if (orders && !orders.length) {
-  //     onGetOrders();
-  //   }
-  // }, [onGetOrders, orders]);
 
   useEffect(() => {
     if (!isEmpty(incomeData) && !!isEdit) {
       setIsEdit(false);
     }
   }, [incomeData]);
-
-  const defaultSorted = [
-    {
-      dataField: 'orderId',
-      order: 'desc',
-    },
-  ];
 
   return (
     <React.Fragment>
@@ -158,7 +99,7 @@ const TopCustomers: React.FC<{ incomeData: Customer[] }> = ({ incomeData }) => {
             </CardSubtitle>
           </div>
           <ToolkitProvider
-            keyField="id"
+            keyField={"dataField"}
             data={incomeData}
             columns={EcommerceOrderColumns()}
             bootstrap4
@@ -169,11 +110,10 @@ const TopCustomers: React.FC<{ incomeData: Customer[] }> = ({ incomeData }) => {
                   <Col xl="12">
                     <div className="table-responsive">
                       <BootstrapTable
-                        keyField="id"
+                        keyField={'dataField'}
                         responsive
                         bordered={false}
                         striped={false}
-                        defaultSorted={defaultSorted}
                         selectRow={selectRow}
                         classes={'table align-middle table-nowrap table-check'}
                         headerWrapperClasses={'table-light'}

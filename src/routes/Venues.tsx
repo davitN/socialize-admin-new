@@ -140,16 +140,16 @@ const Venues: React.FC<{}> = () => {
                 // tableClassName={classes.table}
                        emptyMessage="Data not found..."
             >
-              {dataLoading && tableHeader.map(({ name, field }) => <Column field={field} header={name} key={field}
+              {dataLoading && tableHeader.map(({ name, field }, index) => <Column field={field} header={name} key={`${field}_${index}`}
                                                                            body={<Skeleton/>}/>)}
-              {!dataLoading && tableHeader.map((item) => {
+              {!dataLoading && tableHeader.map((item, index) => {
                 if (item.haveTemplate) {
                   return (
-                      <Column header={item.name} body={item.template}/>
+                      <Column key={`${item.field}_${index}`} header={item.name} body={item.template}/>
                   )
                 } else {
                   return (
-                      <Column field={item.field} header={item.name}/>
+                      <Column key={`${item.field}_${index}`} field={item.field} header={item.name}/>
                   )
                 }
               })}

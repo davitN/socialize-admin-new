@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
 import App from '../App'
 import TopCustomers from './TopCustomers'
@@ -31,24 +31,27 @@ const AppRoutes = () => {
           }
         />
         {
-          userRole === 'SuperAdmin' ? 
-          <Route
-            path="/venues"
-            element={
-              <WithAuth>
-                <Venues />
-              </WithAuth>
-            }
-          /> : null
+          userRole === 'SuperAdmin' && (
+              <Fragment>
+                <Route
+                    path="/venues"
+                    element={
+                      <WithAuth>
+                        <Venues />
+                      </WithAuth>
+                    }
+                />
+                <Route
+                    path="/venues/:id"
+                    element={
+                      <WithAuth>
+                        <VenueForm />
+                      </WithAuth>
+                    }
+                />
+              </Fragment>
+            )
         }
-        <Route
-          path="/venues/:id"
-          element={
-            <WithAuth>
-              <VenueForm />
-            </WithAuth>
-          }
-        />
         <Route
           path="/company"
           element={

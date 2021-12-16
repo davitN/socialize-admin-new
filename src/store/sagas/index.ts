@@ -31,6 +31,8 @@ import {
   PUT_COMPANY,
   SAVE_COMPANY,
 } from '../ducks/companyDuck';
+import { GET_INITIAL_DATA_SG } from '../ducks/initialDataDuck';
+import { getInitialDataSaga } from './initialDataSaga';
 
 function* actionWatcher() {
   yield takeLatest(CHECK_SIGNED_IN, checkSignedInSaga);
@@ -38,6 +40,7 @@ function* actionWatcher() {
   yield takeLatest(SUBMIT_SIGN_IN_OTP_SG, summitSignInOTP_Saga);
   yield takeLatest(REQUEST_SIGN_UP_SG, signUpSaga);
   yield takeLatest(LOGOUT, logoutSaga);
+  yield takeLatest(GET_INITIAL_DATA_SG, getInitialDataSaga);
   yield takeLatest(GET_DASHBOARD_DATA_SG, getDashboardDataSaga);
   yield takeLatest(GET_LATEST_POSTS_SG, getLatestPostsSaga);
   yield takeLatest(GET_TOP_CUSTOMERS_SG, getTopCustomersSaga);

@@ -27,7 +27,8 @@ export const setDashboardDataAction = (data: DashboardData) => ({
   payload: data,
 });
 
-export const getDashboardDataActionSG = (callbacks?: CallBacks) => ({
+export const getDashboardDataActionSG = (placeId: string, callbacks?: CallBacks) => ({
   type: GET_DASHBOARD_DATA_SG,
   callbacks,
+  placeId
 });
