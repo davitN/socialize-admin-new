@@ -6,7 +6,6 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import ToolkitProvider from 'react-bootstrap-table2-toolkit';
 
 import {
-  Button,
   Card,
   CardBody,
   Col,
@@ -26,12 +25,7 @@ const TopCustomers: React.FC<{ incomeData: Customer[] }> = ({ incomeData }) => {
   const selectRow = {
     mode: 'checkbox',
   };
-
-  const [modal1, setModal1] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-
-  const toggleViewModal = () => setModal1(!modal1);
-
   const EcommerceOrderColumns = () => [
     {
       dataField: 'username',
