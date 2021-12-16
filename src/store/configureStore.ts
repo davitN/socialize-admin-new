@@ -11,11 +11,12 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import {
   authReducer,
   mainReducer,
+  initialDataReducer,
   dashboardReducer,
   latestPostsReducer,
   topCustomersReducer,
   venueReducer,
-  companyReducer,
+  companyReducer
 } from './ducks';
 import { RESET_STORE } from './ducks/mainDuck';
 
@@ -24,6 +25,7 @@ export const sagaMiddleware = createSagaMiddleware();
 const appReducer = combineReducers({
   mainReducer,
   authReducer,
+  initialDataReducer,
   dashboardReducer,
   latestPostsReducer,
   topCustomersReducer,

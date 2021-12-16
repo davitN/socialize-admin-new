@@ -17,7 +17,7 @@ import { TableQueryParams } from '../types/table';
 import { VenueStateModel } from '../types/venue';
 import TextInput from '../components/shared/form-elements/TextInput';
 import { MultiSelect, MultiSelectChangeParams, MultiSelectFilterParams } from 'primereact/multiselect';
-import { Calendar } from 'primereact/calendar';
+import { Calendar, CalendarChangeParams } from 'primereact/calendar';
 
 const useStyles = createUseStyles({
   inputError: {
@@ -115,6 +115,12 @@ const CompanyForm: React.FC<{}> = () => {
         console.log('err')
       }
     }))
+  }
+
+  const calendarResponse = (event: CalendarChangeParams) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    setPaidTillDate(event.value)
   }
 
   const formNotValid = () => {
@@ -230,7 +236,7 @@ const CompanyForm: React.FC<{}> = () => {
                           showIcon={true}
                           value={paidTillDate}
                           dateFormat={'dd/mm/yy'}
-                          onChange={(e) => setPaidTillDate(e.value)}
+                          onChange={(e) => calendarResponse(e)}
                       />
                     </div>
                     <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
