@@ -1,18 +1,18 @@
 import { AnyAction } from 'redux';
 import { CallBacks } from '../../types/main';
-import { VenueSendModel, VenuesTableModel, VenueStateModel } from '../../types/venue';
+import { VenueSendModel, VenuesTableModel } from '../../types/venue';
 import { TableQueryParams } from '../../types/table';
 
-export const SAVE_VENUE = "socialize/main/saveVenue";
-export const PUT_VENUE = "socialize/main/putVenue";
-export const GET_VENUES_SG = "socialize/main/getVenues_sg";
-export const SET_VENUES = "socialize/main/setVenues";
+export const SAVE_VENUE = 'socialize/main/saveVenue';
+export const PUT_VENUE = 'socialize/main/putVenue';
+export const GET_VENUES_SG = 'socialize/main/getVenues_sg';
+export const SET_VENUES = 'socialize/main/setVenues';
 
 const initialState: { venuesData: VenuesTableModel } = {
   venuesData: {
     count: 0,
-    data: []
-  }
+    data: [],
+  },
 };
 
 export const venueReducer = (state = initialState, action: AnyAction) => {
@@ -21,7 +21,7 @@ export const venueReducer = (state = initialState, action: AnyAction) => {
     case SET_VENUES:
       return {
         ...state,
-        venuesData: (payload as VenuesTableModel),
+        venuesData: payload as VenuesTableModel,
       };
     default:
       return state;
@@ -33,21 +33,31 @@ export const setVenuesAction = (venues: VenuesTableModel) => ({
   payload: venues,
 });
 
-export const getVenuesActionSG = (params: TableQueryParams, callbacks?: CallBacks) => ({
+export const getVenuesActionSG = (
+  params: TableQueryParams,
+  callbacks?: CallBacks
+) => ({
   params,
   type: GET_VENUES_SG,
   callbacks,
 });
 
-export const saveVenueAction = (data: VenueSendModel, callbacks?: CallBacks) => ({
+export const saveVenueAction = (
+  data: VenueSendModel,
+  callbacks?: CallBacks
+) => ({
   type: SAVE_VENUE,
   data,
-  callbacks
+  callbacks,
 });
 
-export const putVenueAction = (id: string, data: VenueSendModel, callbacks?: CallBacks) => ({
+export const putVenueAction = (
+  id: string,
+  data: VenueSendModel,
+  callbacks?: CallBacks
+) => ({
   type: PUT_VENUE,
   id,
   data,
-  callbacks
+  callbacks,
 });

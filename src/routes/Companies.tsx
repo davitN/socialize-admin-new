@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import Breadcrumbs from '../components/shared/Breadcrumb';
+// import Breadcrumbs from '../components/shared/Breadcrumb';
 import { getCompaniesActionSG } from '../store/ducks/companyDuck';
 import { useDispatch, useSelector } from 'react-redux';
 import { Card, CardBody } from 'reactstrap';
@@ -12,7 +12,7 @@ import { RootState } from '../store/configureStore';
 import { TableHeaderModel, TableQueryParams } from '../types/table';
 import { PaginationEventModel } from '../types/pagination/pagination';
 import { Button } from 'primereact/button';
-import { createUseStyles } from 'react-jss';
+// import { createUseStyles } from 'react-jss';
 import { useNavigate } from 'react-router-dom';
 import { CompanyModel } from '../types/company';
 
@@ -65,11 +65,11 @@ const Companies: React.FC<{}> = () => {
       field: 'view',
       haveTemplate: true,
       template: (row: CompanyModel) => (
-          <Button onClick={() => navigate(row._id)}>
-            <i className="pi pi-cog"/>
-          </Button>
-      )
-    }
+        <Button onClick={() => navigate(row._id)}>
+          <i className="pi pi-cog" />
+        </Button>
+      ),
+    },
   ];
 
   //   const classes = useStyles();
@@ -141,22 +141,22 @@ const Companies: React.FC<{}> = () => {
             emptyMessage="Data not found..."
           >
             {dataLoading &&
-              tableHeader.map(({ name, field }) => (
+              tableHeader.map(({ name, field }, index) => (
                 <Column
                   field={field}
                   header={name}
-                  key={field}
+                  key={`${field}_${index}`}
                   body={<Skeleton />}
                 />
               ))}
             {!dataLoading &&
-              tableHeader.map((item) => {
+              tableHeader.map((item, index) => {
                 if (item.haveTemplate) {
                   return (
                     <Column
                       header={item.name}
                       body={item.template}
-                      key={item.field}
+                      key={`${item.field}_${index}`}
                     />
                   );
                 } else {
@@ -164,7 +164,7 @@ const Companies: React.FC<{}> = () => {
                     <Column
                       field={item.field}
                       header={item.name}
-                      key={item.field}
+                      key={`${item.field}_${index}`}
                     />
                   );
                 }

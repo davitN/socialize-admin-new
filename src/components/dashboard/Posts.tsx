@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import BootstrapTable from 'react-bootstrap-table-next';
-import ToolkitProvider from 'react-bootstrap-table2-toolkit';
 
-import { Button, Card, CardBody, Col, Row, CardTitle, Badge } from 'reactstrap';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import { Post } from '../../types/dashboard';
+import { Link } from 'react-router-dom';
+
+import { Button, Card, CardBody, CardTitle, Badge } from 'reactstrap';
 import altImg from '../../assets/images/alt-profile-img.jpg';
 
 //შესამოწმებელია რაშია ზუსტად საჭირო
@@ -23,144 +25,130 @@ const getCustomerTypeColors = (type: string): string => {
   }
 };
 
-import { Post } from '../../types/dashboard';
 import PropTypes from 'prop-types';
 
+const tableHeader = [
+  {
+    name: 'Post',
+    field: '_id',
+    haveTemplate: true,
+    template: (rowData: Post) => (
+      <Link to="#" className="text-body fw-bold">
+        {
+          <img
+            data-dz-thumbnail=""
+            height="30"
+            className={'rounded'}
+            alt={rowData.username}
+            src={rowData?.profileImage?.imgURL || altImg}
+          />
+        }{' '}
+        {rowData._id}
+      </Link>
+    ),
+  },
+  {
+    name: 'Customer Posting',
+    field: 'name',
+    haveTemplate: true,
+    template: (rowData: Post) => (
+      <>
+        {rowData.firstName} {rowData.lastName}
+      </>
+    ),
+  },
+  {
+    name: 'Date',
+    field: 'createdAt',
+    haveTemplate: true,
+    template: (rowData: Post) => (
+      <>
+        {new Date(rowData.createdAt).toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: 'short',
+        })}
+        , {new Date(rowData.createdAt).getFullYear()}
+      </>
+    ),
+  },
+  {
+    name: 'Comments',
+    field: 'commentsCount',
+  },
+  {
+    name: 'Customer Type',
+    field: 'customerType',
+    haveTemplate: true,
+    template: (row: Post) => (
+      <Badge
+        className={
+          'font-size-12 badge-soft-' + getCustomerTypeColors(row.customerType)
+        }
+        color={getCustomerTypeColors(row.customerType)}
+        pill
+      >
+        {row.customerType}
+      </Badge>
+    ),
+  },
+  {
+    name: 'Views',
+    field: 'viewsCount',
+  },
+  {
+    name: 'View Details',
+    field: 'viewDetails',
+    haveTemplate: true,
+    template: () => {
+      return (
+        <Button type="button" color="primary" className="btn-sm btn-rounded">
+          View Details
+        </Button>
+      );
+    },
+  },
+];
 const Posts: React.FC<{ posts: Post[] }> = ({ posts }) => {
-  const selectRow = {
-    mode: 'checkbox',
-  };
+  const LIMIT = 5;
 
   const [modal1, setModal1] = useState(false);
 
   const toggleViewModal = () => setModal1(!modal1);
 
-  const EcommerceOrderColumns = () => [
-    {
-      dataField: '_id',
-      text: 'Post',
-      sort: true,
-      // eslint-disable-next-line react/display-name
-      formatter: (cellContent: any, row: any) => (
-        <Link to="#" className="text-body fw-bold">
-          <img
-            data-dz-thumbnail=""
-            height="30"
-            className={'rounded'}
-            alt={row.username}
-            src={row?.profileImage?.imgURL || altImg}
-          />{' '}
-          {row._id}
-        </Link>
-      ),
-    },
-    {
-      dataField: 'name',
-      text: 'Customer Posting',
-      sort: true,
-      // eslint-disable-next-line react/display-name
-      formatter: (cellContent: any, row: any) => (
-        <React.Fragment>
-          {row.firstName} {row.lastName}
-        </React.Fragment>
-      ),
-    },
-    {
-      dataField: 'createdAt',
-      text: 'Date',
-      sort: true,
-      // eslint-disable-next-line react/display-name
-      formatter: (cellContent: any, row: any) => (
-        <React.Fragment>
-          {new Date(row.createdAt).toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-          })}
-          , {new Date(row.createdAt).getFullYear()}
-        </React.Fragment>
-      ),
-    },
-    {
-      dataField: 'commentsCount',
-      text: 'Comments',
-      sort: true,
-    },
-    {
-      dataField: 'customerType',
-      text: 'Customer Type',
-      sort: true,
-      // eslint-disable-next-line react/display-name
-      formatter: (cellContent: any, row: any) => (
-        <Badge
-          className={
-            'font-size-12 badge-soft-' + getCustomerTypeColors(row.customerType)
-          }
-          color={getCustomerTypeColors(row.customerType)}
-          pill
-        >
-          {row.customerType}
-        </Badge>
-      ),
-    },
-    {
-      dataField: 'viewsCount',
-      text: 'Views',
-      sort: true,
-    },
-    {
-      dataField: 'view',
-      isDummyField: true,
-      text: 'View Details',
-      // eslint-disable-next-line react/display-name
-      formatter: () => (
-        <Button
-          type="button"
-          color="primary"
-          className="btn-sm btn-rounded"
-          onClick={toggleViewModal}
-        >
-          View Details
-        </Button>
-      ),
-    },
-  ];
-
   return (
-    <React.Fragment>
-      {/* <EcommerceOrdersModal isOpen={modal1} toggle={toggleViewModal} /> */}
-      <Card>
-        <CardBody>
-          <CardTitle className={'mb-3 text-start'}>Latest Posts</CardTitle>
-          <ToolkitProvider
-            keyField="dataField"
-            data={posts}
-            columns={EcommerceOrderColumns()}
-            bootstrap4
-          >
-            {(toolkitProps: any) => (
-              <React.Fragment>
-                <Row className={'text-start'}>
-                  <Col xl="12">
-                    <div className="table-responsive">
-                      <BootstrapTable
-                        keyField="dataField"
-                        responsive
-                        bordered={false}
-                        striped={false}
-                        selectRow={selectRow}
-                        classes={'table align-middle table-nowrap table-check'}
-                        headerWrapperClasses={'table-light'}
-                        {...toolkitProps.baseProps}
-                      />
-                    </div>
-                  </Col>
-                </Row>
-              </React.Fragment>
-            )}
-          </ToolkitProvider>
-        </CardBody>
-      </Card>
-    </React.Fragment>
+    <Card>
+      <CardBody>
+        <CardTitle title="Latest Posts" />
+        <DataTable
+          className={'fs-6'}
+          value={posts}
+          responsiveLayout="scroll"
+          rows={LIMIT}
+          // tableClassName={classes.table}
+          emptyMessage="Data not found..."
+        >
+          {tableHeader.map((item, index) => {
+            if (item.haveTemplate) {
+              return (
+                <Column
+                  header={item.name}
+                  body={item.template}
+                  key={`${item.field}_${index}`}
+                />
+              );
+            } else {
+              return (
+                <Column
+                  field={item.field}
+                  header={item.name}
+                  key={`${item.field}_${index}`}
+                />
+              );
+            }
+          })}
+        </DataTable>
+      </CardBody>
+    </Card>
   );
 };
 
