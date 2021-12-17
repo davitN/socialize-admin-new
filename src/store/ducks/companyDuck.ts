@@ -7,6 +7,7 @@ export const SAVE_COMPANY = 'socialize/main/saveCompany';
 export const PUT_COMPANY = 'socialize/main/putCompany';
 export const GET_COMPANIES_SG = 'socialize/main/getCompanies_sg';
 export const GET_COMPANY_SUBSCRIPTION_SG = 'socialize/main/getCompanySubscriptions_sg';
+export const GET_SELECTED_COMPANY_SG = 'socialize/main/getSelectedCompany_sg';
 export const SET_COMPANIES = 'socialize/main/setCompanies';
 export const SET_SUBSCRIPTIONS = 'socialize/main/setCompanySubscriptions';
 
@@ -56,13 +57,21 @@ export const getCompaniesActionSG = (
 });
 
 export const getCompanySubscriptionActionSG = (
-    companyId: string,
     callbacks?: CallBacks
 ) => ({
   type: GET_COMPANY_SUBSCRIPTION_SG,
+  callbacks,
+});
+
+export const getSelectedCompanyActionSG = (
+    companyId: string,
+    callbacks?: CallBacks
+) => ({
+  type: GET_SELECTED_COMPANY_SG,
   companyId,
   callbacks,
 });
+
 
 export const saveCompanyAction = (
   data: CompanyModel,

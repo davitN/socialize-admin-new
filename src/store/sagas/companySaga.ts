@@ -31,15 +31,34 @@ export function* getCompaniesSaga({
   }
 }
 
-export function* getCompanySubscriptionsSaga({ companyId, callbacks }: {
+export function* getCompanySubscriptionsSaga({ callbacks }: {
+  callbacks: CallBacks,
+  type: string
+}) {
+  try {
+    const res: CompanySubscriptionModel[] = yield axiosInstance.get(`/company_subscription/get_company_subscriptions`);
+    yield put(setCompanySubscriptionAction(res));
+    callbacks?.success && callbacks.success();
+  } catch (error: any) {
+    callbacks?.error && callbacks.error(error.response?.data.message);
+    yield put(
+        notifyAction({
+          type: 'error',
+          message: error.response?.data.message,
+          showError: false,
+        })
+    );
+  }
+}
+
+export function* getSelectedCompanySaga({ companyId, callbacks }: {
   companyId: string
   callbacks: CallBacks;
   type: string;
 }) {
   try {
-    const res: CompanySubscriptionModel[] = yield axiosInstance.get(`/company/get/${companyId}`);
-    yield put(setCompanySubscriptionAction(res));
-    callbacks?.success && callbacks.success();
+    const res: CompanyModel = yield axiosInstance.get(`/company/get/${companyId}`);
+    callbacks?.success && callbacks.success(res);
   } catch (error: any) {
     callbacks?.error && callbacks.error(error.response?.data.message);
     yield put(

@@ -11,12 +11,13 @@ import { Button } from 'primereact/button';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/configureStore';
 import { CompanyModel } from '../types/company';
-import { getCompanySubscriptionActionSG, putCompanyAction, saveCompanyAction } from '../store/ducks/companyDuck';
-import { getVenuesActionSG } from '../store/ducks/VenueDuck';
-import { TableQueryParams } from '../types/table';
-import { VenueStateModel } from '../types/venue';
+import {
+  getCompanySubscriptionActionSG,
+  getSelectedCompanyActionSG,
+  putCompanyAction,
+  saveCompanyAction
+} from '../store/ducks/companyDuck';
 import TextInput from '../components/shared/form-elements/TextInput';
-import { MultiSelect, MultiSelectChangeParams, MultiSelectFilterParams } from 'primereact/multiselect';
 import { Calendar, CalendarChangeParams } from 'primereact/calendar';
 
 const useStyles = createUseStyles({
@@ -60,13 +61,10 @@ const CompanyForm: React.FC<{}> = () => {
   const classes = useStyles();
   const [paidTillDate, setPaidTillDate] = useState<Date>(new Date());
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [dataLoading, setDataLoading] = useState(false);
-  const [selectedVenues, setSelectedVenues] = useState<Array<VenueStateModel>>([]);
   const [newMode, setNewMode] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id: companyId } = useParams();
-  const { venuesData } = useSelector((state: RootState) => state.venueReducer);
   const { companySubscriptionData } = useSelector((state: RootState) => state.companyReducer);
   const [values, setValues] = useState<CompanyModel>({
     _id: '',
@@ -86,33 +84,25 @@ const CompanyForm: React.FC<{}> = () => {
     isActive: false,
     __v: null
   })
-  const queryParams: TableQueryParams = {
-    limit: 5,
-    offset: 0,
-    searchWord: ''
-  }
-  const { companiesData } = useSelector((state: RootState) => state.companyReducer);
 
-  const getVenues = (searchWord?: string) => {
-    setDataLoading(true);
-    queryParams.searchWord = searchWord || '';
-    dispatch(getVenuesActionSG(queryParams, {
+  const getCompanySubscriptions = () => {
+    dispatch(getCompanySubscriptionActionSG({
       success: () => {
-        setDataLoading(false);
+        //
       },
       error: () => {
-        setDataLoading(false);
+        //
       }
-    }));
+    }))
   }
 
-  const getCompanySubscriptions = (id: string) => {
-    dispatch(getCompanySubscriptionActionSG(id, {
-      success: () => {
-        console.log('get')
-      },
-      error: () => {
-        console.log('err')
+  const getSelectedCompany = (companyId: string) => {
+    dispatch(getSelectedCompanyActionSG(companyId, {
+      success: (res: CompanyModel) => {
+        console.log(res);
+        setValues(res);
+        setPaidTillDate(new Date(res.paidTill));
+        setValues({ ...values, ...res });
       }
     }))
   }
@@ -124,9 +114,6 @@ const CompanyForm: React.FC<{}> = () => {
   }
 
   const formNotValid = () => {
-    if (selectedVenues.length === 0 && !values.placeId) {
-      return true;
-    }
     if (!values.name) {
       return true;
     }
@@ -140,7 +127,6 @@ const CompanyForm: React.FC<{}> = () => {
       return;
     }
     const sendData: any = values;
-    sendData.placeId = selectedVenues[0] ? selectedVenues[0]._id : values.placeId;
     sendData.paidTill = paidTillDate.toISOString();
     if (newMode) {
       dispatch(saveCompanyAction(values, {
@@ -160,34 +146,14 @@ const CompanyForm: React.FC<{}> = () => {
     }
   }
 
-  const onSelectVenue = (event: MultiSelectChangeParams) => {
-    if (event.value.length > 0) {
-      setSelectedVenues([event.value[event.value.length - 1]]);
-    } else {
-      setSelectedVenues([]);
-    }
-  };
-
-  const onFilterVenues = (event: MultiSelectFilterParams) => {
-    getVenues(event.filter);
-  }
-
   useEffect(() => {
     if (companyId === 'new') {
       setNewMode(true)
     } else if (companyId) {
       setNewMode(false);
-      const selectedCompany: CompanyModel = companiesData.data.find(item => item._id === companyId);
-      if (!selectedCompany) {
-        navigate('/company')
-        return;
-      }
-      setPaidTillDate(new Date(selectedCompany.paidTill));
-      setValues({ ...values, ...selectedCompany });
-      // getCompanySubscriptions(companyId);
-
+      getSelectedCompany(companyId);
+      // getCompanySubscriptions();
     }
-    getVenues();
   }, [companyId]);
 
   function onSwitch(active: boolean) {
@@ -214,20 +180,6 @@ const CompanyForm: React.FC<{}> = () => {
                   placeholder="Enter your Company Name"
                   required
               />
-              <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
-                <label>Venue</label>
-                <MultiSelect
-                    scrollHeight={'240px'}
-                    showSelectAll={false}
-                    value={selectedVenues}
-                    optionLabel={'profile.name'}
-                    options={venuesData.data}
-                    onChange={(e) => onSelectVenue(e)}
-                    placeholder="Select a Venue"
-                    onFilter={(event) => onFilterVenues(event)}
-                    filter={true}
-                />
-              </div>
               {!newMode && (
                   <Fragment>
                     <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>

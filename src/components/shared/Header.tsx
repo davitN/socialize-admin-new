@@ -39,7 +39,6 @@ const Header: React.FC<{}> = () => {
 
   useEffect(() => {
     if (selectedPlace.length > 0) {
-      console.log(selectedPlace)
       dispatch(setSelectedPlaceIdAction(selectedPlace[0]._id))
     }
   }, [selectedPlace]);
