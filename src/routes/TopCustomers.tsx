@@ -12,6 +12,7 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Customer } from '../types/dashboard';
 import { getTopCustomersActionSG } from '../store/ducks/topCustomersDuck';
+import { initialDataReducer } from '../store/ducks';
 import altImg from '../assets/images/alt-profile-img.jpg';
 
 const tableHeader = [
@@ -79,6 +80,22 @@ const TopCustomers = () => {
   const { topCustomers } = useSelector(
     (state: RootState) => state.topCustomersReducer
   );
+  const { selectedPlaceId } = useSelector(
+    (state: RootState) => state.initialDataReducer
+  );
+
+  useEffect(() => {
+    if (selectedPlaceId) {
+      dispatch(
+        getTopCustomersActionSG({
+          offset: 0,
+          limit: LIMIT,
+          placeId: selectedPlaceId,
+        })
+      );
+    }
+    setDataLoading(false);
+  }, [selectedPlaceId]);
 
   const [currentPage, setCurrentPage] = useState<number>(0);
 
@@ -86,7 +103,7 @@ const TopCustomers = () => {
     setDataLoading(true);
     dispatch(
       getTopCustomersActionSG(
-        { offset: 0, limit: LIMIT },
+        { offset: 0, limit: LIMIT, placeId: selectedPlaceId },
         {
           success: () => {
             setDataLoading(false);
@@ -104,7 +121,7 @@ const TopCustomers = () => {
     setDataLoading(true);
     dispatch(
       getTopCustomersActionSG(
-        { offset: event.first, limit: LIMIT },
+        { offset: event.first, limit: LIMIT, placeId: selectedPlaceId },
         {
           success: () => {
             setDataLoading(false);
