@@ -3,7 +3,7 @@ import { createUseStyles } from 'react-jss';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutAction } from '../../store/ducks/authDuck';
 import { RootState } from '../../store/configureStore';
-import { getInitialDataActionSG } from '../../store/ducks/initialDataDuck';
+import { getInitialDataActionSG, setSelectedPlaceIdAction } from '../../store/ducks/initialDataDuck';
 import { InitialDataModel, PlaceModel } from '../../types/initial-data';
 import { getDashboardDataActionSG } from '../../store/ducks/dashboardDuck';
 import { MultiSelect } from 'primereact/multiselect';
@@ -39,20 +39,10 @@ const Header: React.FC<{}> = () => {
 
   useEffect(() => {
     if (selectedPlace.length > 0) {
-      getDashboardData(selectedPlace[0]._id);
+      console.log(selectedPlace)
+      dispatch(setSelectedPlaceIdAction(selectedPlace[0]._id))
     }
   }, [selectedPlace]);
-
-  const getDashboardData = (placeId: string) => {
-    dispatch(getDashboardDataActionSG(placeId, {
-      success: () => {
-        //
-      },
-      error: () => {
-        //
-      }
-    }));
-  }
 
   const onSelectPlace = (values: PlaceModel[]) => {
     if (values.length > 1) {

@@ -22,10 +22,11 @@ import MonthlyEarning from "../components/dashboard/MonthlyEarning";
 import Breadcrumbs from '../components/shared/Breadcrumb';
 
 //redux
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/configureStore";
 import TopCustomers from '../components/dashboard/TopCustomers';
 import Posts from '../components/dashboard/Posts';
+import { getDashboardDataActionSG } from '../store/ducks/dashboardDuck';
 
 const correctTrends = (incomeArr: Array<{
   firstTimeVisitor: number,
@@ -58,10 +59,18 @@ const correctTrends = (incomeArr: Array<{
 const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const Dashboard = () => {
+  const dispatch = useDispatch();
   const { dashboardData } = useSelector((state: RootState) => state.dashboardReducer);
+  const { selectedPlaceId } = useSelector((state: RootState) => state.initialDataReducer);
   const { userData } = useSelector((state: RootState) => state.authReducer);
   const [reports, setReports] = useState([]);
   const [periodData, setPeriodData] = useState([]);
+
+  useEffect(() => {
+    if (selectedPlaceId) {
+      dispatch(getDashboardDataActionSG(selectedPlaceId))
+    }
+  }, [selectedPlaceId]);
 
   useEffect(() => {
     if (!dashboardData) {
