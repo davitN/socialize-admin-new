@@ -168,20 +168,20 @@ const LatestPosts = () => {
             emptyMessage="Data not found..."
           >
             {dataLoading &&
-              tableHeader.map(({ name, field }) => (
+              tableHeader.map(({ name, field }, index) => (
                 <Column
                   field={field}
                   header={name}
-                  key={field}
+                  key={`${field}_${index}`}
                   body={<Skeleton />}
                 />
               ))}
             {!dataLoading &&
-              tableHeader.map((item) => {
+              tableHeader.map((item, index) => {
                 if (item.haveTemplate) {
-                  return <Column header={item.name} body={item.template} />;
+                  return <Column header={item.name} body={item.template} key={`${item.field}_${index}`} />;
                 } else {
-                  return <Column field={item.field} header={item.name} />;
+                  return <Column field={item.field} header={item.name} key={`${item.field}_${index}`} />;
                 }
               })}
           </DataTable>
