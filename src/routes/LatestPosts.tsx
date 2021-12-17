@@ -12,7 +12,9 @@ import { Skeleton } from 'primereact/skeleton';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Post } from '../types/dashboard';
+import { initialDataReducer } from '../store/ducks';
 import altImg from '../assets/images/alt-profile-img.jpg';
+import { getDashboardDataActionSG } from '../store/ducks/dashboardDuck';
 
 const getCustomerTypeColors = (type: string): string => {
   switch (type) {
@@ -115,6 +117,9 @@ const LatestPosts = () => {
   const { latestPosts } = useSelector(
     (state: RootState) => state.latestPostsReducer
   );
+  const { selectedPlaceId } = useSelector(
+    (state: RootState) => state.initialDataReducer
+  );
 
   const [currentPage, setCurrentPage] = useState<number>(0);
 
@@ -122,7 +127,7 @@ const LatestPosts = () => {
     setDataLoading(true);
     dispatch(
       getLatestPostsActionSG(
-        { offset: 0, limit: LIMIT },
+        { offset: 0, limit: LIMIT, placeId: selectedPlaceId },
         {
           success: () => {
             setDataLoading(false);
@@ -136,12 +141,25 @@ const LatestPosts = () => {
     console.log(latestPosts.data);
   }, [dispatch]);
 
+  useEffect(() => {
+    if (selectedPlaceId) {
+      dispatch(
+        getLatestPostsActionSG({
+          offset: 0,
+          limit: LIMIT,
+          placeId: selectedPlaceId,
+        })
+      );
+    }
+    setDataLoading(false);
+  }, [selectedPlaceId]);
+
   const handlePageChange = (event: PaginationEventModel) => {
     setCurrentPage(event.first);
     setDataLoading(true);
     dispatch(
       getLatestPostsActionSG(
-        { offset: event.first, limit: LIMIT },
+        { offset: event.first, limit: LIMIT, placeId: selectedPlaceId },
         {
           success: () => {
             setDataLoading(false);
@@ -179,9 +197,21 @@ const LatestPosts = () => {
             {!dataLoading &&
               tableHeader.map((item, index) => {
                 if (item.haveTemplate) {
-                  return <Column header={item.name} body={item.template} key={`${item.field}_${index}`} />;
+                  return (
+                    <Column
+                      header={item.name}
+                      body={item.template}
+                      key={`${item.field}_${index}`}
+                    />
+                  );
                 } else {
-                  return <Column field={item.field} header={item.name} key={`${item.field}_${index}`} />;
+                  return (
+                    <Column
+                      field={item.field}
+                      header={item.name}
+                      key={`${item.field}_${index}`}
+                    />
+                  );
                 }
               })}
           </DataTable>
