@@ -8,11 +8,9 @@ import { createUseStyles } from 'react-jss';
 import { useNavigate, useParams } from 'react-router-dom';
 import CvSwitcher from '../components/shared/switcher';
 import { Button } from 'primereact/button';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store/configureStore';
+import { useDispatch } from 'react-redux';
 import { CompanyModel } from '../types/company';
 import {
-  getCompanySubscriptionActionSG,
   getSelectedCompanyActionSG,
   putCompanyAction,
   saveCompanyAction
@@ -65,7 +63,7 @@ const CompanyForm: React.FC<{}> = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id: companyId } = useParams();
-  const { companySubscriptionData } = useSelector((state: RootState) => state.companyReducer);
+  // const { companySubscriptionData } = useSelector((state: RootState) => state.companyReducer);
   const [values, setValues] = useState<CompanyModel>({
     _id: '',
     placeId: '',
@@ -85,16 +83,16 @@ const CompanyForm: React.FC<{}> = () => {
     __v: null
   })
 
-  const getCompanySubscriptions = () => {
-    dispatch(getCompanySubscriptionActionSG({
-      success: () => {
-        //
-      },
-      error: () => {
-        //
-      }
-    }))
-  }
+  // const getCompanySubscriptions = () => {
+  //   dispatch(getCompanySubscriptionActionSG({
+  //     success: () => {
+  //       //
+  //     },
+  //     error: () => {
+  //       //
+  //     }
+  //   }))
+  // }
 
   const getSelectedCompany = (companyId: string) => {
     dispatch(getSelectedCompanyActionSG(companyId, {

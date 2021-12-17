@@ -8,7 +8,6 @@ export const DEFAULT = 'socialize/main/default';
 export const RESET_STORE = 'socialize/main/resetStore';
 export const CHECKED_SIGNED_IN = 'socialize/main/checkedSignedIn';
 export const GET_INITIAL_ROLES_SG = "socialize/main/getInitialRoles_sg";
-export const SET_INITIAL_ROLES_DATA = "socialize/main/setInitialRoles";
 
 const initialState = {
   isLoading: true,
@@ -40,11 +39,6 @@ export const checkedSignedInAction = (isSignedIn: boolean) => ({
 export const resetStoreAction = (isLoading = false) => ({
   type: RESET_STORE,
   isLoading,
-});
-
-export const setInitialRolesAction = (data: any) => ({
-  type: SET_INITIAL_ROLES_DATA,
-  payload: data,
 });
 
 export const getInitialRolesActionSG = (callbacks?: CallBacks) => ({
