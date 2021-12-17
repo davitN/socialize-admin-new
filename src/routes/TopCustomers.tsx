@@ -99,23 +99,6 @@ const TopCustomers = () => {
 
   const [currentPage, setCurrentPage] = useState<number>(0);
 
-  useEffect(() => {
-    setDataLoading(true);
-    dispatch(
-      getTopCustomersActionSG(
-        { offset: 0, limit: LIMIT, placeId: selectedPlaceId },
-        {
-          success: () => {
-            setDataLoading(false);
-          },
-          error: () => {
-            setDataLoading(false);
-          },
-        }
-      )
-    );
-  }, [dispatch]);
-
   const handlePageChange = (event: PaginationEventModel) => {
     setCurrentPage(event.first);
     setDataLoading(true);

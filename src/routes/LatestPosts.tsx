@@ -124,24 +124,6 @@ const LatestPosts = () => {
   const [currentPage, setCurrentPage] = useState<number>(0);
 
   useEffect(() => {
-    setDataLoading(true);
-    dispatch(
-      getLatestPostsActionSG(
-        { offset: 0, limit: LIMIT, placeId: selectedPlaceId },
-        {
-          success: () => {
-            setDataLoading(false);
-          },
-          error: () => {
-            setDataLoading(false);
-          },
-        }
-      )
-    );
-    console.log(latestPosts.data);
-  }, [dispatch]);
-
-  useEffect(() => {
     if (selectedPlaceId) {
       dispatch(
         getLatestPostsActionSG({
