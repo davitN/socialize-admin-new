@@ -4,7 +4,8 @@ import React from 'react';
 export interface TableQueryParams {
   offset: number,
   limit: number,
-  searchWord?: string
+  searchWord?: string,
+  placeId?: string
 }
 
 export interface TableHeaderModel {
