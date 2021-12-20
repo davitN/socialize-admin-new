@@ -1,9 +1,6 @@
-import { Customer } from '../dashboard';
-import React from 'react';
-
 export interface TableQueryParams {
-  offset: number,
-  limit: number,
+  offset?: number,
+  limit?: number,
   searchWord?: string,
   placeId?: string
 }

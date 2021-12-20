@@ -15,7 +15,6 @@ import {
   setSelectedPlaceIdAction,
 } from '../../store/ducks/initialDataDuck';
 import { InitialDataModel, PlaceModel } from '../../types/initial-data';
-import { getDashboardDataActionSG } from '../../store/ducks/dashboardDuck';
 import { MultiSelect } from 'primereact/multiselect';
 import avatar1 from '../../assets/images/users/avatar-1.jpg';
 
@@ -59,8 +58,7 @@ const Header: React.FC<{}> = () => {
 
   useEffect(() => {
     if (selectedPlace.length > 0) {
-      console.log(selectedPlace);
-      dispatch(setSelectedPlaceIdAction(selectedPlace[0]._id));
+      dispatch(setSelectedPlaceIdAction(selectedPlace[0]._id))
     }
   }, [selectedPlace]);
 

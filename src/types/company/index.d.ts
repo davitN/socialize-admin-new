@@ -1,7 +1,8 @@
 export interface CompanyModel {
   _id?: string;
-  placeId?: string;
   adminId?: string;
+  email: string;
+  phone: string;
   name?: string;
   companySubscription?: CompanySubscriptionModel;
   paidTill?: string;

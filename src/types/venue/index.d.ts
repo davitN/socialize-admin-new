@@ -1,5 +1,6 @@
 export interface VenueStateModel {
   _id?: string,
+  company: string
   allowUsersToAccessAfterLeaving: boolean,
   accessDaysAfter: number,
   inObjectRadiusInMeters: number,

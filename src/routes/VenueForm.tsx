@@ -14,6 +14,9 @@ import { Button } from 'primereact/button';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/configureStore';
 import { putVenueAction, saveVenueAction } from '../store/ducks/VenueDuck';
+import { getCompaniesActionSG } from '../store/ducks/companyDuck';
+import { MultiSelect } from 'primereact/multiselect';
+import { CompanyModel } from '../types/company';
 
 const useStyles = createUseStyles({
   inputBlock: {
@@ -34,6 +37,18 @@ const useStyles = createUseStyles({
   },
   errorBorder: {
     borderColor: '#ff4a4a'
+  },
+  multiSelectClass: {
+    height: '40px',
+    '& label': {
+      width: '200px',
+      textAlign: 'start'
+    },
+    '& .p-multiselect': {
+      width: 'calc(100% - 200px)',
+      borderRadius: '0.25rem',
+      height: '100%'
+    }
   },
   formLabel: {
     width: '200px',
@@ -59,13 +74,18 @@ const VenueForm: React.FC<{}> = () => {
   const classes = useStyles();
   const [newMode, setNewMode] = useState(false);
   const dispatch = useDispatch();
+  const [selectedCompany, setSelectedCompany] = useState<Array<CompanyModel>>([]);
   const navigate = useNavigate();
   const { id: venueId } = useParams();
   const [logoImg, setLogo] = useState([]);
   const [coverThumbnailImg, setCoverThumbnail] = useState([]);
   const [coverImg, setCover] = useState([]);
+  const { companiesData } = useSelector(
+      (state: RootState) => state.companyReducer
+  );
   const [values, setValues] = useState<VenueStateModel>({
     accessDaysAfter: null,
+    company: '',
     allowUsersToAccessAfterLeaving: false,
     cover: {
       width: null,
@@ -105,6 +125,32 @@ const VenueForm: React.FC<{}> = () => {
     type: 'Restaurant'
   })
 
+  const getCompanies = () => {
+    dispatch(
+        getCompaniesActionSG({offset: 0, limit: 1000000}, {
+          success: () => {
+            //
+          },
+          error: () => {
+            //
+          },
+        })
+    );
+  };
+
+  const onSelectCompany = (values: CompanyModel[]) => {
+    if (values.length > 0) {
+      setSelectedCompany([values[values.length - 1]]);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedCompany.length > 0) {
+      setValues({...values, company: selectedCompany[0]._id});
+    }
+  }, [selectedCompany]);
+
+
   const sendData: VenueSendModel = { data: null, coverThumbnail: null, cover: null, logo: null };
   const { venuesData } = useSelector((state: RootState) => state.venueReducer);
 
@@ -124,6 +170,9 @@ const VenueForm: React.FC<{}> = () => {
     }
   }
   const formNotValid = () => {
+    if (!values.company) {
+      return true;
+    }
     if (!values.profile.name) {
       return true;
     }
@@ -171,14 +220,18 @@ const VenueForm: React.FC<{}> = () => {
         success: () => {
           navigate('/venues')
         },
-        error: (error: any) => console.log(error),
+        error: () => {
+          //
+        }
       }))
     } else {
-      dispatch(putVenueAction(values._id, sendData, {
+      dispatch(putVenueAction(values._id, { ...sendData }, {
         success: () => {
           navigate('/venues')
         },
-        error: (error: any) => console.log(error),
+        error: () => {
+          //
+        },
       }))
     }
   }
@@ -190,6 +243,17 @@ const VenueForm: React.FC<{}> = () => {
   });
 
   useEffect(() => {
+    if (!newMode && values.company) {
+      const company = companiesData.data.find(item => item._id === values.company);
+      if (company) {
+        setSelectedCompany([company]);
+      }
+    }
+  }, [companiesData]);
+
+
+  useEffect(() => {
+    getCompanies();
     if (venueId === 'new') {
       setNewMode(true)
     } else if (venueId) {
@@ -279,6 +343,20 @@ const VenueForm: React.FC<{}> = () => {
                   placeholder="Enter your Business Name"
                   required
               />
+              <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
+                <label>Company</label>
+                <MultiSelect
+                    className={(isSubmitted && selectedCompany.length === 0) ? classes.errorBorder : ''}
+                    scrollHeight={'240px'}
+                    showSelectAll={false}
+                    value={selectedCompany}
+                    optionLabel={'name'}
+                    options={companiesData.data || []}
+                    onChange={(e) => onSelectCompany(e.value)}
+                    placeholder="Select a Company"
+                    filter={true}
+                />
+              </div>
               <TextInput
                   customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.location.address) ? classes.inputError : ''}`}
                   value={values.location.address}
@@ -671,7 +749,7 @@ const VenueForm: React.FC<{}> = () => {
                 <Col md="9">
                   <Input
                       type="number"
-                      value={values.accessDaysAfter}
+                      value={values.accessDaysAfter || ''}
                       className={`form-control ${(isSubmitted && !values.accessDaysAfter) ? classes.errorBorder : ''}`}
                       id="days-after"
                       onChange={event => setValues({
@@ -690,7 +768,7 @@ const VenueForm: React.FC<{}> = () => {
                       All time visitors count
                     </Label>
                     <Col md="9">
-                      <Input type="number" value={values.allTimeVisitorsCount}
+                      <Input type="number" value={values.allTimeVisitorsCount || ''}
                              className={`form-control`}
                              readOnly={true}
                              id="all-time-visitors-count"

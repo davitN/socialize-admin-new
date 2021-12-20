@@ -45,7 +45,6 @@ const SideNav: React.FC<{}> = () => {
   React.useEffect(() => {
     setActiveRoute(location.pathname);
     // runs on location, i.e. route, change
-    console.log('handle route change here', location);
   }, [location]);
   return (
     <div className={`flex-vertical vertical-filled ${classes.container}`}>

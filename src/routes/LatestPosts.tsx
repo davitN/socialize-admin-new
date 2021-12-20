@@ -12,9 +12,7 @@ import { Skeleton } from 'primereact/skeleton';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Post } from '../types/dashboard';
-import { initialDataReducer } from '../store/ducks';
 import altImg from '../assets/images/alt-profile-img.jpg';
-import { getDashboardDataActionSG } from '../store/ducks/dashboardDuck';
 
 const getCustomerTypeColors = (type: string): string => {
   switch (type) {
@@ -35,18 +33,18 @@ const tableHeader = [
     field: '_id',
     haveTemplate: true,
     template: (rowData: Post) => (
-      <>
-        {
-          <img
-            data-dz-thumbnail=""
-            height="30"
-            className={'rounded'}
-            alt={rowData.username}
-            src={rowData?.profileImage?.imgURL || altImg}
-          />
-        }{' '}
-        {rowData._id}
-      </>
+        <>
+          {
+            <img
+                data-dz-thumbnail=""
+                height="30"
+                className={'rounded'}
+                alt={rowData.username}
+                src={rowData?.profileImage?.imgURL || altImg}
+            />
+          }{' '}
+          {rowData._id}
+        </>
     ),
   },
   {
@@ -54,9 +52,9 @@ const tableHeader = [
     field: 'name',
     haveTemplate: true,
     template: (rowData: Post) => (
-      <Fragment>
-        {rowData.firstName} {rowData.lastName}
-      </Fragment>
+        <Fragment>
+          {rowData.firstName} {rowData.lastName}
+        </Fragment>
     ),
   },
   {
@@ -64,13 +62,13 @@ const tableHeader = [
     field: 'createdAt',
     haveTemplate: true,
     template: (rowData: Post) => (
-      <Fragment>
-        {new Date(rowData.createdAt).toLocaleDateString('en-GB', {
-          day: '2-digit',
-          month: 'short',
-        })}
-        , {new Date(rowData.createdAt).getFullYear()}
-      </Fragment>
+        <Fragment>
+          {new Date(rowData.createdAt).toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+          })}
+          , {new Date(rowData.createdAt).getFullYear()}
+        </Fragment>
     ),
   },
   {
@@ -82,15 +80,15 @@ const tableHeader = [
     field: 'customerType',
     haveTemplate: true,
     template: (row: Post) => (
-      <Badge
-        className={
-          'font-size-12 badge-soft-' + getCustomerTypeColors(row.customerType)
-        }
-        color={getCustomerTypeColors(row.customerType)}
-        pill
-      >
-        {row.customerType}
-      </Badge>
+        <Badge
+            className={
+                'font-size-12 badge-soft-' + getCustomerTypeColors(row.customerType)
+            }
+            color={getCustomerTypeColors(row.customerType)}
+            pill
+        >
+          {row.customerType}
+        </Badge>
     ),
   },
   {
@@ -103,9 +101,9 @@ const tableHeader = [
     haveTemplate: true,
     template: () => {
       return (
-        <Button type="button" color="primary" className="btn-sm btn-rounded">
-          View Details
-        </Button>
+          <Button type="button" color="primary" className="btn-sm btn-rounded">
+            View Details
+          </Button>
       );
     },
   },
@@ -115,22 +113,29 @@ const LatestPosts = () => {
   const LIMIT = 10;
   const dispatch = useDispatch();
   const { latestPosts } = useSelector(
-    (state: RootState) => state.latestPostsReducer
+      (state: RootState) => state.latestPostsReducer
   );
-  const { selectedPlaceId } = useSelector(
-    (state: RootState) => state.initialDataReducer
-  );
-
+  const { selectedPlaceId } = useSelector((state: RootState) => state.initialDataReducer);
   const [currentPage, setCurrentPage] = useState<number>(0);
 
   useEffect(() => {
     if (selectedPlaceId) {
+      setDataLoading(true);
       dispatch(
-        getLatestPostsActionSG({
-          offset: 0,
-          limit: LIMIT,
-          placeId: selectedPlaceId,
-        })
+          getLatestPostsActionSG({
+                offset: 0,
+                limit: LIMIT,
+                placeId: selectedPlaceId,
+              },
+              {
+                success: () => {
+                  setDataLoading(false);
+                },
+                error: () => {
+                  setDataLoading(false);
+                },
+              }
+          )
       );
     }
     setDataLoading(false);
@@ -140,74 +145,74 @@ const LatestPosts = () => {
     setCurrentPage(event.first);
     setDataLoading(true);
     dispatch(
-      getLatestPostsActionSG(
-        { offset: event.first, limit: LIMIT, placeId: selectedPlaceId },
-        {
-          success: () => {
-            setDataLoading(false);
-          },
-          error: () => {
-            setDataLoading(false);
-          },
-        }
-      )
+        getLatestPostsActionSG(
+            { offset: event.first, limit: LIMIT, placeId: selectedPlaceId },
+            {
+              success: () => {
+                setDataLoading(false);
+              },
+              error: () => {
+                setDataLoading(false);
+              },
+            }
+        )
     );
   };
 
   return (
-    <div className="page-content">
-      <Card>
-        <CardBody>
-          <CardTitle title="Latest Posts" />
-          <DataTable
-            className={'fs-6'}
-            value={latestPosts?.data || new Array(5).fill(0)}
-            responsiveLayout="scroll"
-            rows={LIMIT}
-            // tableClassName={classes.table}
-            emptyMessage="Data not found..."
-          >
-            {dataLoading &&
-              tableHeader.map(({ name, field }, index) => (
-                <Column
-                  field={field}
-                  header={name}
-                  key={`${field}_${index}`}
-                  body={<Skeleton />}
-                />
-              ))}
-            {!dataLoading &&
-              tableHeader.map((item, index) => {
-                if (item.haveTemplate) {
-                  return (
-                    <Column
-                      header={item.name}
-                      body={item.template}
-                      key={`${item.field}_${index}`}
-                    />
-                  );
-                } else {
-                  return (
-                    <Column
-                      field={item.field}
-                      header={item.name}
-                      key={`${item.field}_${index}`}
-                    />
-                  );
-                }
-              })}
-          </DataTable>
-          <Paginator
-            className="justify-content-end"
-            template="PrevPageLink PageLinks NextPageLink"
-            first={currentPage}
-            rows={LIMIT}
-            totalRecords={latestPosts.count}
-            onPageChange={handlePageChange}
-          />
-        </CardBody>
-      </Card>
-    </div>
+      <div className="page-content">
+        <Card>
+          <CardBody>
+            <CardTitle title="Latest Posts"/>
+            <DataTable
+                className={'fs-6'}
+                value={latestPosts?.data || new Array(5).fill(0)}
+                responsiveLayout="scroll"
+                rows={LIMIT}
+                // tableClassName={classes.table}
+                emptyMessage="Data not found..."
+            >
+              {dataLoading &&
+                  tableHeader.map(({ name, field }, index) => (
+                      <Column
+                          field={field}
+                          header={name}
+                          key={`${field}_${index}`}
+                          body={<Skeleton/>}
+                      />
+                  ))}
+              {!dataLoading &&
+                  tableHeader.map((item, index) => {
+                    if (item.haveTemplate) {
+                      return (
+                          <Column
+                              header={item.name}
+                              body={item.template}
+                              key={`${item.field}_${index}`}
+                          />
+                      );
+                    } else {
+                      return (
+                          <Column
+                              field={item.field}
+                              header={item.name}
+                              key={`${item.field}_${index}`}
+                          />
+                      );
+                    }
+                  })}
+            </DataTable>
+            <Paginator
+                className="justify-content-end"
+                template="PrevPageLink PageLinks NextPageLink"
+                first={currentPage}
+                rows={LIMIT}
+                totalRecords={latestPosts.count}
+                onPageChange={handlePageChange}
+            />
+          </CardBody>
+        </Card>
+      </div>
   );
 };
 

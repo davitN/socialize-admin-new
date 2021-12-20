@@ -13,9 +13,9 @@ import {
   Label,
   Row,
 } from 'reactstrap';
-import { VenueImages, VenueSendModel, VenueStateModel } from '../types/venue';
 import Breadcrumbs from '../components/shared/Breadcrumb';
 import TextInput from '../components/shared/form-elements/TextInput';
+import { Password } from 'primereact/password';
 
 import { createUseStyles } from 'react-jss';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -178,17 +178,26 @@ const UserProfile: React.FC<{}> = () => {
               </FormGroup>
             ) : (
               <Card>
-                <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
-                    isSubmitted && !values.password ? classes.inputError : ''
-                  }`}
-                  type="password"
-                  value={values.password}
-                  handleChange={() =>
-                    setValues({ ...values, password: values.password })
-                  }
-                  label="Old Password"
-                />
+                <Label
+                  md="3"
+                  className="col-form-label text-start"
+                  htmlFor="old-password"
+                >
+                  Old Password
+                </Label>
+                <Col md="9" className={'flex-horizontal'}>
+                  <Password
+                    id="old-password"
+                    className={`flex-horizontal mb-3 ${classes.inputBlock} ${
+                      isSubmitted && !values.password ? classes.inputError : ''
+                    }`}
+                    type="password"
+                    value={values.password}
+                    onChange={(e) =>
+                      setValues({ ...values, password: e.target.value })
+                    }
+                  />
+                </Col>
 
                 <TextInput
                   type="password"
