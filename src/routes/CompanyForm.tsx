@@ -58,15 +58,26 @@ const useStyles = createUseStyles({
 const CompanyForm: React.FC<{}> = () => {
   const classes = useStyles();
   const [paidTillDate, setPaidTillDate] = useState<Date>(new Date());
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [newMode, setNewMode] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [validation, setValidation] = useState<{
+    email: boolean,
+    phone: boolean,
+    name: boolean,
+    submitted: boolean
+  }>({
+    email: false,
+    name: false,
+    phone: false,
+    submitted: false
+  });
   const { id: companyId } = useParams();
   // const { companySubscriptionData } = useSelector((state: RootState) => state.companyReducer);
   const [values, setValues] = useState<CompanyModel>({
     _id: '',
-    placeId: '',
+    email: '',
+    phone: '',
     adminId: '',
     name: '',
     companySubscription: {
@@ -105,29 +116,36 @@ const CompanyForm: React.FC<{}> = () => {
     }))
   }
 
+  const handleValidation = () => {
+    setValidation({
+      ...validation,
+      name: !!values.name,
+      phone: !!values.phone,
+      email: new RegExp('^[^@]+@[^@]{2,}\\.[^@]{2,}$').test(values.email)
+    });
+  };
+
   const calendarResponse = (event: CalendarChangeParams) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     setPaidTillDate(event.value)
   }
 
-  const formNotValid = () => {
-    if (!values.name) {
-      return true;
-    }
-    return false;
-  }
-
   const submitButton = (event: Event) => {
     event.preventDefault();
-    setIsSubmitted(true);
-    if (formNotValid()) {
+    setValidation({...validation, submitted: true});
+    if (!(validation.name && validation.phone && validation.email)) {
       return;
     }
-    const sendData: any = values;
+    const sendData: CompanyModel | any = values;
     sendData.paidTill = paidTillDate.toISOString();
     if (newMode) {
-      dispatch(saveCompanyAction(values, {
+      const newData: CompanyModel = {
+        email: sendData.email,
+        phone: sendData.phone,
+        name: sendData.name
+      }
+      dispatch(saveCompanyAction(newData, {
         success: () => {
           navigate('/company')
         },
@@ -145,6 +163,11 @@ const CompanyForm: React.FC<{}> = () => {
   }
 
   useEffect(() => {
+    handleValidation();
+  }, [values]);
+
+
+  useEffect(() => {
     if (companyId === 'new') {
       setNewMode(true)
     } else if (companyId) {
@@ -157,6 +180,7 @@ const CompanyForm: React.FC<{}> = () => {
   function onSwitch(active: boolean) {
     setValues({ ...values, isActive: active })
   }
+
   return (
       <div className="page-content">
         <Breadcrumbs
@@ -171,11 +195,28 @@ const CompanyForm: React.FC<{}> = () => {
             {/*</CardSubtitle>*/}
             <Form>
               <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.name) ? classes.inputError : ''}`}
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(validation.submitted && !validation.name) ? classes.inputError : ''}`}
                   value={values.name}
                   handleChange={(name) => setValues({ ...values, name })}
                   label="Company Name"
                   placeholder="Enter your Company Name"
+                  required
+              />
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(validation.submitted && !validation.phone) ? classes.inputError : ''}`}
+                  value={values.phone}
+                  handleChange={(phone) => setValues({ ...values, phone })}
+                  label="Phone"
+                  placeholder="Enter Phone Number"
+                  required
+              />
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(validation.submitted && !validation.email) ? classes.inputError : ''}`}
+                  value={values.email}
+                  handleChange={(email) => setValues({ ...values, email })}
+                  label="Email"
+                  type={'email'}
+                  placeholder="Enter Email"
                   required
               />
               {!newMode && (
