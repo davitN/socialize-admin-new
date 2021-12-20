@@ -22,12 +22,12 @@ import { getTopCustomersSaga } from './topCustomersSaga';
 import { getVenuesSaga, putVenueSaga, saveVenueSaga } from './VenuesSaga';
 import { GET_VENUES_SG, PUT_VENUE, SAVE_VENUE } from '../ducks/VenueDuck';
 import {
-  getCompaniesSaga, getCompanySubscriptionsSaga,
+  getCompaniesSaga, getCompanySubscriptionsSaga, getSelectedCompanySaga,
   putCompanySaga,
   saveCompanySaga,
 } from './companySaga';
 import {
-  GET_COMPANIES_SG, GET_COMPANY_SUBSCRIPTION_SG,
+  GET_COMPANIES_SG, GET_COMPANY_SUBSCRIPTION_SG, GET_SELECTED_COMPANY_SG,
   PUT_COMPANY,
   SAVE_COMPANY,
 } from '../ducks/companyDuck';
@@ -51,6 +51,7 @@ function* actionWatcher() {
   yield takeLatest(PUT_COMPANY, putCompanySaga);
   yield takeLatest(GET_COMPANIES_SG, getCompaniesSaga);
   yield takeLatest(GET_COMPANY_SUBSCRIPTION_SG, getCompanySubscriptionsSaga);
+  yield takeLatest(GET_SELECTED_COMPANY_SG, getSelectedCompanySaga);
 }
 
 export default function* rootSaga() {

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -110,10 +110,6 @@ const tableHeader = [
 ];
 const Posts: React.FC<{ posts: Post[] }> = ({ posts }) => {
   const LIMIT = 5;
-
-  const [modal1, setModal1] = useState(false);
-
-  const toggleViewModal = () => setModal1(!modal1);
 
   return (
     <Card>

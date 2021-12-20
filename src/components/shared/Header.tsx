@@ -5,7 +5,6 @@ import { logoutAction } from '../../store/ducks/authDuck';
 import { RootState } from '../../store/configureStore';
 import { getInitialDataActionSG, setSelectedPlaceIdAction } from '../../store/ducks/initialDataDuck';
 import { InitialDataModel, PlaceModel } from '../../types/initial-data';
-import { getDashboardDataActionSG } from '../../store/ducks/dashboardDuck';
 import { MultiSelect } from 'primereact/multiselect';
 
 const useStyles = createUseStyles({
@@ -39,7 +38,6 @@ const Header: React.FC<{}> = () => {
 
   useEffect(() => {
     if (selectedPlace.length > 0) {
-      console.log(selectedPlace)
       dispatch(setSelectedPlaceIdAction(selectedPlace[0]._id))
     }
   }, [selectedPlace]);
