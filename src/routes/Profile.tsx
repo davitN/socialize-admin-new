@@ -1,29 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import {
   Card,
   CardBody,
-  CardSubtitle,
   CardTitle,
   Col,
   Form,
   FormGroup,
   Input,
   Label,
-  Row,
 } from 'reactstrap';
 import Breadcrumbs from '../components/shared/Breadcrumb';
-import TextInput from '../components/shared/form-elements/TextInput';
 import { Password } from 'primereact/password';
-
 import { createUseStyles } from 'react-jss';
-import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'primereact/button';
-import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/configureStore';
-import { putVenueAction, saveVenueAction } from '../store/ducks/VenueDuck';
 import { UserProfileModel, userProfileSendModel } from '../types/profile';
+import { changePasswordActionSG } from '../store/ducks/authDuck';
 
 const useStyles = createUseStyles({
   inputBlock: {
@@ -32,40 +28,32 @@ const useStyles = createUseStyles({
       marginBottom: 0,
       textAlign: 'start',
     },
-    '& input': {
-      width: 'calc(100% - 200px)',
-      borderRadius: '0.25rem',
-    },
   },
   inputError: {
-    '& input': {
-      borderColor: '#ff4a4a',
-    },
-  },
-  errorBorder: {
     borderColor: '#ff4a4a',
   },
-  formLabel: {
-    width: '200px',
+  passwordInput: {
+    width: '100% !important',
+    lineHeight: 'normal !important',
   },
-  formValue: {
-    width: 'calc(100% - 200px)',
-  },
-  dropZoneWrapper: {
-    padding: 0,
-    '& .dropzone': {
-      width: '400px',
-    },
-  },
-  dropZonePreviewImg: {
-    width: '140px',
-    height: 'calc(140px - 1rem)',
-    objectFit: 'cover',
+  errText: {
+    display: 'flex',
+    justifyContent: 'center',
+    height: '30px',
+    color: '#ff4a4a',
+    alignItems: 'center',
+    textAlign: 'center',
+    width: '100%',
   },
 });
 
+let errorText = '';
+
 const UserProfile: React.FC<{}> = () => {
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [formInvalid, setFormInvalid] = useState(false);
+  const [oldPassIsValid, setOldPassIsValid] = useState(true);
+  const [newPassIsValid, setNewPassIsValid] = useState(true);
+  const [confirmPassIsValid, setConfirmPassIsValid] = useState(true);
   const classes = useStyles();
   const [showPasswordsForm, setShowPasswordsForm] = useState(false);
   const dispatch = useDispatch();
@@ -79,6 +67,7 @@ const UserProfile: React.FC<{}> = () => {
 
   const sendData: userProfileSendModel = {
     data: null,
+    _id: userData._id,
   };
 
   const onChangeState = (changedStates: UserProfileModel) => {
@@ -89,15 +78,7 @@ const UserProfile: React.FC<{}> = () => {
     onChangeState(values);
   });
 
-  const formNotValid = () => {
-    if (!values.password) {
-      return true;
-    }
-    if (!values.newPassword) {
-      return true;
-    }
-    return false;
-  };
+  const regEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/;
 
   const togglePasswordInputs = () => {
     setShowPasswordsForm(true);
@@ -105,12 +86,49 @@ const UserProfile: React.FC<{}> = () => {
 
   const submitButton = (event: any) => {
     event.preventDefault();
-    setIsSubmitted(true);
-    if (formNotValid()) {
+
+    if (!values.password) {
+      setOldPassIsValid(false);
+      setFormInvalid(true);
+      errorText = 'Please enter valid password.';
+      return;
+    }
+    if (!values.newPassword) {
+      setNewPassIsValid(false);
+      setFormInvalid(true);
+      errorText = 'Please enter valid password.';
+      return;
+    }
+
+    // Check for safety
+
+    // if (!regEx.test(values.newPassword)) {
+    //   setNewPassIsValid(false);
+    //   setFormInvalid(true);
+    //   errorText = 'Please enter stronger password.';
+    //   return;
+    // }
+    if (!values.confirmPassword) {
+      setConfirmPassIsValid(false);
+      setFormInvalid(true);
+      errorText = 'Please repeat passsword.';
+      return;
+    } else {
+      if (values.confirmPassword !== values.newPassword) {
+        errorText = 'Passwords do not match!';
+        setConfirmPassIsValid(false);
+        setNewPassIsValid(false);
+        setFormInvalid(true);
+        return;
+      }
+    }
+    errorText = '';
+
+    if (!formInvalid) {
       return;
     }
     dispatch(
-      putVenueAction(userData._id, sendData, {
+      changePasswordActionSG(sendData, {
         success: () => {
           navigate('/dashboard');
         },
@@ -163,8 +181,7 @@ const UserProfile: React.FC<{}> = () => {
                 />
               </Col>
             </FormGroup>
-
-            {!showPasswordsForm ? (
+            {!showPasswordsForm && (
               <FormGroup className="mb-3" row>
                 <Label md="3" className="col-form-label text-start">
                   Password
@@ -176,8 +193,28 @@ const UserProfile: React.FC<{}> = () => {
                   ></Button>
                 </Col>
               </FormGroup>
-            ) : (
-              <Card>
+            )}
+          </CardBody>
+        </Card>
+        {showPasswordsForm && (
+          <Card>
+            <CardBody>
+              {/* <FormGroup className={'flex-horizontal flex-end'}>
+                <TextInput
+                  type="password"
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
+                    isSubmitted && !values.password ? classes.inputError : ''
+                  }`}
+                  handleChange={(password) =>
+                    setValues({ ...values, password: password })
+                  }
+                  value={values.password}
+                  label="Old Password"
+                  required
+                />
+              </FormGroup> */}
+
+              <FormGroup className="flex-horizontal">
                 <Label
                   md="3"
                   className="col-form-label text-start"
@@ -185,58 +222,102 @@ const UserProfile: React.FC<{}> = () => {
                 >
                   Old Password
                 </Label>
-                <Col md="9" className={'flex-horizontal'}>
+                <Col
+                  md="9"
+                  className={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                >
                   <Password
-                    id="old-password"
-                    className={`flex-horizontal mb-3 ${classes.inputBlock} ${
-                      isSubmitted && !values.password ? classes.inputError : ''
+                    inputId="old-password"
+                    className={`${classes.passwordInput} ${
+                      !oldPassIsValid ? classes.inputError : ''
                     }`}
-                    type="password"
+                    inputClassName={`${classes.passwordInput} ${
+                      !oldPassIsValid ? classes.inputError : ''
+                    } `}
                     value={values.password}
                     onChange={(e) =>
                       setValues({ ...values, password: e.target.value })
                     }
+                    feedback={false}
+                    toggleMask
+                    required
                   />
                 </Col>
-
-                <TextInput
-                  type="password"
-                  value={values.newPassword}
-                  label="New Password"
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
-                    isSubmitted && !values.newPassword ? classes.inputError : ''
-                  }`}
-                  handleChange={() =>
-                    setValues({ ...values, newPassword: values.newPassword })
-                  }
-                />
-
-                <TextInput
-                  type="password"
-                  value={values.confirmPassword}
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
-                    isSubmitted && !values.confirmPassword
-                      ? classes.inputError
-                      : ''
-                  }`}
-                  label="Confirm Password"
-                  handleChange={() =>
-                    setValues({
-                      ...values,
-                      confirmPassword: values.confirmPassword,
-                    })
-                  }
-                />
-              </Card>
-            )}
-
-            <Button
-              label={'Submit'}
-              type={'submit'}
-              onClick={(event) => submitButton(event)}
-            />
-          </CardBody>
-        </Card>
+              </FormGroup>
+              <FormGroup className="flex-horizontal">
+                <Label
+                  md="3"
+                  className="col-form-label text-start"
+                  htmlFor="new-password"
+                >
+                  New Password
+                </Label>
+                <Col md="9" className={`flex-horizontal mb-3 `}>
+                  <Password
+                    inputId="new-password"
+                    className={`${classes.passwordInput} ${
+                      !newPassIsValid ? classes.inputError : ''
+                    }`}
+                    inputClassName={`${classes.passwordInput} ${
+                      !newPassIsValid ? classes.inputError : ''
+                    } `}
+                    value={values.newPassword}
+                    onChange={(e) =>
+                      setValues({ ...values, newPassword: e.target.value })
+                    }
+                    feedback={false}
+                    toggleMask
+                    required
+                  />
+                </Col>
+              </FormGroup>
+              <FormGroup className="flex-horizontal">
+                <Label
+                  md="3"
+                  className="col-form-label text-start"
+                  htmlFor="confirm-password"
+                >
+                  New Password
+                </Label>
+                <Col
+                  md="9"
+                  className={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                >
+                  <Password
+                    inputId="confirm-password"
+                    className={`${classes.passwordInput} ${
+                      !confirmPassIsValid ? classes.inputError : ''
+                    }`}
+                    inputClassName={`${classes.passwordInput} ${
+                      !confirmPassIsValid ? classes.inputError : ''
+                    } `}
+                    value={values.confirmPassword}
+                    onChange={(e) =>
+                      setValues({ ...values, confirmPassword: e.target.value })
+                    }
+                    feedback={false}
+                    toggleMask
+                    required
+                  />
+                </Col>
+              </FormGroup>
+              <Button
+                label={'Submit'}
+                type={'submit'}
+                onClick={(event) => submitButton(event)}
+              />
+              <FormGroup className="flex-horizontal">
+                {formInvalid ? (
+                  <div className={`md-3 ${classes.errText}`}>
+                    <span>{errorText}</span>
+                  </div>
+                ) : (
+                  ''
+                )}
+              </FormGroup>
+            </CardBody>
+          </Card>
+        )}
       </Form>
     </div>
   );

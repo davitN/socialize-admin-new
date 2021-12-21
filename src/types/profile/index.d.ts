@@ -5,5 +5,6 @@ export interface UserProfileModel {
 }
 
 export interface userProfileSendModel {
-  data: userProfileSendModel;
+  _id: string;
+  data: UserProfileModel;
 }
