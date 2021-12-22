@@ -4,7 +4,7 @@ export interface UserProfileModel {
   confirmPassword: string;
 }
 
-export interface userProfileSendModel {
+export interface UserProfileSendModel {
   oldPassword: string;
   password: string;
 }

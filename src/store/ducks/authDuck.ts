@@ -1,7 +1,7 @@
 import { AnyAction } from 'redux';
 import { AuthState, ISignInData, ISignUpData } from '../../types/auth';
 import { CallBacks, IUserData } from '../../types/main';
-import { userProfileSendModel } from '../../types/profile';
+import { UserProfileSendModel } from '../../types/profile';
 
 export const CHECK_SIGNED_IN = 'socialize/auth/checkSignedIn';
 export const SET_USER_DATA = 'socialize/auth/setUserData';
@@ -66,7 +66,7 @@ export const setUserDataAction = (userData: IUserData) => ({
 });
 
 export const changePasswordActionSG = (
-  userData: userProfileSendModel,
+  userData: UserProfileSendModel,
   callback: CallBacks
 ) => ({
   type: REQUEST_PASSWORD_CHANGE_SG,
