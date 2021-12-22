@@ -13,6 +13,7 @@ import VenueForm from './VenueForm';
 import Venues from './Venues';
 import { RootState } from '../store/configureStore';
 import { useSelector } from 'react-redux';
+import UserProfile from './Profile';
 
 const AppRoutes = () => {
   const userRole = useSelector(
@@ -28,6 +29,14 @@ const AppRoutes = () => {
             element={
               <WithAuth>
                 <Dashboard />
+              </WithAuth>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <WithAuth>
+                <UserProfile />
               </WithAuth>
             }
           />

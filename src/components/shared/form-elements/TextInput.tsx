@@ -25,14 +25,14 @@ const TextInput: FC<PropsTypes> = ({
   return (
     <span className={classNames(classes.fullWidth, 'p-field p-mb-0', icon && 'p-input-icon-left', customClasses)}>
       {label && (
-        <label htmlFor="label" className={classNames(classes.textColor)}>
+        <label htmlFor={label} className={classNames(classes.textColor)}>
           {label}
           {desc && <p className={classes.desc}>{desc}</p>}
         </label>
       )}
       {icon && icon}
       <InputText
-        id="label"
+        id={label}
         disabled={disabled}
         value={value || ''}
         placeholder={placeholder}

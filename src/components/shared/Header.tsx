@@ -1,13 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+} from 'reactstrap';
+import { useNavigate } from 'react-router-dom';
 import { logoutAction } from '../../store/ducks/authDuck';
 import { RootState } from '../../store/configureStore';
-import { getInitialDataActionSG, setSelectedPlaceIdAction } from '../../store/ducks/initialDataDuck';
+import {
+  getInitialDataActionSG,
+  setSelectedPlaceIdAction,
+} from '../../store/ducks/initialDataDuck';
 import { InitialDataModel, PlaceModel } from '../../types/initial-data';
-import { MultiSelect } from 'primereact/multiselect';
 import { AutoComplete } from 'primereact/autocomplete';
-import { valuesIn } from 'lodash';
+import avatar1 from '../../assets/images/users/avatar-1.jpg';
 
 const useStyles = createUseStyles({
   container: {
@@ -29,8 +38,15 @@ const Header: React.FC<{}> = () => {
     }
   });
   const dispatch = useDispatch();
-  const userRole = useSelector((state: RootState) => state.authReducer?.userData?.role?.name);
-  const { initialData } = useSelector((state: RootState) => state.initialDataReducer)
+  const userRole = useSelector(
+    (state: RootState) => state.authReducer?.userData?.role?.name
+  );
+  const { userData } = useSelector((state: RootState) => state.authReducer);
+  const { initialData } = useSelector(
+    (state: RootState) => state.initialDataReducer
+  );
+  const navigate = useNavigate();
+  const [showMenu, setShowMenu] = useState(false);
 
   const getInitialData = () => {
     dispatch(getInitialDataActionSG({
@@ -41,7 +57,7 @@ const Header: React.FC<{}> = () => {
         //
       }
     }));
-  }
+  };
 
   useEffect(() => {
     if (selectedPlace._id) {
@@ -54,7 +70,7 @@ const Header: React.FC<{}> = () => {
     if (value._id) {
       setSelectedPlace(value);
     }
-  }
+  };
 
   useEffect(() => {
     console.log('user role is - ', userRole);
@@ -80,7 +96,46 @@ const Header: React.FC<{}> = () => {
             placeholder="Select a Place"
             forceSelection={true}
         />
-        <label className={classes.logOut} onClick={logOut}>log out</label>
+        <Dropdown
+            isOpen={showMenu}
+            toggle={() => setShowMenu(!showMenu)}
+            className="d-inline-block"
+        >
+          <DropdownToggle
+              className="btn header-item "
+              id="page-header-user-dropdown"
+              tag="button"
+          >
+            <img
+                className="rounded-circle header-profile-user"
+                src={avatar1}
+                alt="Header Avatar"
+            />
+            <span
+                className="d-none d-md-inline-block ms-2 me-1"
+                style={{ fontWeight: 600 }}
+            >
+            {userData.firstName} {userData.lastName}
+          </span>
+            <i className="mdi mdi-chevron-down d-none d-xl-inline-block"/>
+          </DropdownToggle>
+          <DropdownMenu className="dropdown-menu-end">
+            <DropdownItem
+                className="dropdown-item"
+                onClick={() => navigate('profile')}
+            >
+              {' '}
+              <i className="bx bx-user font-size-16 align-middle me-1"/>
+              <span>Profile</span>{' '}
+            </DropdownItem>
+            <div className="dropdown-divider"/>
+            <DropdownItem className="dropdown-item" onClick={logOut}>
+              <i className="bx bx-power-off font-size-16 align-middle me-1 text-danger"/>
+              <span>Logout</span>
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+
         {/*<Link to="/companies">companies</Link> | <Link to="/app-users">app users</Link> | <Link to="/auth">log in</Link> |{" "}*/}
         {/*<Link to="/dashboard">dashboard</Link>*/}
       </div>
