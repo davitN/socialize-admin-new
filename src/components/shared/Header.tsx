@@ -6,6 +6,8 @@ import { RootState } from '../../store/configureStore';
 import { getInitialDataActionSG, setSelectedPlaceIdAction } from '../../store/ducks/initialDataDuck';
 import { InitialDataModel, PlaceModel } from '../../types/initial-data';
 import { MultiSelect } from 'primereact/multiselect';
+import { AutoComplete } from 'primereact/autocomplete';
+import { valuesIn } from 'lodash';
 
 const useStyles = createUseStyles({
   container: {
@@ -20,7 +22,12 @@ const useStyles = createUseStyles({
 });
 const Header: React.FC<{}> = () => {
   const classes = useStyles();
-  const [selectedPlace, setSelectedPlace] = useState<Array<PlaceModel>>([]);
+  const [selectedPlace, setSelectedPlace] = useState<PlaceModel>({
+    _id: '',
+    profile: {
+      name: ''
+    }
+  });
   const dispatch = useDispatch();
   const userRole = useSelector((state: RootState) => state.authReducer?.userData?.role?.name);
   const { initialData } = useSelector((state: RootState) => state.initialDataReducer)
@@ -28,7 +35,7 @@ const Header: React.FC<{}> = () => {
   const getInitialData = () => {
     dispatch(getInitialDataActionSG({
       success: (res: InitialDataModel) => {
-        setSelectedPlace([res.places[0]]);
+        setSelectedPlace(res.places[0]);
       },
       error: () => {
         //
@@ -37,14 +44,15 @@ const Header: React.FC<{}> = () => {
   }
 
   useEffect(() => {
-    if (selectedPlace.length > 0) {
-      dispatch(setSelectedPlaceIdAction(selectedPlace[0]._id))
+    if (selectedPlace._id) {
+      dispatch(setSelectedPlaceIdAction(selectedPlace._id))
     }
   }, [selectedPlace]);
 
-  const onSelectPlace = (values: PlaceModel[]) => {
-    if (values.length > 1) {
-      setSelectedPlace([values[values.length - 1]]);
+  const onSelectPlace = (value: PlaceModel) => {
+    console.log(value)
+    if (value._id) {
+      setSelectedPlace(value);
     }
   }
 
@@ -61,15 +69,16 @@ const Header: React.FC<{}> = () => {
 
   return (
       <div className={`flex-horizontal ${classes.container}`}>
-        <MultiSelect
+        <AutoComplete
+            dropdown={true}
             scrollHeight={'240px'}
-            showSelectAll={false}
             value={selectedPlace}
-            optionLabel={'profile.name'}
-            options={initialData.places || []}
-            onChange={(e) => onSelectPlace(e.value)}
+            field={'profile.name'}
+            suggestions={initialData.places || []}
+            // onChange={(e) => onSelectPlace(e.value)}
+            onSelect={(e) => onSelectPlace(e.value)}
             placeholder="Select a Place"
-            filter={true}
+            forceSelection={true}
         />
         <label className={classes.logOut} onClick={logOut}>log out</label>
         {/*<Link to="/companies">companies</Link> | <Link to="/app-users">app users</Link> | <Link to="/auth">log in</Link> |{" "}*/}

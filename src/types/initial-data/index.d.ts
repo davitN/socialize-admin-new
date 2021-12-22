@@ -12,15 +12,15 @@ interface RoleModel {
 }
 
 export interface PlaceModel {
-  _id: string,
-  logo: {
+  _id?: string,
+  logo?: {
     height: number,
     imgURL: string,
     width: number,
   },
   profile: {
-    description: string,
-    name: string,
-    rating: number,
+    description?: string,
+    name?: string,
+    rating?: number,
   }
 }
