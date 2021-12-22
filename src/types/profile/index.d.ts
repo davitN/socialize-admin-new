@@ -1,10 +1,10 @@
 export interface UserProfileModel {
+  oldPassword: string;
   password: string;
-  newPassword: string;
   confirmPassword: string;
 }
 
 export interface userProfileSendModel {
-  _id: string;
-  data: UserProfileModel;
+  oldPassword: string;
+  password: string;
 }

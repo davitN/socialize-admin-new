@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Card,
@@ -37,13 +37,11 @@ const useStyles = createUseStyles({
     lineHeight: 'normal !important',
   },
   errText: {
-    display: 'flex',
     justifyContent: 'center',
-    height: '30px',
     color: '#ff4a4a',
-    alignItems: 'center',
-    textAlign: 'center',
     width: '100%',
+    marginTop: '-0.5rem',
+    marginBottom: '0.5rem',
   },
 });
 
@@ -59,26 +57,33 @@ const UserProfile: React.FC<{}> = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [values, setValues] = useState<UserProfileModel>({
+    oldPassword: '',
     password: '',
-    newPassword: '',
     confirmPassword: '',
   });
   const { userData } = useSelector((state: RootState) => state.authReducer);
 
-  const sendData: userProfileSendModel = {
-    data: null,
-    _id: userData._id,
+  let sendData: userProfileSendModel = {
+    oldPassword: '',
+    password: '',
   };
 
-  const onChangeState = (changedStates: UserProfileModel) => {
-    sendData.data = changedStates;
+  const onChangeState = (changedStates: userProfileSendModel) => {
+    sendData = changedStates;
   };
 
   useEffect(() => {
     onChangeState(values);
   });
 
-  const regEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/;
+  useEffect(() => {
+    setFormInvalid(false);
+    setNewPassIsValid(true);
+    setOldPassIsValid(true);
+    setConfirmPassIsValid(true);
+  }, [values]);
+
+//   const regEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/;
 
   const togglePasswordInputs = () => {
     setShowPasswordsForm(true);
@@ -87,13 +92,13 @@ const UserProfile: React.FC<{}> = () => {
   const submitButton = (event: any) => {
     event.preventDefault();
 
-    if (!values.password) {
+    if (!values.oldPassword || values.oldPassword.length < 6) {
       setOldPassIsValid(false);
       setFormInvalid(true);
       errorText = 'Please enter valid password.';
       return;
     }
-    if (!values.newPassword) {
+    if (!values.password || values.password.length < 6) {
       setNewPassIsValid(false);
       setFormInvalid(true);
       errorText = 'Please enter valid password.';
@@ -108,23 +113,21 @@ const UserProfile: React.FC<{}> = () => {
     //   errorText = 'Please enter stronger password.';
     //   return;
     // }
-    if (!values.confirmPassword) {
+    if (!values.confirmPassword || values.confirmPassword.length < 6) {
       setConfirmPassIsValid(false);
       setFormInvalid(true);
       errorText = 'Please repeat passsword.';
       return;
     } else {
-      if (values.confirmPassword !== values.newPassword) {
+      if (values.confirmPassword !== values.password) {
         errorText = 'Passwords do not match!';
         setConfirmPassIsValid(false);
-        setNewPassIsValid(false);
         setFormInvalid(true);
         return;
       }
     }
-    errorText = '';
 
-    if (!formInvalid) {
+    if (formInvalid) {
       return;
     }
     dispatch(
@@ -132,9 +135,19 @@ const UserProfile: React.FC<{}> = () => {
         success: () => {
           navigate('/dashboard');
         },
-        error: (error: any) => console.log(error),
+        error: (error: any) => {
+          console.log(error.response.status);
+          if (error.response.status === 403) {
+            errorText = 'Old password was incorrect!';
+          }
+        },
       })
     );
+    setValues({
+      oldPassword: '',
+      password: '',
+      confirmPassword: '',
+    });
   };
 
   return (
@@ -199,21 +212,6 @@ const UserProfile: React.FC<{}> = () => {
         {showPasswordsForm && (
           <Card>
             <CardBody>
-              {/* <FormGroup className={'flex-horizontal flex-end'}>
-                <TextInput
-                  type="password"
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
-                    isSubmitted && !values.password ? classes.inputError : ''
-                  }`}
-                  handleChange={(password) =>
-                    setValues({ ...values, password: password })
-                  }
-                  value={values.password}
-                  label="Old Password"
-                  required
-                />
-              </FormGroup> */}
-
               <FormGroup className="flex-horizontal">
                 <Label
                   md="3"
@@ -234,9 +232,9 @@ const UserProfile: React.FC<{}> = () => {
                     inputClassName={`${classes.passwordInput} ${
                       !oldPassIsValid ? classes.inputError : ''
                     } `}
-                    value={values.password}
+                    value={values.oldPassword}
                     onChange={(e) =>
-                      setValues({ ...values, password: e.target.value })
+                      setValues({ ...values, oldPassword: e.target.value })
                     }
                     feedback={false}
                     toggleMask
@@ -244,6 +242,11 @@ const UserProfile: React.FC<{}> = () => {
                   />
                 </Col>
               </FormGroup>
+              {!oldPassIsValid && (
+                <div className={`md-3 ${classes.errText}`}>
+                  <span>{errorText}</span>
+                </div>
+              )}
               <FormGroup className="flex-horizontal">
                 <Label
                   md="3"
@@ -261,9 +264,9 @@ const UserProfile: React.FC<{}> = () => {
                     inputClassName={`${classes.passwordInput} ${
                       !newPassIsValid ? classes.inputError : ''
                     } `}
-                    value={values.newPassword}
+                    value={values.password}
                     onChange={(e) =>
-                      setValues({ ...values, newPassword: e.target.value })
+                      setValues({ ...values, password: e.target.value })
                     }
                     feedback={false}
                     toggleMask
@@ -271,6 +274,11 @@ const UserProfile: React.FC<{}> = () => {
                   />
                 </Col>
               </FormGroup>
+              {!newPassIsValid && (
+                <div className={`md-3 ${classes.errText}`}>
+                  <span>{errorText}</span>
+                </div>
+              )}
               <FormGroup className="flex-horizontal">
                 <Label
                   md="3"
@@ -301,12 +309,17 @@ const UserProfile: React.FC<{}> = () => {
                   />
                 </Col>
               </FormGroup>
+              {!confirmPassIsValid && (
+                <div className={`md-3 ${classes.errText}`}>
+                  <span>{errorText}</span>
+                </div>
+              )}
               <Button
                 label={'Submit'}
                 type={'submit'}
                 onClick={(event) => submitButton(event)}
               />
-              <FormGroup className="flex-horizontal">
+              {/* <FormGroup className="flex-horizontal">
                 {formInvalid ? (
                   <div className={`md-3 ${classes.errText}`}>
                     <span>{errorText}</span>
@@ -314,7 +327,7 @@ const UserProfile: React.FC<{}> = () => {
                 ) : (
                   ''
                 )}
-              </FormGroup>
+              </FormGroup> */}
             </CardBody>
           </Card>
         )}

@@ -96,24 +96,27 @@ export function* signUpSaga(payload: {
 export function* changePasswordSaga(payload: {
   userData: userProfileSendModel;
   callback: CallBacks;
+  type: string;
 }) {
-  const { userData } = payload;
+  const { userData, callback } = payload;
   try {
-    // const res: IUserData = yield axiosInstance.put(
-    //   '/change_password',
-    //   userData
-    // );
-    // yield setUserDataAction(res);
-    console.log('success');
-    payload.callback;
+    yield axiosInstance.put('/account/change_password', userData);
+    yield put(
+      notifyAction({
+        type: 'success',
+        message: 'Password changed succsessfully',
+      })
+    );
+    callback?.success && callback.success();
   } catch (error: any) {
     yield put(
       notifyAction({
         type: 'error',
-        message: error.response?.data.message,
+        message: error.response?.data?.message,
         showError: true,
       })
     );
+    callback?.error && callback.error(error);
   }
 }
 
