@@ -15,8 +15,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/configureStore';
 import { putVenueAction, saveVenueAction } from '../store/ducks/VenueDuck';
 import { getCompaniesActionSG } from '../store/ducks/companyDuck';
-import { MultiSelect } from 'primereact/multiselect';
 import { CompanyModel } from '../types/company';
+import { AutoComplete, AutoCompleteCompleteMethodParams } from 'primereact/autocomplete';
 
 const useStyles = createUseStyles({
   inputBlock: {
@@ -44,7 +44,7 @@ const useStyles = createUseStyles({
       width: '200px',
       textAlign: 'start'
     },
-    '& .p-multiselect': {
+    '& .p-autocomplete': {
       width: 'calc(100% - 200px)',
       borderRadius: '0.25rem',
       height: '100%'
@@ -72,9 +72,14 @@ const useStyles = createUseStyles({
 const VenueForm: React.FC<{}> = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const classes = useStyles();
+  const [companySearchValue, setCompanySearchValue] = useState('');
+  const [filteredCompanies, setFilteredCompanies] = useState([]);
   const [newMode, setNewMode] = useState(false);
   const dispatch = useDispatch();
-  const [selectedCompany, setSelectedCompany] = useState<Array<CompanyModel>>([]);
+  const [selectedCompany, setSelectedCompany] = useState<CompanyModel>({
+    name: '',
+    _id: '',
+  });
   const navigate = useNavigate();
   const { id: venueId } = useParams();
   const [logoImg, setLogo] = useState([]);
@@ -138,15 +143,16 @@ const VenueForm: React.FC<{}> = () => {
     );
   };
 
-  const onSelectCompany = (values: CompanyModel[]) => {
-    if (values.length > 0) {
-      setSelectedCompany([values[values.length - 1]]);
+  const onSelectCompany = (value: CompanyModel) => {
+    if (value._id) {
+      setSelectedCompany(value);
     }
   };
 
   useEffect(() => {
-    if (selectedCompany.length > 0) {
-      setValues({...values, company: selectedCompany[0]._id});
+    if (selectedCompany._id) {
+      setValues({...values, company: selectedCompany._id});
+      setCompanySearchValue(selectedCompany.name);
     }
   }, [selectedCompany]);
 
@@ -170,6 +176,9 @@ const VenueForm: React.FC<{}> = () => {
     }
   }
   const formNotValid = () => {
+    if (!companySearchValue) {
+      return true;
+    }
     if (!values.company) {
       return true;
     }
@@ -207,6 +216,18 @@ const VenueForm: React.FC<{}> = () => {
       return true;
     }
     return false;
+  };
+
+  const searchCompanies = (event: AutoCompleteCompleteMethodParams) => {
+    setTimeout(() => {
+      let results;
+      if (event.query.length === 0) {
+        results = [...companiesData.data];
+      } else {
+        results = companiesData.data.filter(item => item.name.toLowerCase().includes(event.query.toLowerCase()))
+      }
+      setFilteredCompanies(results)
+    }, 250)
   }
 
   const submitButton = (event: any) => {
@@ -218,7 +239,7 @@ const VenueForm: React.FC<{}> = () => {
     if (newMode) {
       dispatch(saveVenueAction(sendData, {
         success: () => {
-          navigate('/venues')
+          navigate(-1)
         },
         error: () => {
           //
@@ -227,7 +248,7 @@ const VenueForm: React.FC<{}> = () => {
     } else {
       dispatch(putVenueAction(values._id, { ...sendData }, {
         success: () => {
-          navigate('/venues')
+          navigate(-1)
         },
         error: () => {
           //
@@ -246,7 +267,7 @@ const VenueForm: React.FC<{}> = () => {
     if (!newMode && values.company) {
       const company = companiesData.data.find(item => item._id === values.company);
       if (company) {
-        setSelectedCompany([company]);
+        setSelectedCompany(company);
       }
     }
   }, [companiesData]);
@@ -260,7 +281,7 @@ const VenueForm: React.FC<{}> = () => {
       setNewMode(false);
       const selectedVenue: VenueStateModel = venuesData.data.find(item => item._id === venueId);
       if (!selectedVenue) {
-        navigate('/venues')
+        navigate(-1)
       }
       setValues({ ...values, ...selectedVenue })
     }
@@ -345,16 +366,18 @@ const VenueForm: React.FC<{}> = () => {
               />
               <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
                 <label>Company</label>
-                <MultiSelect
-                    className={(isSubmitted && selectedCompany.length === 0) ? classes.errorBorder : ''}
+                <AutoComplete
+                    className={(isSubmitted && !companySearchValue) ? classes.inputError : ''}
+                    completeMethod={searchCompanies}
                     scrollHeight={'240px'}
-                    showSelectAll={false}
-                    value={selectedCompany}
-                    optionLabel={'name'}
-                    options={companiesData.data || []}
-                    onChange={(e) => onSelectCompany(e.value)}
+                    value={companySearchValue}
+                    dropdown={true}
+                    field={'name'}
+                    suggestions={filteredCompanies}
+                    onSelect={(e) => onSelectCompany(e.value)}
+                    onChange={(e) => setCompanySearchValue(e.value)}
                     placeholder="Select a Company"
-                    filter={true}
+                    forceSelection={true}
                 />
               </div>
               <TextInput

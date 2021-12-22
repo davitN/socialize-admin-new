@@ -15,7 +15,7 @@ import { PaginationEventModel } from '../types/pagination/pagination';
 import { Button } from 'primereact/button';
 import { createUseStyles } from 'react-jss';
 import TextInput from '../components/shared/form-elements/TextInput';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 let queryParams: TableQueryParams = {
   limit: 10,
@@ -63,9 +63,9 @@ const Venues: React.FC<{}> = () => {
       )
     }
   ]
-
   const classes = useStyles();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams({});
   const [searchValue, setSearchValue] = useState('');
   const [dataLoading, setDataLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(0);
@@ -75,7 +75,12 @@ const Venues: React.FC<{}> = () => {
 
   const getData = () => {
     setDataLoading(true);
-    dispatch(getVenuesActionSG(queryParams, {
+    const params: TableQueryParams = {
+      limit: searchParams.get('limit'),
+      offset: searchParams.get('offset'),
+      searchWord: searchParams.get('searchWord')
+    }
+    dispatch(getVenuesActionSG(params, {
       success: () => {
         setDataLoading(false);
       },
@@ -85,25 +90,51 @@ const Venues: React.FC<{}> = () => {
     }));
   }
   useEffect(() => {
+    console.log();
     queryParams = {
-      limit: 10,
-      offset: 0,
-      searchWord: ''
+      limit: parseInt(searchParams.get('limit')) || 10,
+      offset: parseInt(searchParams.get('offset')) || 0,
+      searchWord: searchParams.get('searchWord') || ''
     }
-    getData();
+    console.log((parseInt(queryParams.offset) / parseInt(queryParams.limit)))
+    setCurrentPage(queryParams.offset);
+    setSearchParams({
+      limit: queryParams.limit.toString(),
+      offset: queryParams.offset.toString(),
+      searchWord: queryParams.searchWord
+    });
+    // navigate({
+    //   search: `?${createSearchParams({
+    //     limit: queryParams.limit.toString(),
+    //     offset: queryParams.offset.toString(),
+    //     searchWord: queryParams.searchWord
+    //   })}`
+    // })
   }, [dispatch]);
+
+  useEffect(() => {
+    getData();
+  }, [searchParams]);
 
   const handlePageChange = (event: PaginationEventModel) => {
     setCurrentPage(event.first)
     queryParams.offset = event.first;
     queryParams.limit = LIMIT;
-    getData();
-  }
+    setSearchParams({
+      limit: queryParams.limit.toString(),
+      offset: queryParams.offset.toString(),
+      searchWord: queryParams.searchWord
+    });
+  };
 
   const handleSearch = (event: string) => {
     setSearchValue(event);
     queryParams.searchWord = event;
-    getData();
+    setSearchParams({
+      limit: queryParams.limit.toString(),
+      offset: queryParams.offset.toString(),
+      searchWord: queryParams.searchWord
+    });
   }
 
   return (
@@ -140,8 +171,9 @@ const Venues: React.FC<{}> = () => {
                 // tableClassName={classes.table}
                        emptyMessage="Data not found..."
             >
-              {dataLoading && tableHeader.map(({ name, field }, index) => <Column field={field} header={name} key={`${field}_${index}`}
-                                                                           body={<Skeleton/>}/>)}
+              {dataLoading && tableHeader.map(({ name, field }, index) => <Column field={field} header={name}
+                                                                                  key={`${field}_${index}`}
+                                                                                  body={<Skeleton/>}/>)}
               {!dataLoading && tableHeader.map((item, index) => {
                 if (item.haveTemplate) {
                   return (

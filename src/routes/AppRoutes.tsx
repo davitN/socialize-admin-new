@@ -58,24 +58,24 @@ const AppRoutes = () => {
                   </WithAuth>
                 }
               />
+              <Route
+                  path="/company"
+                  element={
+                    <WithAuth>
+                      <Companies />
+                    </WithAuth>
+                  }
+              />
+              <Route
+                  path="/company/:id"
+                  element={
+                    <WithAuth>
+                      <CompanyForm />
+                    </WithAuth>
+                  }
+              />
             </Fragment>
           )}
-          <Route
-            path="/company"
-            element={
-              <WithAuth>
-                <Companies />
-              </WithAuth>
-            }
-          />
-          <Route
-            path="/company/:id"
-            element={
-              <WithAuth>
-                <CompanyForm />
-              </WithAuth>
-            }
-          />
           <Route
             path="/latest-posts"
             element={
