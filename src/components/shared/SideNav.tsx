@@ -1,21 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { Link, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/configureStore';
+import { RouteModel } from '../../types/route';
 
-const mainRoutes: Array<{ name: string; route: string; iconName: string }> = [
+const mainRoutes: RouteModel[] = [
   {
     name: 'Dashboard',
     route: '/dashboard',
     iconName: 'bx bx-home-circle',
   },
   {
-    name: 'Venues',
-    route: '/venues',
+    name: 'Companies',
+    route: '/company',
     iconName: 'bx bx-home-circle',
   },
   {
-    name: 'Companies',
-    route: '/company',
+    name: 'Venues',
+    route: '/venues',
     iconName: 'bx bx-home-circle',
   },
   {
@@ -38,9 +41,27 @@ const useStyles = createUseStyles({
 });
 
 const SideNav: React.FC<{}> = () => {
+  const userRole = useSelector(
+      (state: RootState) => state.authReducer?.userData?.role?.name
+  );
+  const [routes, setRoutes] = useState<RouteModel[]>([]);
   const classes = useStyles();
   const location = useLocation();
   const [activeRoute, setActiveRoute] = useState('');
+
+  useEffect(() => {
+    const activeRoutes: RouteModel[] = mainRoutes.filter(route => {
+      if (userRole === 'SuperAdmin') {
+        return true;
+      }
+      if (route.route === '/company' || route.route === '/venues') {
+        return false;
+      }
+      return true;
+    })
+    setRoutes(activeRoutes)
+  }, [userRole]);
+
 
   React.useEffect(() => {
     setActiveRoute(location.pathname);
@@ -52,7 +73,7 @@ const SideNav: React.FC<{}> = () => {
       <div id="sidebar-menu">
         <ul className="metismenu list-unstyled" id="side-menu">
           <li className="menu-title text-start">Menu</li>
-          {mainRoutes.map((item, index) => {
+          {routes.map((item, index) => {
             return (
               <li
                 key={`main_route_${index}`}
@@ -64,7 +85,7 @@ const SideNav: React.FC<{}> = () => {
                     item.route === activeRoute ? 'mm-active' : ''
                   }`}
                 >
-                  <i className={item.iconName}></i>
+                  <i className={item.iconName} />
                   <span>{item.name}</span>
                 </Link>
               </li>

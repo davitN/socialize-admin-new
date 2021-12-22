@@ -12,6 +12,7 @@ export const REQUEST_SIGN_UP_SG = 'socialize/auth/requestSignUp_sg';
 export const REQUEST_PASSWORD_CHANGE_SG =
   'socialize/auth/requestPasswordChange_sg';
 export const LOGOUT = 'socialize/auth/logout';
+export const LOGOUT_SG = 'socialize/auth/logout_sg';
 
 const initialState: AuthState = {
   userData: {},
@@ -30,6 +31,8 @@ export const authReducer = (state = initialState, action: AnyAction) => {
         ...state,
         userData: { ...state.userData, ...action.userData },
       };
+    case LOGOUT_SG:
+      return initialState;
     default:
       return state;
   }
@@ -77,3 +80,7 @@ export const changePasswordActionSG = (
 export const logoutAction = () => ({
   type: LOGOUT,
 });
+
+export const logoutActionSG = () => ({
+  type: LOGOUT_SG
+})

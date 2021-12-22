@@ -1,6 +1,6 @@
 export interface TableQueryParams {
-  offset?: number,
-  limit?: number,
+  offset?: any,
+  limit?: any,
   searchWord?: string,
   placeId?: string
 }

@@ -15,8 +15,8 @@ import {
   setSelectedPlaceIdAction,
 } from '../../store/ducks/initialDataDuck';
 import { InitialDataModel, PlaceModel } from '../../types/initial-data';
-import { AutoComplete } from 'primereact/autocomplete';
 import avatar1 from '../../assets/images/users/avatar-1.jpg';
+import { AutoComplete, AutoCompleteCompleteMethodParams } from 'primereact/autocomplete';
 
 const useStyles = createUseStyles({
   container: {
@@ -31,6 +31,7 @@ const useStyles = createUseStyles({
 });
 const Header: React.FC<{}> = () => {
   const classes = useStyles();
+  const [placeSearchValue, setPlaceSearchValue] = useState('');
   const [selectedPlace, setSelectedPlace] = useState<PlaceModel>({
     _id: '',
     profile: {
@@ -41,6 +42,7 @@ const Header: React.FC<{}> = () => {
   const userRole = useSelector(
     (state: RootState) => state.authReducer?.userData?.role?.name
   );
+  const [filteredPlaces, setFilteredPlaces] = useState([]);
   const { userData } = useSelector((state: RootState) => state.authReducer);
   const { initialData } = useSelector(
     (state: RootState) => state.initialDataReducer
@@ -62,15 +64,27 @@ const Header: React.FC<{}> = () => {
   useEffect(() => {
     if (selectedPlace._id) {
       dispatch(setSelectedPlaceIdAction(selectedPlace._id))
+      setPlaceSearchValue(selectedPlace.profile.name)
     }
   }, [selectedPlace]);
 
   const onSelectPlace = (value: PlaceModel) => {
-    console.log(value)
     if (value._id) {
       setSelectedPlace(value);
     }
   };
+
+  const searchPlaces = (event: AutoCompleteCompleteMethodParams) => {
+    setTimeout(() => {
+      let results;
+      if (event.query.length === 0) {
+        results = [...initialData.places];
+      } else {
+        results = initialData.places.filter(item => item.profile.name.toLowerCase().includes(event.query.toLowerCase()))
+      }
+      setFilteredPlaces(results)
+    }, 250)
+  }
 
   useEffect(() => {
     console.log('user role is - ', userRole);
@@ -87,13 +101,12 @@ const Header: React.FC<{}> = () => {
       <div className={`flex-horizontal ${classes.container}`}>
         <AutoComplete
             dropdown={true}
-            scrollHeight={'240px'}
-            value={selectedPlace}
+            value={placeSearchValue}
             field={'profile.name'}
-            suggestions={initialData.places || []}
-            // onChange={(e) => onSelectPlace(e.value)}
+            suggestions={filteredPlaces}
+            completeMethod={searchPlaces}
+            onChange={(e) => setPlaceSearchValue(e.value)}
             onSelect={(e) => onSelectPlace(e.value)}
-            placeholder="Select a Place"
             forceSelection={true}
         />
         <Dropdown
