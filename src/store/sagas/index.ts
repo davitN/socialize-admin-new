@@ -5,6 +5,7 @@ import { getDashboardDataSaga } from './dashboardSaga';
 import { GET_LATEST_POSTS_SG } from '../ducks/latestPostsDuck';
 import { getLatestPostsSaga } from './latestPostsSaga';
 import {
+  changePasswordSaga,
   logoutSaga,
   signInSaga,
   signUpSaga,
@@ -13,6 +14,7 @@ import {
 import {
   CHECK_SIGNED_IN,
   LOGOUT,
+  REQUEST_PASSWORD_CHANGE_SG,
   REQUEST_SIGN_IN_SG,
   REQUEST_SIGN_UP_SG,
   SUBMIT_SIGN_IN_OTP_SG,
@@ -22,12 +24,16 @@ import { getTopCustomersSaga } from './topCustomersSaga';
 import { getVenuesSaga, putVenueSaga, saveVenueSaga } from './VenuesSaga';
 import { GET_VENUES_SG, PUT_VENUE, SAVE_VENUE } from '../ducks/VenueDuck';
 import {
-  getCompaniesSaga, getCompanySubscriptionsSaga, getSelectedCompanySaga,
+  getCompaniesSaga,
+  getCompanySubscriptionsSaga,
+  getSelectedCompanySaga,
   putCompanySaga,
   saveCompanySaga,
 } from './companySaga';
 import {
-  GET_COMPANIES_SG, GET_COMPANY_SUBSCRIPTION_SG, GET_SELECTED_COMPANY_SG,
+  GET_COMPANIES_SG,
+  GET_COMPANY_SUBSCRIPTION_SG,
+  GET_SELECTED_COMPANY_SG,
   PUT_COMPANY,
   SAVE_COMPANY,
 } from '../ducks/companyDuck';
@@ -52,6 +58,7 @@ function* actionWatcher() {
   yield takeLatest(GET_COMPANIES_SG, getCompaniesSaga);
   yield takeLatest(GET_COMPANY_SUBSCRIPTION_SG, getCompanySubscriptionsSaga);
   yield takeLatest(GET_SELECTED_COMPANY_SG, getSelectedCompanySaga);
+  yield takeLatest(REQUEST_PASSWORD_CHANGE_SG, changePasswordSaga);
 }
 
 export default function* rootSaga() {
