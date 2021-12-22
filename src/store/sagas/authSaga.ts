@@ -3,7 +3,7 @@ import { put } from 'redux-saga/effects';
 import axiosInstance from '../../services/interceptor.service';
 import { ISignInData, ISignUpData } from '../../types/auth';
 import { CallBacks, IUserData } from '../../types/main';
-import { userProfileSendModel } from '../../types/profile';
+import { UserProfileSendModel } from '../../types/profile';
 import { setUserDataAction } from '../ducks/authDuck';
 import {
   checkedSignedInAction,
@@ -94,7 +94,7 @@ export function* signUpSaga(payload: {
 }
 
 export function* changePasswordSaga(payload: {
-  userData: userProfileSendModel;
+  userData: UserProfileSendModel;
   callback: CallBacks;
   type: string;
 }) {

@@ -18,7 +18,7 @@ import { Password } from 'primereact/password';
 import { createUseStyles } from 'react-jss';
 import { Button } from 'primereact/button';
 import { RootState } from '../store/configureStore';
-import { UserProfileModel, userProfileSendModel } from '../types/profile';
+import { UserProfileModel, UserProfileSendModel } from '../types/profile';
 import { changePasswordActionSG } from '../store/ducks/authDuck';
 
 const useStyles = createUseStyles({
@@ -63,12 +63,12 @@ const UserProfile: React.FC<{}> = () => {
   });
   const { userData } = useSelector((state: RootState) => state.authReducer);
 
-  let sendData: userProfileSendModel = {
+  let sendData: UserProfileSendModel = {
     oldPassword: '',
     password: '',
   };
 
-  const onChangeState = (changedStates: userProfileSendModel) => {
+  const onChangeState = (changedStates: UserProfileSendModel) => {
     sendData = changedStates;
   };
 
@@ -82,8 +82,6 @@ const UserProfile: React.FC<{}> = () => {
     setOldPassIsValid(true);
     setConfirmPassIsValid(true);
   }, [values]);
-
-//   const regEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/;
 
   const togglePasswordInputs = () => {
     setShowPasswordsForm(true);
@@ -104,15 +102,6 @@ const UserProfile: React.FC<{}> = () => {
       errorText = 'Please enter valid password.';
       return;
     }
-
-    // Check for safety
-
-    // if (!regEx.test(values.newPassword)) {
-    //   setNewPassIsValid(false);
-    //   setFormInvalid(true);
-    //   errorText = 'Please enter stronger password.';
-    //   return;
-    // }
     if (!values.confirmPassword || values.confirmPassword.length < 6) {
       setConfirmPassIsValid(false);
       setFormInvalid(true);
@@ -137,7 +126,7 @@ const UserProfile: React.FC<{}> = () => {
         },
         error: (error: any) => {
           console.log(error.response.status);
-          if (error.response.status === 403) {
+          if (error.response.status === 409) {
             errorText = 'Old password was incorrect!';
           }
         },
