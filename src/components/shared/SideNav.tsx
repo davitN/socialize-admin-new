@@ -30,6 +30,11 @@ const mainRoutes: RouteModel[] = [
     name: 'Top Customers',
     route: '/top-customers',
     iconName: 'bx bx-home-circle',
+  },
+  {
+    name: 'Admin Management',
+    route: '/admin-management',
+    iconName: 'bx bx-home-circle',
   }
 ];
 const useStyles = createUseStyles({

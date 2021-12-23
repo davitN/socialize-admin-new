@@ -6,6 +6,7 @@ import { latestPostsReducer } from './latestPostsDuck';
 import { topCustomersReducer } from './topCustomersDuck';
 import { venueReducer } from './VenueDuck';
 import { companyReducer } from './companyDuck';
+import { adminManagementReducer } from './adminManagementDuck';
 
 export {
   mainReducer,
@@ -16,4 +17,5 @@ export {
   topCustomersReducer,
   venueReducer,
   companyReducer,
+  adminManagementReducer,
 };
