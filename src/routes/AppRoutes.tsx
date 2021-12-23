@@ -15,6 +15,7 @@ import { RootState } from '../store/configureStore';
 import { useSelector } from 'react-redux';
 import UserProfile from './Profile';
 import AdminManagements from './AdminManagements';
+import AdminManagementForm from './AdminManagementForm';
 
 const AppRoutes = () => {
   const userRole = useSelector(
@@ -75,6 +76,22 @@ const AppRoutes = () => {
                     </WithAuth>
                   }
               />
+              <Route
+                  path="/admin-management"
+                  element={
+                    <WithAuth>
+                      <AdminManagements />
+                    </WithAuth>
+                  }
+              />
+              <Route
+                  path="/admin-management/:id"
+                  element={
+                    <WithAuth>
+                      <AdminManagementForm />
+                    </WithAuth>
+                  }
+              />
             </Fragment>
           )}
           <Route
@@ -92,14 +109,6 @@ const AppRoutes = () => {
                 <TopCustomers />
               </WithAuth>
             }
-          />
-          <Route
-              path="/admin-management"
-              element={
-                <WithAuth>
-                  <AdminManagements />
-                </WithAuth>
-              }
           />
           <Route
             path="auth"
