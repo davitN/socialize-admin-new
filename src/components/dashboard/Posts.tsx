@@ -5,8 +5,9 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Post } from '../../types/dashboard';
 import { Link } from 'react-router-dom';
+import { Button } from 'primereact/button';
 
-import { Button, Card, CardBody, CardTitle, Badge } from 'reactstrap';
+import { Card, CardBody, CardTitle, Badge } from 'reactstrap';
 import altImg from '../../assets/images/alt-profile-img.jpg';
 
 //შესამოწმებელია რაშია ზუსტად საჭირო
