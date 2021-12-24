@@ -139,10 +139,6 @@ const Venues: React.FC<{}> = () => {
 
   return (
       <div className="page-content">
-        <Breadcrumbs
-            title={'Welcome to That Social App Premium Dashboard'}
-            breadcrumbItem={'VOLLEYBOX SETTINGS'}
-        />
         <Card>
           <CardBody>
             <div className={`mb-2 flex-horizontal justify-content-end`}>

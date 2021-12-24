@@ -183,10 +183,6 @@ const CompanyForm: React.FC<{}> = () => {
 
   return (
       <div className="page-content">
-        <Breadcrumbs
-            title={'Welcome to That Social App Premium Dashboard'}
-            breadcrumbItem={'VOLLEYBOX SETTINGS'}
-        />
         <Card>
           <CardBody>
             {/*<CardTitle className={'text-start'}>Location Information</CardTitle>*/}

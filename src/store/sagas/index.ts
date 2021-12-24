@@ -39,6 +39,18 @@ import {
 } from '../ducks/companyDuck';
 import { GET_INITIAL_DATA_SG } from '../ducks/initialDataDuck';
 import { getInitialDataSaga } from './initialDataSaga';
+import {
+  GET_ADMIN_MANAGEMENTS_SG,
+  GET_SELECTED_ADMIN_MANAGEMENT_SG,
+  PUT_ADMIN_MANAGEMENT,
+  SAVE_ADMIN_MANAGEMENT
+} from '../ducks/adminManagementDuck';
+import {
+  getAdminManagementSaga,
+  getSelectedAdminManagementSaga,
+  putAdminManagementSaga,
+  saveAdminManagementSaga
+} from './adminManagementSaga';
 
 function* actionWatcher() {
   yield takeLatest(CHECK_SIGNED_IN, checkSignedInSaga);
@@ -59,6 +71,10 @@ function* actionWatcher() {
   yield takeLatest(GET_COMPANY_SUBSCRIPTION_SG, getCompanySubscriptionsSaga);
   yield takeLatest(GET_SELECTED_COMPANY_SG, getSelectedCompanySaga);
   yield takeLatest(REQUEST_PASSWORD_CHANGE_SG, changePasswordSaga);
+  yield takeLatest(SAVE_ADMIN_MANAGEMENT, saveAdminManagementSaga);
+  yield takeLatest(PUT_ADMIN_MANAGEMENT, putAdminManagementSaga);
+  yield takeLatest(GET_ADMIN_MANAGEMENTS_SG, getAdminManagementSaga);
+  yield takeLatest(GET_SELECTED_ADMIN_MANAGEMENT_SG, getSelectedAdminManagementSaga);
 }
 
 export default function* rootSaga() {

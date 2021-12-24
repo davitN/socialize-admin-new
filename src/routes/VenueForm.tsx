@@ -8,7 +8,7 @@ import {
   CardTitle,
   Col,
   Form,
-  FormGroup,
+  FormGroup, Input,
   Label,
   Row,
 } from 'reactstrap';
@@ -392,34 +392,23 @@ const VenueForm: React.FC<{}> = () => {
   }
 
   return (
-    <div className="page-content">
-      <Breadcrumbs
-        title={'Welcome to That Social App Premium Dashboard'}
-        breadcrumbItem={'VOLLEYBOX SETTINGS'}
-      />
-      <Form>
-        <Card>
-          <CardBody>
-            <CardTitle className={'text-start'}>Location Information</CardTitle>
-            <CardSubtitle className="mb-4 text-start">
-              Make sure your location information is accurate.
-            </CardSubtitle>
-            <TextInput
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
-                isSubmitted && !values.profile.name ? classes.inputError : ''
-              }`}
-              value={values.profile.name}
-              handleChange={(name) =>
-                setValues({ ...values, profile: { ...values.profile, name } })
-              }
-              label="Business Name"
-              placeholder="Enter your Business Name"
-              required
-            />
-            <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
-              <div
-                className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}
-              >
+      <div className="page-content">
+        <Form>
+          <Card>
+            <CardBody>
+              <CardTitle className={'text-start'}>Location Information</CardTitle>
+              <CardSubtitle className="mb-4 text-start">
+                Make sure your location information is accurate.
+              </CardSubtitle>
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.profile.name) ? classes.inputError : ''}`}
+                  value={values.profile.name}
+                  handleChange={(name) => setValues({ ...values, profile: { ...values.profile, name } })}
+                  label="Business Name"
+                  placeholder="Enter your Business Name"
+                  required
+              />
+              <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
                 <label>Company</label>
                 <AutoComplete
                   className={
@@ -437,376 +426,430 @@ const VenueForm: React.FC<{}> = () => {
                   forceSelection={true}
                 />
               </div>
-            </div>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody>
-            <CardTitle className={'text-start'}>
-              Premium Business Settings
-            </CardTitle>
-            <CardSubtitle className="mb-4 text-start">
-              Please feel free to change these settings for your business
-              listing.
-            </CardSubtitle>
-            <FormGroup className="mb-3" row>
-              <Label md="3" className="col-form-label text-start">
-                Logo Image
-              </Label>
-              <Col
-                md="9"
-                className={`flex-horizontal ${classes.dropZoneWrapper}`}
-              >
-                <Dropzone
-                  onDrop={(acceptedFiles) => {
-                    handleAcceptedFiles('logo', acceptedFiles);
-                  }}
-                >
-                  {({ getRootProps, getInputProps }) => (
-                    <div
-                      className={`dropzone ${
-                        isSubmitted &&
-                        !values.logo.imgURL &&
-                        logoImg.length === 0
-                          ? classes.errorBorder
-                          : ''
-                      }`}
-                    >
-                      <div
-                        className="dz-message needsclick"
-                        {...getRootProps()}
-                      >
-                        <input {...getInputProps()} />
-                        <div className="dz-message needsclick">
-                          <div className="mb-3">
-                            <i className="display-4 text-muted bx bxs-cloud-upload" />
-                          </div>
-                          <h5>Drop Image here or click to upload.</h5>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </Dropzone>
-                <div className="dropzone-previews ms-3" id="file-previews">
-                  {logoImg.length === 0 && values.logo.imgURL && (
-                    <Card className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
-                      <div className="p-2">
-                        <Row className="align-items-center">
-                          <Col className="col-auto">
-                            <img
-                              data-dz-thumbnail=""
-                              height="80"
-                              className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
-                              alt={'logo'}
-                              src={values.logo.imgURL}
-                            />
-                          </Col>
-                          <Col>
-                            <Link
-                              to="#"
-                              className="text-muted font-weight-bold"
-                            >
-                              Logo
-                            </Link>
-                            <p className="mb-0">
-                              <strong>
-                                {values.logo.width} X {values.logo.height}
-                              </strong>
-                            </p>
-                          </Col>
-                        </Row>
-                      </div>
-                    </Card>
-                  )}
-                  {logoImg.map((f: any, i) => {
-                    return (
-                      <Card
-                        className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
-                        key={i + '-file'}
-                      >
-                        <div className="p-2">
-                          <Row className="align-items-center">
-                            <Col className="col-auto">
-                              <img
-                                data-dz-thumbnail=""
-                                height="80"
-                                className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
-                                alt={f.name}
-                                src={f.preview}
-                              />
-                            </Col>
-                            <Col>
-                              <Link
-                                to="#"
-                                className="text-muted font-weight-bold"
-                              >
-                                {f.name}
-                              </Link>
-                              <p className="mb-0">
-                                <strong>{f.formattedSize}</strong>
-                              </p>
-                            </Col>
-                          </Row>
-                        </div>
-                      </Card>
-                    );
-                  })}
-                </div>
-              </Col>
-            </FormGroup>
-            <FormGroup className="mb-3" row>
-              <Label md="3" className="col-form-label text-start">
-                Listing Image
-              </Label>
-              <Col
-                md="9"
-                className={`flex-horizontal ${classes.dropZoneWrapper}`}
-              >
-                <Dropzone
-                  onDrop={(acceptedFiles) => {
-                    handleAcceptedFiles('coverThumbnail', acceptedFiles);
-                  }}
-                >
-                  {({ getRootProps, getInputProps }) => (
-                    <div
-                      className={`dropzone ${
-                        isSubmitted && newMode && coverThumbnailImg.length === 0
-                          ? classes.errorBorder
-                          : ''
-                      }`}
-                    >
-                      <div
-                        className="dz-message needsclick"
-                        {...getRootProps()}
-                      >
-                        <input {...getInputProps()} />
-                        <div className="dz-message needsclick">
-                          <div className="mb-3">
-                            <i className="display-4 text-muted bx bxs-cloud-upload" />
-                          </div>
-                          <h5>Drop Image here or click to upload.</h5>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </Dropzone>
-                <div className="dropzone-previews ms-3" id="file-previews">
-                  {coverThumbnailImg.length === 0 &&
-                    values.coverThumbnail.imgURL && (
-                      <Card className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
-                        <div className="p-2">
-                          <Row className="align-items-center">
-                            <Col className="col-auto">
-                              <img
-                                data-dz-thumbnail=""
-                                height="80"
-                                className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
-                                alt={'coverThumbnailImg'}
-                                src={values.coverThumbnail.imgURL}
-                              />
-                            </Col>
-                            <Col>
-                              <Link
-                                to="#"
-                                className="text-muted font-weight-bold"
-                              >
-                                Listing Image
-                              </Link>
-                              <p className="mb-0">
-                                <strong>
-                                  {values.coverThumbnail.width} X{' '}
-                                  {values.coverThumbnail.height}
-                                </strong>
-                              </p>
-                            </Col>
-                          </Row>
-                        </div>
-                      </Card>
-                    )}
-                  {coverThumbnailImg.map((f: any, i) => {
-                    return (
-                      <Card
-                        className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
-                        key={i + '-file'}
-                      >
-                        <div className="p-2">
-                          <Row className="align-items-center">
-                            <Col className="col-auto">
-                              <img
-                                data-dz-thumbnail=""
-                                height="80"
-                                className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
-                                alt={f.name}
-                                src={f.preview}
-                              />
-                            </Col>
-                            <Col>
-                              <Link
-                                to="#"
-                                className="text-muted font-weight-bold"
-                              >
-                                {f.name}
-                              </Link>
-                              <p className="mb-0">
-                                <strong>{f.formattedSize}</strong>
-                              </p>
-                            </Col>
-                          </Row>
-                        </div>
-                      </Card>
-                    );
-                  })}
-                </div>
-              </Col>
-            </FormGroup>
-            <FormGroup className="mb-3" row>
-              <Label md="3" className="col-form-label text-start">
-                Background Image
-              </Label>
-              <Col
-                md="9"
-                className={`flex-horizontal ${classes.dropZoneWrapper}`}
-              >
-                <Dropzone
-                  onDrop={(acceptedFiles) => {
-                    handleAcceptedFiles('cover', acceptedFiles);
-                  }}
-                >
-                  {({ getRootProps, getInputProps }) => (
-                    <div
-                      className={`dropzone ${
-                        isSubmitted &&
-                        !values.cover.imgURL &&
-                        coverImg.length === 0
-                          ? classes.errorBorder
-                          : ''
-                      }`}
-                    >
-                      <div
-                        className="dz-message needsclick"
-                        {...getRootProps()}
-                      >
-                        <input {...getInputProps()} />
-                        <div className="dz-message needsclick">
-                          <div className="mb-3">
-                            <i className="display-4 text-muted bx bxs-cloud-upload" />
-                          </div>
-                          <h5>Drop Image here or click to upload.</h5>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </Dropzone>
-                <div className="dropzone-previews ms-3" id="file-previews">
-                  {coverImg.length === 0 && values.cover.imgURL && (
-                    <Card className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
-                      <div className="p-2">
-                        <Row className="align-items-center">
-                          <Col className="col-auto">
-                            <img
-                              data-dz-thumbnail=""
-                              height="80"
-                              className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
-                              alt={'cover'}
-                              src={values.cover.imgURL}
-                            />
-                          </Col>
-                          <Col>
-                            <Link
-                              to="#"
-                              className="text-muted font-weight-bold"
-                            >
-                              Background
-                            </Link>
-                            <p className="mb-0">
-                              <strong>
-                                {values.cover.width} X {values.cover.height}
-                              </strong>
-                            </p>
-                          </Col>
-                        </Row>
-                      </div>
-                    </Card>
-                  )}
-                  {coverImg.map((f: any, i) => {
-                    return (
-                      <Card
-                        className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
-                        key={i + '-file'}
-                      >
-                        <div className="p-2">
-                          <Row className="align-items-center">
-                            <Col className="col-auto">
-                              <img
-                                data-dz-thumbnail=""
-                                height="80"
-                                className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
-                                alt={f.name}
-                                src={f.preview}
-                              />
-                            </Col>
-                            <Col>
-                              <Link
-                                to="#"
-                                className="text-muted font-weight-bold"
-                              >
-                                {f.name}
-                              </Link>
-                              <p className="mb-0">
-                                <strong>{f.formattedSize}</strong>
-                              </p>
-                            </Col>
-                          </Row>
-                        </div>
-                      </Card>
-                    );
-                  })}
-                </div>
-              </Col>
-            </FormGroup>
-            <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
-              <label>Allow Users To Access Location When They Leave?</label>
-              <CvSwitcher
-                defaultValue={values.allowUsersToAccessAfterLeaving}
-                onChange={(event: boolean) => onSwitch(event)}
-              />
-            </div>
-            <TextInput
-              label={'How Many Days After?'}
-              value={values.accessDaysAfter || ''}
-              type={'number'}
-              customClasses={`flex-horizontal mb-4 ${classes.inputBlock} ${
-                isSubmitted && !values.accessDaysAfter
-                  ? classes.errorBorder
-                  : ''
-              }`}
-              id={'days-after'}
-              handleChange={(event) =>
-                setValues({
-                  ...values,
-                  accessDaysAfter: parseInt(event),
-                })
-              }
-            />
-            {!newMode && (
               <TextInput
-                label={'All time visitors count'}
-                value={values.allTimeVisitorsCount || ''}
-                type={'number'}
-                customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-                id={'all-time-visitors-count'}
-                readonly={true}
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.location.address) ? classes.inputError : ''}`}
+                  value={values.location.address}
+                  handleChange={(address) => setValues({ ...values, location: { ...values.location, address } })}
+                  label="Address"
+                  placeholder="Enter your Address"
+                  required
               />
-            )}
-            <Button
-              label={'Submit'}
-              type={'submit'}
-              onClick={(event) => submitButton(event)}
-            />
-          </CardBody>
-        </Card>
-      </Form>
-    </div>
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.location.city) ? classes.inputError : ''}`}
+                  value={values.location.city}
+                  handleChange={(city) => setValues({ ...values, location: { ...values.location, city } })}
+                  label="City"
+                  placeholder="City"
+                  required
+              />
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  value={values.location.state}
+                  handleChange={(state) => setValues({ ...values, location: { ...values.location, state } })}
+                  label="Province"
+                  placeholder="Enter Province"
+                  required
+              />
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.location.country) ? classes.inputError : ''}`}
+                  value={values.location.country}
+                  handleChange={(country) => setValues({ ...values, location: { ...values.location, country } })}
+                  label="Country"
+                  placeholder="Enter Country"
+                  required
+              />
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.profile.webSite) ? classes.inputError : ''}`}
+                  value={values.profile.webSite}
+                  handleChange={(webSite) => setValues({ ...values, profile: { ...values.profile, webSite } })}
+                  label="Website"
+                  placeholder="Enter Website"
+                  required
+              />
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.profile.phoneNumber) ? classes.inputError : ''}`}
+                  value={values.profile.phoneNumber}
+                  handleChange={(phoneNumber) => setValues({ ...values, profile: { ...values.profile, phoneNumber } })}
+                  label="Public Phone Number"
+                  placeholder="(204) 227 - 3308"
+                  required
+              />
+              <FormGroup className="mb-0" row>
+                <Label
+                    htmlFor="description"
+                    className={`col-form-label text-start ${classes.formLabel}`}
+                >
+                  Description:
+                </Label>
+                <Col className={classes.formValue}>
+                  <textarea
+                      value={values.profile.description}
+                      className={`form-control ${(isSubmitted && !values.profile.description) ? classes.errorBorder : ''}`}
+                      id="description"
+                      rows={3}
+                      placeholder="Write some note.."
+                      onChange={event => setValues({
+                        ...values,
+                        profile: { ...values.profile, description: event.target.value }
+                      })}
+                  />
+                </Col>
+              </FormGroup>
+            </CardBody>
+          </Card>
+          <Card>
+            <CardBody>
+              <CardTitle className={'text-start'}>
+                Premium Business Settings
+              </CardTitle>
+              <CardSubtitle className="mb-4 text-start">
+                Please feel free to change these settings for your business listing.
+              </CardSubtitle>
+              <FormGroup className="mb-3" row>
+                <Label md="3" className="col-form-label text-start">
+                  Logo Image
+                </Label>
+                <Col
+                    md="9"
+                    className={`flex-horizontal ${classes.dropZoneWrapper}`}
+                >
+                  <Dropzone
+                      onDrop={(acceptedFiles) => {
+                        handleAcceptedFiles('logo', acceptedFiles);
+                      }}
+                  >
+                    {({ getRootProps, getInputProps }) => (
+                        <div
+                            className={`dropzone ${(isSubmitted && !values.logo.imgURL && logoImg.length === 0) ? classes.errorBorder : ''}`}>
+                          <div className="dz-message needsclick" {...getRootProps()}>
+                            <input {...getInputProps()} />
+                            <div className="dz-message needsclick">
+                              <div className="mb-3">
+                                <i className="display-4 text-muted bx bxs-cloud-upload"/>
+                              </div>
+                              <h5>Drop Image here or click to upload.</h5>
+                            </div>
+                          </div>
+                        </div>
+                    )}
+                  </Dropzone>
+                  <div className="dropzone-previews ms-3" id="file-previews">
+                    {
+                        (logoImg.length === 0 && values.logo.imgURL) && (
+                            <Card
+                                className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
+                            >
+                              <div className="p-2">
+                                <Row className="align-items-center">
+                                  <Col className="col-auto">
+                                    <img
+                                        data-dz-thumbnail=""
+                                        height="80"
+                                        className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
+                                        alt={'logo'}
+                                        src={values.logo.imgURL}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Link
+                                        to="#"
+                                        className="text-muted font-weight-bold"
+                                    >
+                                      Logo
+                                    </Link>
+                                    <p className="mb-0">
+                                      <strong>{values.logo.width} X {values.logo.height}</strong>
+                                    </p>
+                                  </Col>
+                                </Row>
+                              </div>
+                            </Card>
+                        )
+                    }
+                    {logoImg.map((f: any, i) => {
+                      return (
+                          <Card
+                              className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
+                              key={i + '-file'}
+                          >
+                            <div className="p-2">
+                              <Row className="align-items-center">
+                                <Col className="col-auto">
+                                  <img
+                                      data-dz-thumbnail=""
+                                      height="80"
+                                      className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
+                                      alt={f.name}
+                                      src={f.preview}
+                                  />
+                                </Col>
+                                <Col>
+                                  <Link
+                                      to="#"
+                                      className="text-muted font-weight-bold"
+                                  >
+                                    {f.name}
+                                  </Link>
+                                  <p className="mb-0">
+                                    <strong>{f.formattedSize}</strong>
+                                  </p>
+                                </Col>
+                              </Row>
+                            </div>
+                          </Card>
+                      );
+                    })}
+                  </div>
+                </Col>
+              </FormGroup>
+              <FormGroup className="mb-3" row>
+                <Label md="3" className="col-form-label text-start">
+                  Listing Image
+                </Label>
+                <Col
+                    md="9"
+                    className={`flex-horizontal ${classes.dropZoneWrapper}`}
+                >
+                  <Dropzone
+                      onDrop={(acceptedFiles) => {
+                        handleAcceptedFiles('coverThumbnail', acceptedFiles);
+                      }}
+                  >
+                    {({ getRootProps, getInputProps }) => (
+                        <div
+                            className={`dropzone ${(isSubmitted && newMode && coverThumbnailImg.length === 0) ? classes.errorBorder : ''}`}>
+                          <div className="dz-message needsclick" {...getRootProps()}>
+                            <input {...getInputProps()} />
+                            <div className="dz-message needsclick">
+                              <div className="mb-3">
+                                <i className="display-4 text-muted bx bxs-cloud-upload"/>
+                              </div>
+                              <h5>Drop Image here or click to upload.</h5>
+                            </div>
+                          </div>
+                        </div>
+                    )}
+                  </Dropzone>
+                  <div className="dropzone-previews ms-3" id="file-previews">
+                    {
+                        (coverThumbnailImg.length === 0 && values.coverThumbnail.imgURL) && (
+                            <Card
+                                className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
+                            >
+                              <div className="p-2">
+                                <Row className="align-items-center">
+                                  <Col className="col-auto">
+                                    <img
+                                        data-dz-thumbnail=""
+                                        height="80"
+                                        className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
+                                        alt={'coverThumbnailImg'}
+                                        src={values.coverThumbnail.imgURL}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Link
+                                        to="#"
+                                        className="text-muted font-weight-bold"
+                                    >
+                                      Listing Image
+                                    </Link>
+                                    <p className="mb-0">
+                                      <strong>{values.coverThumbnail.width} X {values.coverThumbnail.height}</strong>
+                                    </p>
+                                  </Col>
+                                </Row>
+                              </div>
+                            </Card>
+                        )
+                    }
+                    {coverThumbnailImg.map((f: any, i) => {
+                      return (
+                          <Card
+                              className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
+                              key={i + '-file'}
+                          >
+                            <div className="p-2">
+                              <Row className="align-items-center">
+                                <Col className="col-auto">
+                                  <img
+                                      data-dz-thumbnail=""
+                                      height="80"
+                                      className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
+                                      alt={f.name}
+                                      src={f.preview}
+                                  />
+                                </Col>
+                                <Col>
+                                  <Link
+                                      to="#"
+                                      className="text-muted font-weight-bold"
+                                  >
+                                    {f.name}
+                                  </Link>
+                                  <p className="mb-0">
+                                    <strong>{f.formattedSize}</strong>
+                                  </p>
+                                </Col>
+                              </Row>
+                            </div>
+                          </Card>
+                      );
+                    })}
+                  </div>
+                </Col>
+              </FormGroup>
+              <FormGroup className="mb-3" row>
+                <Label md="3" className="col-form-label text-start">
+                  Background Image
+                </Label>
+                <Col
+                    md="9"
+                    className={`flex-horizontal ${classes.dropZoneWrapper}`}
+                >
+                  <Dropzone
+                      onDrop={(acceptedFiles) => {
+                        handleAcceptedFiles('cover', acceptedFiles);
+                      }}
+                  >
+                    {({ getRootProps, getInputProps }) => (
+                        <div
+                            className={`dropzone ${(isSubmitted && !values.cover.imgURL && coverImg.length === 0) ? classes.errorBorder : ''}`}>
+                          <div className="dz-message needsclick" {...getRootProps()}>
+                            <input {...getInputProps()} />
+                            <div className="dz-message needsclick">
+                              <div className="mb-3">
+                                <i className="display-4 text-muted bx bxs-cloud-upload"/>
+                              </div>
+                              <h5>Drop Image here or click to upload.</h5>
+                            </div>
+                          </div>
+                        </div>
+                    )}
+                  </Dropzone>
+                  <div className="dropzone-previews ms-3" id="file-previews">
+                    {
+                        (coverImg.length === 0 && values.cover.imgURL) && (
+                            <Card
+                                className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
+                            >
+                              <div className="p-2">
+                                <Row className="align-items-center">
+                                  <Col className="col-auto">
+                                    <img
+                                        data-dz-thumbnail=""
+                                        height="80"
+                                        className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
+                                        alt={'cover'}
+                                        src={values.cover.imgURL}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Link
+                                        to="#"
+                                        className="text-muted font-weight-bold"
+                                    >
+                                      Background
+                                    </Link>
+                                    <p className="mb-0">
+                                      <strong>{values.cover.width} X {values.cover.height}</strong>
+                                    </p>
+                                  </Col>
+                                </Row>
+                              </div>
+                            </Card>
+                        )
+                    }
+                    {coverImg.map((f: any, i) => {
+                      return (
+                          <Card
+                              className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
+                              key={i + '-file'}
+                          >
+                            <div className="p-2">
+                              <Row className="align-items-center">
+                                <Col className="col-auto">
+                                  <img
+                                      data-dz-thumbnail=""
+                                      height="80"
+                                      className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
+                                      alt={f.name}
+                                      src={f.preview}
+                                  />
+                                </Col>
+                                <Col>
+                                  <Link
+                                      to="#"
+                                      className="text-muted font-weight-bold"
+                                  >
+                                    {f.name}
+                                  </Link>
+                                  <p className="mb-0">
+                                    <strong>{f.formattedSize}</strong>
+                                  </p>
+                                </Col>
+                              </Row>
+                            </div>
+                          </Card>
+                      );
+                    })}
+                  </div>
+                </Col>
+              </FormGroup>
+              <FormGroup className="mb-3" row>
+                <Label md="3" className="col-form-label text-start">
+                  Allow Users To Access Location When They Leave?
+                </Label>
+                <Col md="9" className={'flex-horizontal'}>
+                  <CvSwitcher
+                      defaultValue={values.allowUsersToAccessAfterLeaving}
+                      onChange={(event: boolean) => onSwitch(event)}
+                  />
+                </Col>
+              </FormGroup>
+              <FormGroup className="mb-3" row>
+                <Label
+                    htmlFor="days-after"
+                    md="3"
+                    className="col-form-label text-start"
+                >
+                  How Many Days After?
+                </Label>
+                <Col md="9">
+                  <Input
+                      type="number"
+                      value={values.accessDaysAfter || ''}
+                      className={`form-control ${(isSubmitted && !values.accessDaysAfter) ? classes.errorBorder : ''}`}
+                      id="days-after"
+                      onChange={event => setValues({
+                        ...values,
+                        accessDaysAfter: parseInt(event.target.value)
+                      })}/>
+                </Col>
+              </FormGroup>
+              {!newMode && (
+                  <FormGroup className="mb-3" row>
+                    <Label
+                        htmlFor="admin-accounts"
+                        md="3"
+                        className="col-form-label text-start"
+                    >
+                      All time visitors count
+                    </Label>
+                    <Col md="9">
+                      <Input type="number" value={values.allTimeVisitorsCount || ''}
+                             className={`form-control`}
+                             readOnly={true}
+                             id="all-time-visitors-count"
+                      />
+                    </Col>
+                  </FormGroup>
+              )}
+              <Button label={'Submit'} type={'submit'} onClick={(event) => submitButton(event)}/>
+            </CardBody>
+          </Card>
+        </Form>
+      </div>
   );
 };
 

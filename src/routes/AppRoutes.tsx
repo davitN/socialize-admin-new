@@ -14,6 +14,8 @@ import Venues from './Venues';
 import { RootState } from '../store/configureStore';
 import { useSelector } from 'react-redux';
 import UserProfile from './Profile';
+import AdminManagements from './AdminManagements';
+import AdminManagementForm from './AdminManagementForm';
 
 const AppRoutes = () => {
   const userRole = useSelector(
@@ -71,6 +73,22 @@ const AppRoutes = () => {
                   element={
                     <WithAuth>
                       <CompanyForm />
+                    </WithAuth>
+                  }
+              />
+              <Route
+                  path="/admin-management"
+                  element={
+                    <WithAuth>
+                      <AdminManagements />
+                    </WithAuth>
+                  }
+              />
+              <Route
+                  path="/admin-management/:id"
+                  element={
+                    <WithAuth>
+                      <AdminManagementForm />
                     </WithAuth>
                   }
               />
