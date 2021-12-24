@@ -85,10 +85,6 @@ const Companies: React.FC<{}> = () => {
 
   const getData = () => {
     setDataLoading(true);
-    queryParams = {
-      offset: searchParams.get('offset') || 0,
-      limit: searchParams.get('limit') || 10,
-    };
     dispatch(
       getCompaniesActionSG(queryParams, {
         success: () => {
@@ -100,9 +96,14 @@ const Companies: React.FC<{}> = () => {
       })
     );
   };
+
   useEffect(() => {
-    getData();
     setCurrentPage(queryParams.offset);
+    setSearchParams({
+      offset: queryParams.offset.toString(),
+      limit: queryParams.limit.toString(),
+    });
+    getData();
   }, [searchParams]);
 
   const handlePageChange = (event: PaginationEventModel) => {
