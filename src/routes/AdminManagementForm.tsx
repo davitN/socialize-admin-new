@@ -20,6 +20,7 @@ import { AutoComplete, AutoCompleteCompleteMethodParams } from 'primereact/autoc
 import { RootState } from '../store/configureStore';
 import { getCompaniesActionSG } from '../store/ducks/companyDuck';
 import { CompanyModel } from '../types/company';
+import { Password } from 'primereact/password';
 
 const useStyles = createUseStyles({
   inputError: {
@@ -51,6 +52,13 @@ const useStyles = createUseStyles({
       width: 'calc(100% - 200px)',
       borderRadius: '0.25rem',
       height: '100%'
+    },
+    '& .p-password': {
+      width: 'calc(100% - 200px)',
+      '& input': {
+        width: '100%',
+        height: '37px'
+      }
     }
   },
   formLabel: {
@@ -88,6 +96,7 @@ const AdminManagementForm: React.FC<{}> = () => {
     email: boolean,
     phone: boolean,
     role: boolean,
+    password: boolean
     submitted: boolean
   }>({
     username: false,
@@ -96,6 +105,7 @@ const AdminManagementForm: React.FC<{}> = () => {
     email: false,
     phone: false,
     role: false,
+    password: true,
     submitted: false
   });
   const { id: adminId } = useParams();
@@ -113,7 +123,7 @@ const AdminManagementForm: React.FC<{}> = () => {
 
   const getCompanies = () => {
     dispatch(
-        getCompaniesActionSG({offset: 0, limit: 1000000}, {
+        getCompaniesActionSG({ offset: 0, limit: 1000000 }, {
           success: () => {
             //
           },
@@ -125,12 +135,13 @@ const AdminManagementForm: React.FC<{}> = () => {
   };
 
   useEffect(() => {
-    setValues({...values, roleId: selectedRole._id})
+    console.log(selectedRole);
+    setValues({ ...values, roleId: selectedRole._id })
   }, [selectedRole]);
 
   useEffect(() => {
     if (selectedCompany._id) {
-      setValues({...values, companyId: selectedCompany._id});
+      setValues({ ...values, companyId: selectedCompany._id });
       setCompanySearchValue(selectedCompany.name);
     }
   }, [selectedCompany]);
@@ -138,9 +149,13 @@ const AdminManagementForm: React.FC<{}> = () => {
   const getSelectedAdminManagement = (adminId: string) => {
     dispatch(getSelectedAdminManagementActionSG(adminId, {
       success: (res: AdminModel) => {
-        console.log(res);
-        setValues(res);
-        setValues({ ...values, ...res });
+        setSelectedRole(res.role);
+        setValues({ ...values, ...res, roleId: res.role._id });
+        if (res.role.name === 'CompanyOwner') {
+          setSelectedCompany(res.company)
+        }
+      }, error: () => {
+        navigate(-1);
       }
     }))
   }
@@ -163,6 +178,18 @@ const AdminManagementForm: React.FC<{}> = () => {
     }, 250)
   }
 
+  const checkPassword = (): boolean => {
+    const regexp = new RegExp('^(?=.*[a-z])(?=.*[0-9])(?=.*[A-Z])[a-zA-Z0-9]{6,50}$')
+    if (newMode) {
+      return regexp.test(values.password)
+    } else {
+      if (values.password) {
+        return regexp.test(values.password)
+      }
+      return true;
+    }
+  }
+
   const handleValidation = () => {
     setValidation({
       ...validation,
@@ -170,27 +197,32 @@ const AdminManagementForm: React.FC<{}> = () => {
       firstName: !!values.firstName,
       lastName: !!values.lastName,
       phone: !!values.phone,
+      role: !!values.roleId,
       email: new RegExp('^[^@]+@[^@]{2,}\\.[^@]{2,}$').test(values.email),
-      role: !!values.roleId
+      password: checkPassword(),
     });
   };
 
   const submitButton = (event: Event) => {
     event.preventDefault();
     setValidation({ ...validation, submitted: true });
-    if (!(validation.username && validation.phone && validation.email && validation.firstName && validation.lastName)) {
+    if (!(
+        validation.username &&
+        validation.phone &&
+        validation.email &&
+        validation.firstName &&
+        validation.lastName &&
+        validation.password &&
+        validation.role
+    )) {
       return;
     }
-    const sendData: AdminModel | any = values;
     if (selectedRole.name === 'CompanyOwner' && !values.companyId) {
       return;
     }
-    console.log(values);
     if (newMode) {
-      if (!values.password) {
-        return;
-      }
       const newData: AdminModel = {
+        username: values.username,
         firstName: values.firstName,
         lastName: values.lastName,
         phone: values.phone,
@@ -208,11 +240,25 @@ const AdminManagementForm: React.FC<{}> = () => {
         error: (error: any) => console.log(error),
       }))
     } else {
+      const sendData: AdminModel = {
+        username: values.username,
+        firstName: values.firstName,
+        lastName: values.lastName,
+        phone: values.phone,
+        email: values.email,
+        roleId: values.roleId,
+        password: values.password
+      }
+      if (selectedRole.name === 'CompanyOwner') {
+        sendData.companyId = values.companyId;
+      }
       dispatch(putAdminManagementAction(values._id, sendData, {
         success: () => {
           navigate(-1)
         },
-        error: (error: any) => console.log(error),
+        error: () => {
+          //
+        },
       }))
     }
   }
@@ -234,10 +280,6 @@ const AdminManagementForm: React.FC<{}> = () => {
 
   return (
       <div className="page-content">
-        <Breadcrumbs
-            title={'Welcome to That Social App Premium Dashboard'}
-            breadcrumbItem={'VOLLEYBOX SETTINGS'}
-        />
         <Card>
           <CardBody>
             {/*<CardTitle className={'text-start'}>Location Information</CardTitle>*/}
@@ -270,14 +312,14 @@ const AdminManagementForm: React.FC<{}> = () => {
                   required
               />
               <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
-                <label>Company</label>
+                <label>Role</label>
                 <Dropdown
                     className={(validation.submitted && !validation.role) ? classes.borderError : ''}
                     optionLabel={'name'}
                     value={selectedRole}
                     options={roles}
-                    onChange={e => {setSelectedRole(e.value)}}
-                    placeholder={'Select a Role'}
+                    onChange={e => setSelectedRole(e.value)}
+                    placeholder={selectedRole.name ? selectedRole.name : 'Select a Role'}
                 />
               </div>
               {selectedRole.name === 'CompanyOwner' && (
@@ -315,17 +357,20 @@ const AdminManagementForm: React.FC<{}> = () => {
                   placeholder="Enter Email"
                   required
               />
-              {newMode && (
-                  <TextInput
-                      customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(validation.submitted && !values.password) ? classes.inputError : ''}`}
-                      value={values.password}
-                      handleChange={(password) => setValues({ ...values, password })}
-                      label="Password"
-                      type={'password'}
-                      placeholder="Enter Password"
-                      required
-                  />
-              )}
+              <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
+                <label>Password</label>
+                <Password
+                    className={`${(validation.submitted && !validation.password) ? classes.inputError : ''}`}
+                    value={values.password}
+                    onChange={(e) => setValues({ ...values, password: e.target.value })}
+                    type={'password'}
+                    placeholder="Enter Password"
+                    toggleMask={true}
+                    feedback={false}
+                    required
+                    autoComplete={'off'}
+                />
+              </div>
               <Button label={'Submit'} onClick={() => submitButton(event)} type={'submit'}/>
             </Form>
           </CardBody>

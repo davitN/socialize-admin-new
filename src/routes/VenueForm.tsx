@@ -345,10 +345,6 @@ const VenueForm: React.FC<{}> = () => {
 
   return (
       <div className="page-content">
-        <Breadcrumbs
-            title={'Welcome to That Social App Premium Dashboard'}
-            breadcrumbItem={'VOLLEYBOX SETTINGS'}
-        />
         <Form>
           <Card>
             <CardBody>

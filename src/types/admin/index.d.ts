@@ -8,6 +8,13 @@ export interface AdminModel {
   roleId: string,
   companyId?: string,
   email?: string,
+  role?: { name: string, _id: string },
+  company?: {
+    email: string,
+    name: string,
+    phone: string,
+    _id: string,
+  }
 }
 
 export interface AdminTableModel {

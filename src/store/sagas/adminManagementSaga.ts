@@ -67,7 +67,7 @@ export function* saveAdminManagementSaga({ data, callbacks }: {
         notifyAction({
           type: 'error',
           message: error.response?.data.message,
-          showError: false,
+          showError: true,
         })
     );
   }
@@ -92,7 +92,7 @@ export function* putAdminManagementSaga({
         notifyAction({
           type: 'error',
           message: error.response?.data.message,
-          showError: false,
+          showError: true,
         })
     );
   }

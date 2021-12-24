@@ -32,6 +32,7 @@ const TextInput: FC<PropsTypes> = ({
       )}
       {icon && icon}
       <InputText
+          autoComplete={'off'}
         id={label}
         disabled={disabled}
         value={value || ''}
