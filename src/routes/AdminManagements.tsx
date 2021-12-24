@@ -11,7 +11,7 @@ import { RootState } from '../store/configureStore';
 import { TableHeaderModel, TableQueryParams } from '../types/table';
 import { PaginationEventModel } from '../types/pagination/pagination';
 import { Button } from 'primereact/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getAdminManagementsActionSG } from '../store/ducks/adminManagementDuck';
 import { AdminModel } from '../types/admin';
 
@@ -27,22 +27,22 @@ const AdminManagements: React.FC<{}> = () => {
       field: 'name',
       haveTemplate: true,
       template: (row: AdminModel) => (
-          <Fragment>
-            {row.firstName} {row.lastName}
-          </Fragment>
+        <Fragment>
+          {row.firstName} {row.lastName}
+        </Fragment>
       ),
     },
     {
       name: 'Role',
-      field: 'role.name'
+      field: 'role.name',
     },
     {
       name: 'Email',
-      field: 'email'
+      field: 'email',
     },
     {
       name: 'Phone',
-      field: 'phone'
+      field: 'phone',
     },
     {
       name: 'View',
@@ -60,6 +60,7 @@ const AdminManagements: React.FC<{}> = () => {
   const navigate = useNavigate();
   const [dataLoading, setDataLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(0);
+  const [searchParams, setSearchParams] = useSearchParams({});
   const LIMIT = 10;
   const dispatch = useDispatch();
   const { adminManagements } = useSelector(
@@ -79,18 +80,37 @@ const AdminManagements: React.FC<{}> = () => {
       })
     );
   };
+
   useEffect(() => {
     queryParams = {
-      limit: 10,
-      offset: 0,
+      limit: parseInt(searchParams.get('limit')) || 10,
+      offset: parseInt(searchParams.get('offset')) || 0,
     };
+    setCurrentPage(queryParams.offset);
+    setSearchParams({
+      limit: queryParams.limit.toString(),
+      offset: queryParams.offset.toString(),
+      searchWord: queryParams.searchWord,
+    });
+  }, []);
+
+  useEffect(() => {
+    setCurrentPage(queryParams.offset);
+    setSearchParams({
+      limit: queryParams.limit.toString(),
+      offset: queryParams.offset.toString(),
+    });
     getData();
-  }, [dispatch]);
+  }, [searchParams]);
 
   const handlePageChange = (event: PaginationEventModel) => {
     setCurrentPage(event.first);
     queryParams.offset = event.first;
     queryParams.limit = LIMIT;
+    setSearchParams({
+      limit: queryParams.limit.toString(),
+      offset: queryParams.offset.toString(),
+    });
     getData();
   };
 
@@ -106,7 +126,9 @@ const AdminManagements: React.FC<{}> = () => {
           </div>
           <DataTable
             className={'fs-6'}
-            value={adminManagements.data.length > 0 ? adminManagements.data : []}
+            value={
+              adminManagements.data.length > 0 ? adminManagements.data : []
+            }
             responsiveLayout="scroll"
             rows={LIMIT}
             // tableClassName={classes.table}
