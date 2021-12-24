@@ -1,7 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 
-import { Card, CardBody, CardSubtitle, CardTitle, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
+import {
+  Card,
+  CardBody,
+  CardSubtitle,
+  CardTitle,
+  Col,
+  Form,
+  FormGroup, Input,
+  Label,
+  Row,
+} from 'reactstrap';
 import { VenueImages, VenueSendModel, VenueStateModel } from '../types/venue';
 import Breadcrumbs from '../components/shared/Breadcrumb';
 import TextInput from '../components/shared/form-elements/TextInput';
@@ -16,45 +26,48 @@ import { RootState } from '../store/configureStore';
 import { putVenueAction, saveVenueAction } from '../store/ducks/VenueDuck';
 import { getCompaniesActionSG } from '../store/ducks/companyDuck';
 import { CompanyModel } from '../types/company';
-import { AutoComplete, AutoCompleteCompleteMethodParams } from 'primereact/autocomplete';
+import {
+  AutoComplete,
+  AutoCompleteCompleteMethodParams,
+} from 'primereact/autocomplete';
 
 const useStyles = createUseStyles({
   inputBlock: {
     '& label': {
       width: '200px',
       marginBottom: 0,
-      textAlign: 'start'
+      textAlign: 'start',
     },
     '& input': {
       width: 'calc(100% - 200px)',
       borderRadius: '0.25rem',
-    }
+    },
   },
   inputError: {
     '& input': {
-      borderColor: '#ff4a4a'
-    }
+      borderColor: '#ff4a4a',
+    },
   },
   errorBorder: {
-    borderColor: '#ff4a4a'
+    borderColor: '#ff4a4a',
   },
   multiSelectClass: {
     height: '40px',
     '& label': {
       width: '200px',
-      textAlign: 'start'
+      textAlign: 'start',
     },
     '& .p-autocomplete': {
       width: 'calc(100% - 200px)',
       borderRadius: '0.25rem',
-      height: '100%'
-    }
+      height: '100%',
+    },
   },
   formLabel: {
     width: '200px',
   },
   formValue: {
-    width: 'calc(100% - 200px)'
+    width: 'calc(100% - 200px)',
   },
   dropZoneWrapper: {
     padding: 0,
@@ -67,7 +80,7 @@ const useStyles = createUseStyles({
     height: 'calc(140px - 1rem)',
     objectFit: 'cover',
   },
-})
+});
 
 const VenueForm: React.FC<{}> = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -86,7 +99,7 @@ const VenueForm: React.FC<{}> = () => {
   const [coverThumbnailImg, setCoverThumbnail] = useState([]);
   const [coverImg, setCover] = useState([]);
   const { companiesData } = useSelector(
-      (state: RootState) => state.companyReducer
+    (state: RootState) => state.companyReducer
   );
   const [values, setValues] = useState<VenueStateModel>({
     accessDaysAfter: null,
@@ -95,12 +108,12 @@ const VenueForm: React.FC<{}> = () => {
     cover: {
       width: null,
       height: null,
-      imgURL: ''
+      imgURL: '',
     },
     coverThumbnail: {
       width: null,
       height: null,
-      imgURL: ''
+      imgURL: '',
     },
     location: {
       state: '',
@@ -110,7 +123,7 @@ const VenueForm: React.FC<{}> = () => {
       country: '',
       point: {
         type: 'Point',
-        coordinates: [41.123123, 44.123123]
+        coordinates: [41.123123, 44.123123],
       },
       street: '',
     },
@@ -118,28 +131,31 @@ const VenueForm: React.FC<{}> = () => {
     logo: {
       width: null,
       height: null,
-      imgURL: ''
+      imgURL: '',
     },
     profile: {
       name: '',
       phoneNumber: '',
       webSite: '',
       description: '',
-      rating: null
+      rating: null,
     },
-    type: 'Restaurant'
-  })
+    type: 'Restaurant',
+  });
 
   const getCompanies = () => {
     dispatch(
-        getCompaniesActionSG({offset: 0, limit: 1000000}, {
+      getCompaniesActionSG(
+        { offset: 0, limit: 1000000 },
+        {
           success: () => {
             //
           },
           error: () => {
             //
           },
-        })
+        }
+      )
     );
   };
 
@@ -151,18 +167,22 @@ const VenueForm: React.FC<{}> = () => {
 
   useEffect(() => {
     if (selectedCompany._id) {
-      setValues({...values, company: selectedCompany._id});
+      setValues({ ...values, company: selectedCompany._id });
       setCompanySearchValue(selectedCompany.name);
     }
   }, [selectedCompany]);
 
-
-  const sendData: VenueSendModel = { data: null, coverThumbnail: null, cover: null, logo: null };
+  const sendData: VenueSendModel = {
+    data: null,
+    coverThumbnail: null,
+    cover: null,
+    logo: null,
+  };
   const { venuesData } = useSelector((state: RootState) => state.venueReducer);
 
   const onChangeState = (changedStates: VenueStateModel) => {
-    sendData.data = changedStates
-  }
+    sendData.data = changedStates;
+  };
 
   const onChangeFiles = (changedFiles: { [key in VenueImages]: any }) => {
     if (changedFiles.logo.length > 0) {
@@ -174,7 +194,7 @@ const VenueForm: React.FC<{}> = () => {
     if (changedFiles.coverThumbnail.length > 0) {
       sendData.coverThumbnail = changedFiles.coverThumbnail[0];
     }
-  }
+  };
   const formNotValid = () => {
     if (!companySearchValue) {
       return true;
@@ -224,11 +244,13 @@ const VenueForm: React.FC<{}> = () => {
       if (event.query.length === 0) {
         results = [...companiesData.data];
       } else {
-        results = companiesData.data.filter(item => item.name.toLowerCase().includes(event.query.toLowerCase()))
+        results = companiesData.data.filter((item) =>
+          item.name.toLowerCase().includes(event.query.toLowerCase())
+        );
       }
-      setFilteredCompanies(results)
-    }, 250)
-  }
+      setFilteredCompanies(results);
+    }, 250);
+  };
 
   const submitButton = (event: any) => {
     event.preventDefault();
@@ -237,56 +259,69 @@ const VenueForm: React.FC<{}> = () => {
       return;
     }
     if (newMode) {
-      dispatch(saveVenueAction(sendData, {
-        success: () => {
-          navigate(-1)
-        },
-        error: () => {
-          //
-        }
-      }))
+      dispatch(
+        saveVenueAction(sendData, {
+          success: () => {
+            navigate(-1);
+          },
+          error: () => {
+            //
+          },
+        })
+      );
     } else {
-      dispatch(putVenueAction(values._id, { ...sendData }, {
-        success: () => {
-          navigate(-1)
-        },
-        error: () => {
-          //
-        },
-      }))
+      dispatch(
+        putVenueAction(
+          values._id,
+          { ...sendData },
+          {
+            success: () => {
+              navigate(-1);
+            },
+            error: () => {
+              //
+            },
+          }
+        )
+      );
     }
-  }
-
+  };
 
   useEffect(() => {
     onChangeState(values);
-    onChangeFiles({ logo: logoImg, cover: coverImg, coverThumbnail: coverThumbnailImg });
+    onChangeFiles({
+      logo: logoImg,
+      cover: coverImg,
+      coverThumbnail: coverThumbnailImg,
+    });
   });
 
   useEffect(() => {
     if (!newMode && values.company) {
-      const company = companiesData.data.find(item => item._id === values.company);
+      const company = companiesData.data.find(
+        (item) => item._id === values.company
+      );
       if (company) {
         setSelectedCompany(company);
       }
     }
   }, [companiesData]);
 
-
   useEffect(() => {
     getCompanies();
     if (venueId === 'new') {
-      setNewMode(true)
+      setNewMode(true);
     } else if (venueId) {
       setNewMode(false);
-      const selectedVenue: VenueStateModel = venuesData.data.find(item => item._id === venueId);
+      const selectedVenue: VenueStateModel = venuesData.data.find(
+        (item) => item._id === venueId
+      );
       if (!selectedVenue) {
-        navigate(-1)
+        navigate(-1);
       }
-      setValues({ ...values, ...selectedVenue })
+      setValues({ ...values, ...selectedVenue });
     }
   }, [venueId]);
-
 
   const getSizesFromImg = (imgFile: File | any, key: VenueImages) => {
     const img = document.createElement('img');
@@ -294,20 +329,33 @@ const VenueForm: React.FC<{}> = () => {
     setTimeout(() => {
       switch (key) {
         case 'logo':
-          setValues({ ...values, logo: { width: img.width, height: img.height, imgURL: '' } });
+          setValues({
+            ...values,
+            logo: { width: img.width, height: img.height, imgURL: '' },
+          });
           break;
         case 'coverThumbnail':
-          setValues({ ...values, coverThumbnail: { width: img.width, height: img.height, imgURL: '' } });
+          setValues({
+            ...values,
+            coverThumbnail: {
+              width: img.width,
+              height: img.height,
+              imgURL: '',
+            },
+          });
           break;
         case 'cover':
-          setValues({ ...values, cover: { width: img.width, height: img.height, imgURL: '' } });
+          setValues({
+            ...values,
+            cover: { width: img.width, height: img.height, imgURL: '' },
+          });
           break;
       }
-    }, 1000)
-  }
+    }, 1000);
+  };
 
   function onSwitch(active: boolean) {
-    setValues({ ...values, allowUsersToAccessAfterLeaving: active })
+    setValues({ ...values, allowUsersToAccessAfterLeaving: active });
   }
 
   function formatBytes(bytes: any, decimals = 2) {
@@ -322,10 +370,10 @@ const VenueForm: React.FC<{}> = () => {
 
   function handleAcceptedFiles(key: VenueImages, files: any) {
     files.map((file: any) =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-          formattedSize: formatBytes(file.size),
-        })
+      Object.assign(file, {
+        preview: URL.createObjectURL(file),
+        formattedSize: formatBytes(file.size),
+      })
     );
     switch (key) {
       case 'logo':
@@ -363,17 +411,19 @@ const VenueForm: React.FC<{}> = () => {
               <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
                 <label>Company</label>
                 <AutoComplete
-                    className={(isSubmitted && !companySearchValue) ? classes.inputError : ''}
-                    completeMethod={searchCompanies}
-                    scrollHeight={'240px'}
-                    value={companySearchValue}
-                    dropdown={true}
-                    field={'name'}
-                    suggestions={filteredCompanies}
-                    onSelect={(e) => onSelectCompany(e.value)}
-                    onChange={(e) => setCompanySearchValue(e.value)}
-                    placeholder="Select a Company"
-                    forceSelection={true}
+                  className={
+                    isSubmitted && !companySearchValue ? classes.inputError : ''
+                  }
+                  completeMethod={searchCompanies}
+                  scrollHeight={'240px'}
+                  value={companySearchValue}
+                  dropdown={true}
+                  field={'name'}
+                  suggestions={filteredCompanies}
+                  onSelect={(e) => onSelectCompany(e.value)}
+                  onChange={(e) => setCompanySearchValue(e.value)}
+                  placeholder="Select a Company"
+                  forceSelection={true}
                 />
               </div>
               <TextInput

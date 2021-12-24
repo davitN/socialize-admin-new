@@ -3,20 +3,12 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import {
-  Card,
-  CardBody,
-  CardTitle,
-  Col,
-  Form,
-  FormGroup,
-  Input,
-  Label,
-} from 'reactstrap';
+import { Card, CardBody, CardTitle, Form } from 'reactstrap';
 import Breadcrumbs from '../components/shared/Breadcrumb';
 import { Password } from 'primereact/password';
 import { createUseStyles } from 'react-jss';
 import { Button } from 'primereact/button';
+import TextInput from '../components/shared/form-elements/TextInput';
 import { RootState } from '../store/configureStore';
 import { UserProfileModel, UserProfileSendModel } from '../types/profile';
 import { changePasswordActionSG } from '../store/ducks/authDuck';
@@ -27,6 +19,10 @@ const useStyles = createUseStyles({
       width: '200px',
       marginBottom: 0,
       textAlign: 'start',
+    },
+    '& input': {
+      width: 'calc(100% - 200px)',
+      borderRadius: '0.25rem',
     },
   },
   inputError: {
@@ -40,8 +36,14 @@ const useStyles = createUseStyles({
     justifyContent: 'center',
     color: '#ff4a4a',
     width: '100%',
-    marginTop: '-0.5rem',
+    marginTop: '-1.5rem',
     marginBottom: '0.5rem',
+  },
+  formLabel: {
+    width: '200px',
+  },
+  formValue: {
+    width: 'calc(100% - 200px)',
   },
 });
 
@@ -125,9 +127,9 @@ const UserProfile: React.FC<{}> = () => {
           navigate('/dashboard');
         },
         error: (error: any) => {
-          console.log(error.response.status);
           if (error.response.status === 409) {
             errorText = 'Old password was incorrect!';
+            setOldPassIsValid(false);
           }
         },
       })
@@ -149,70 +151,50 @@ const UserProfile: React.FC<{}> = () => {
         <Card>
           <CardBody>
             <CardTitle className={'text-start'}>User Information</CardTitle>
-            <FormGroup className="mb-3" row>
-              <Label
-                md="3"
-                className="col-form-label text-start"
-                htmlFor="first-name"
-              >
-                First Name
-              </Label>
-              <Col md="9" className={'flex-horizontal'}>
-                <Input
-                  className={`form-control`}
-                  value={userData.firstName}
-                  readOnly={true}
-                  id="first-name"
-                />
-              </Col>
-            </FormGroup>
-            <FormGroup className="mb-3" row>
-              <Label
-                md="3"
-                className="col-form-label text-start"
-                htmlFor="last-name"
-              >
-                Last Name
-              </Label>
-              <Col md="9" className={'flex-horizontal'}>
-                <Input
-                  className={`form-control`}
-                  value={userData.lastName}
-                  readOnly={true}
-                  id="last-name"
-                />
-              </Col>
-            </FormGroup>
+            <div className={'mb-3'}>
+              <TextInput
+                value={userData.firstName}
+                label={'First Name'}
+                id={'first-name'}
+                customClasses={`flex-horizontal ${classes.inputBlock}`}
+                readonly={true}
+              />
+            </div>
+            <div className="mb-3">
+              <TextInput
+                value={userData.lastName}
+                id={'last-name'}
+                label={'Last Name'}
+                customClasses={`flex-horizontal ${classes.inputBlock}`}
+                readonly={true}
+              />
+            </div>
             {!showPasswordsForm && (
-              <FormGroup className="mb-3" row>
-                <Label md="3" className="col-form-label text-start">
+              <div className={`mb-3 flex-horizontal`}>
+                <label className={`text-start ${classes.formLabel}`}>
                   Password
-                </Label>
-                <Col md="9" className={'flex-horizontal'}>
+                </label>
+                <div className={`flex-horizontal ${classes.formValue}`}>
                   <Button
                     label="Change Password"
                     onClick={togglePasswordInputs}
                   ></Button>
-                </Col>
-              </FormGroup>
+                </div>
+              </div>
             )}
           </CardBody>
         </Card>
         {showPasswordsForm && (
           <Card>
             <CardBody>
-              <FormGroup className="flex-horizontal">
-                <Label
-                  md="3"
-                  className="col-form-label text-start"
+              <div className={`flex-horizontal mb-3`}>
+                <label
+                  className={`${classes.formLabel} text-start`}
                   htmlFor="old-password"
                 >
                   Old Password
-                </Label>
-                <Col
-                  md="9"
-                  className={`flex-horizontal mb-3 ${classes.inputBlock}`}
-                >
+                </label>
+                <div className={`flex-horizontal mb-3 ${classes.formValue}`}>
                   <Password
                     inputId="old-password"
                     className={`${classes.passwordInput} ${
@@ -229,22 +211,21 @@ const UserProfile: React.FC<{}> = () => {
                     toggleMask
                     required
                   />
-                </Col>
-              </FormGroup>
+                </div>
+              </div>
               {!oldPassIsValid && (
                 <div className={`md-3 ${classes.errText}`}>
                   <span>{errorText}</span>
                 </div>
               )}
-              <FormGroup className="flex-horizontal">
-                <Label
-                  md="3"
-                  className="col-form-label text-start"
+              <div className={`flex-horizontal mb-3`}>
+                <label
+                  className={`${classes.formLabel} text-start`}
                   htmlFor="new-password"
                 >
                   New Password
-                </Label>
-                <Col md="9" className={`flex-horizontal mb-3 `}>
+                </label>
+                <div className={`flex-horizontal mb-3 ${classes.formValue}`}>
                   <Password
                     inputId="new-password"
                     className={`${classes.passwordInput} ${
@@ -261,25 +242,21 @@ const UserProfile: React.FC<{}> = () => {
                     toggleMask
                     required
                   />
-                </Col>
-              </FormGroup>
+                </div>
+              </div>
               {!newPassIsValid && (
                 <div className={`md-3 ${classes.errText}`}>
                   <span>{errorText}</span>
                 </div>
               )}
-              <FormGroup className="flex-horizontal">
-                <Label
-                  md="3"
-                  className="col-form-label text-start"
+              <div className={`flex-horizontal mb-3`}>
+                <label
+                  className={`${classes.formLabel} text-start`}
                   htmlFor="confirm-password"
                 >
-                  New Password
-                </Label>
-                <Col
-                  md="9"
-                  className={`flex-horizontal mb-3 ${classes.inputBlock}`}
-                >
+                  Confirm Password
+                </label>
+                <div className={`flex-horizontal mb-3 ${classes.formValue}`}>
                   <Password
                     inputId="confirm-password"
                     className={`${classes.passwordInput} ${
@@ -296,8 +273,8 @@ const UserProfile: React.FC<{}> = () => {
                     toggleMask
                     required
                   />
-                </Col>
-              </FormGroup>
+                </div>
+              </div>
               {!confirmPassIsValid && (
                 <div className={`md-3 ${classes.errText}`}>
                   <span>{errorText}</span>
@@ -308,15 +285,6 @@ const UserProfile: React.FC<{}> = () => {
                 type={'submit'}
                 onClick={(event) => submitButton(event)}
               />
-              {/* <FormGroup className="flex-horizontal">
-                {formInvalid ? (
-                  <div className={`md-3 ${classes.errText}`}>
-                    <span>{errorText}</span>
-                  </div>
-                ) : (
-                  ''
-                )}
-              </FormGroup> */}
             </CardBody>
           </Card>
         )}

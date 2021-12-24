@@ -10,37 +10,57 @@ interface PropsTypes {
   label?: string;
   placeholder?: string;
   type?: string;
+  id?: string;
   customClasses?: string;
-  icon?: ReactNode
-  required?: boolean,
-  desc?: string,
-  disabled?: boolean
+  icon?: ReactNode;
+  required?: boolean;
+  desc?: string;
+  disabled?: boolean;
+  readonly?: boolean;
 }
 
 const TextInput: FC<PropsTypes> = ({
-  value, handleChange, label, placeholder, type = 'text', customClasses, icon, required, desc, disabled,
+  value,
+  id,
+  handleChange,
+  label,
+  placeholder,
+  type,
+  customClasses,
+  icon,
+  required,
+  desc,
+  disabled,
+  readonly,
 }) => {
   const classes = useStyles();
 
   return (
-    <span className={classNames(classes.fullWidth, 'p-field p-mb-0', icon && 'p-input-icon-left', customClasses)}>
+    <span
+      className={classNames(
+        classes.fullWidth,
+        'p-field p-mb-0',
+        icon && 'p-input-icon-left',
+        customClasses
+      )}
+    >
       {label && (
-        <label htmlFor={label} className={classNames(classes.textColor)}>
+        <label htmlFor={id || label} className={classNames(classes.textColor)}>
           {label}
           {desc && <p className={classes.desc}>{desc}</p>}
         </label>
       )}
       {icon && icon}
       <InputText
-          autoComplete={'off'}
-        id={label}
+        id={id || label}
         disabled={disabled}
         value={value || ''}
         placeholder={placeholder}
         onChange={({ target }) => handleChange && handleChange(target.value)}
-        type={type}
+        type={type || 'text'}
         className={'form-control'}
         required={required || false}
+        readOnly={readonly}
       />
     </span>
   );
