@@ -4,7 +4,7 @@ import axiosInstance from '../../services/interceptor.service';
 import { ISignInData, ISignUpData } from '../../types/auth';
 import { CallBacks, IUserData } from '../../types/main';
 import { UserProfileSendModel } from '../../types/profile';
-import { setUserDataAction } from '../ducks/authDuck';
+import { logoutActionSG, setUserDataAction } from '../ducks/authDuck';
 import {
   checkedSignedInAction,
   DEFAULT,
@@ -125,6 +125,7 @@ export function* logoutSaga() {
     // yield axiosInstance.delete('auth/sign_out');
     // yield AsyncStorage.removeItem("token");
     localStorage.removeItem('token');
+    yield put(logoutActionSG());
     yield put(resetStoreAction());
   } catch (error) {
     // yield notifyAction("error", "Error", "Something went wrong", true);

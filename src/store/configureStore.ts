@@ -41,7 +41,8 @@ const rootReducer = (state: ReturnType<typeof Object>, action: AnyAction) => {
       mainReducer: {
         isLoading: action.isLoading,
         isSignedIn: false,
-      },
+        isVerified: false
+      }
     };
     return appReducer(state, action);
   }

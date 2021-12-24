@@ -1,6 +1,7 @@
 import { AnyAction } from 'redux';
 import notificationService from '../../services/notification.service';
 import { CallBacks } from '../../types/main';
+import { LOGOUT_SG } from './authDuck';
 // import navigationService from "../../services/navigation.service";
 // import notificationService from "../../services/notification.service";
 
@@ -25,6 +26,8 @@ export const mainReducer = (state = initialState, action: AnyAction) => {
       };
     case DEFAULT:
       return state;
+    case LOGOUT_SG:
+      return initialState;
     default:
       return state;
   }

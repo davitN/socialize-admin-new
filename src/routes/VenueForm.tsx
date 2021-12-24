@@ -25,8 +25,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/configureStore';
 import { putVenueAction, saveVenueAction } from '../store/ducks/VenueDuck';
 import { getCompaniesActionSG } from '../store/ducks/companyDuck';
-import { MultiSelect } from 'primereact/multiselect';
 import { CompanyModel } from '../types/company';
+import {
+  AutoComplete,
+  AutoCompleteCompleteMethodParams,
+} from 'primereact/autocomplete';
 
 const useStyles = createUseStyles({
   inputBlock: {
@@ -54,7 +57,7 @@ const useStyles = createUseStyles({
       width: '200px',
       textAlign: 'start',
     },
-    '& .p-multiselect': {
+    '& .p-autocomplete': {
       width: 'calc(100% - 200px)',
       borderRadius: '0.25rem',
       height: '100%',
@@ -82,11 +85,14 @@ const useStyles = createUseStyles({
 const VenueForm: React.FC<{}> = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const classes = useStyles();
+  const [companySearchValue, setCompanySearchValue] = useState('');
+  const [filteredCompanies, setFilteredCompanies] = useState([]);
   const [newMode, setNewMode] = useState(false);
   const dispatch = useDispatch();
-  const [selectedCompany, setSelectedCompany] = useState<Array<CompanyModel>>(
-    []
-  );
+  const [selectedCompany, setSelectedCompany] = useState<CompanyModel>({
+    name: '',
+    _id: '',
+  });
   const navigate = useNavigate();
   const { id: venueId } = useParams();
   const [logoImg, setLogo] = useState([]);
@@ -153,15 +159,16 @@ const VenueForm: React.FC<{}> = () => {
     );
   };
 
-  const onSelectCompany = (values: CompanyModel[]) => {
-    if (values.length > 0) {
-      setSelectedCompany([values[values.length - 1]]);
+  const onSelectCompany = (value: CompanyModel) => {
+    if (value._id) {
+      setSelectedCompany(value);
     }
   };
 
   useEffect(() => {
-    if (selectedCompany.length > 0) {
-      setValues({ ...values, company: selectedCompany[0]._id });
+    if (selectedCompany._id) {
+      setValues({ ...values, company: selectedCompany._id });
+      setCompanySearchValue(selectedCompany.name);
     }
   }, [selectedCompany]);
 
@@ -189,6 +196,9 @@ const VenueForm: React.FC<{}> = () => {
     }
   };
   const formNotValid = () => {
+    if (!companySearchValue) {
+      return true;
+    }
     if (!values.company) {
       return true;
     }
@@ -228,6 +238,20 @@ const VenueForm: React.FC<{}> = () => {
     return false;
   };
 
+  const searchCompanies = (event: AutoCompleteCompleteMethodParams) => {
+    setTimeout(() => {
+      let results;
+      if (event.query.length === 0) {
+        results = [...companiesData.data];
+      } else {
+        results = companiesData.data.filter((item) =>
+          item.name.toLowerCase().includes(event.query.toLowerCase())
+        );
+      }
+      setFilteredCompanies(results);
+    }, 250);
+  };
+
   const submitButton = (event: any) => {
     event.preventDefault();
     setIsSubmitted(true);
@@ -238,7 +262,7 @@ const VenueForm: React.FC<{}> = () => {
       dispatch(
         saveVenueAction(sendData, {
           success: () => {
-            navigate('/venues');
+            navigate(-1);
           },
           error: () => {
             //
@@ -252,7 +276,7 @@ const VenueForm: React.FC<{}> = () => {
           { ...sendData },
           {
             success: () => {
-              navigate('/venues');
+              navigate(-1);
             },
             error: () => {
               //
@@ -278,7 +302,7 @@ const VenueForm: React.FC<{}> = () => {
         (item) => item._id === values.company
       );
       if (company) {
-        setSelectedCompany([company]);
+        setSelectedCompany(company);
       }
     }
   }, [companiesData]);
@@ -293,7 +317,7 @@ const VenueForm: React.FC<{}> = () => {
         (item) => item._id === venueId
       );
       if (!selectedVenue) {
-        navigate('/venues');
+        navigate(-1);
       }
       setValues({ ...values, ...selectedVenue });
     }
@@ -393,141 +417,24 @@ const VenueForm: React.FC<{}> = () => {
               required
             />
             <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
-              <label>Company</label>
-              <MultiSelect
-                className={
-                  isSubmitted && selectedCompany.length === 0
-                    ? classes.errorBorder
-                    : ''
-                }
-                scrollHeight={'240px'}
-                showSelectAll={false}
-                value={selectedCompany}
-                optionLabel={'name'}
-                options={companiesData.data || []}
-                onChange={(e) => onSelectCompany(e.value)}
-                placeholder="Select a Company"
-                filter={true}
-              />
-            </div>
-            <TextInput
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
-                isSubmitted && !values.location.address
-                  ? classes.inputError
-                  : ''
-              }`}
-              value={values.location.address}
-              handleChange={(address) =>
-                setValues({
-                  ...values,
-                  location: { ...values.location, address },
-                })
-              }
-              label="Address"
-              placeholder="Enter your Address"
-              required
-            />
-            <TextInput
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
-                isSubmitted && !values.location.city ? classes.inputError : ''
-              }`}
-              value={values.location.city}
-              handleChange={(city) =>
-                setValues({ ...values, location: { ...values.location, city } })
-              }
-              label="City"
-              placeholder="City"
-              required
-            />
-            <TextInput
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-              value={values.location.state}
-              handleChange={(state) =>
-                setValues({
-                  ...values,
-                  location: { ...values.location, state },
-                })
-              }
-              label="Province"
-              placeholder="Enter Province"
-              required
-            />
-            <TextInput
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
-                isSubmitted && !values.location.country
-                  ? classes.inputError
-                  : ''
-              }`}
-              value={values.location.country}
-              handleChange={(country) =>
-                setValues({
-                  ...values,
-                  location: { ...values.location, country },
-                })
-              }
-              label="Country"
-              placeholder="Enter Country"
-              required
-            />
-            <TextInput
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
-                isSubmitted && !values.profile.webSite ? classes.inputError : ''
-              }`}
-              value={values.profile.webSite}
-              handleChange={(webSite) =>
-                setValues({
-                  ...values,
-                  profile: { ...values.profile, webSite },
-                })
-              }
-              label="Website"
-              placeholder="Enter Website"
-              required
-            />
-            <TextInput
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
-                isSubmitted && !values.profile.phoneNumber
-                  ? classes.inputError
-                  : ''
-              }`}
-              value={values.profile.phoneNumber}
-              handleChange={(phoneNumber) =>
-                setValues({
-                  ...values,
-                  profile: { ...values.profile, phoneNumber },
-                })
-              }
-              label="Public Phone Number"
-              placeholder="(204) 227 - 3308"
-              required
-            />
-            <div className={`flex-horizontal mb-3 mt-4`}>
-              <label
-                htmlFor="description"
-                className={`col-form-label text-start ${classes.formLabel}`}
+              <div
+                className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}
               >
-                Description
-              </label>
-              <div className={classes.formValue}>
-                <textarea
-                  value={values.profile.description}
-                  className={`form-control ${
-                    isSubmitted && !values.profile.description
-                      ? classes.errorBorder
-                      : ''
-                  }`}
-                  id="description"
-                  rows={3}
-                  placeholder="Write some note.."
-                  onChange={(event) =>
-                    setValues({
-                      ...values,
-                      profile: {
-                        ...values.profile,
-                        description: event.target.value,
-                      },
-                    })
+                <label>Company</label>
+                <AutoComplete
+                  className={
+                    isSubmitted && !companySearchValue ? classes.inputError : ''
                   }
+                  completeMethod={searchCompanies}
+                  scrollHeight={'240px'}
+                  value={companySearchValue}
+                  dropdown={true}
+                  field={'name'}
+                  suggestions={filteredCompanies}
+                  onSelect={(e) => onSelectCompany(e.value)}
+                  onChange={(e) => setCompanySearchValue(e.value)}
+                  placeholder="Select a Company"
+                  forceSelection={true}
                 />
               </div>
             </div>
