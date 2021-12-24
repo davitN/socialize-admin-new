@@ -78,12 +78,12 @@ const UserProfile: React.FC<{}> = () => {
     onChangeState(values);
   });
 
-  useEffect(() => {
-    setFormInvalid(false);
-    setNewPassIsValid(true);
-    setOldPassIsValid(true);
-    setConfirmPassIsValid(true);
-  }, [values]);
+  //   useEffect(() => {
+  //     setFormInvalid(false);
+  //     setNewPassIsValid(true);
+  //     setOldPassIsValid(true);
+  //     setConfirmPassIsValid(true);
+  //   }, [values]);
 
   const togglePasswordInputs = () => {
     setShowPasswordsForm(true);
@@ -92,19 +92,19 @@ const UserProfile: React.FC<{}> = () => {
   const submitButton = (event: any) => {
     event.preventDefault();
 
-    if (!values.oldPassword || values.oldPassword.length < 6) {
+    if (!values.oldPassword) {
       setOldPassIsValid(false);
       setFormInvalid(true);
       errorText = 'Please enter valid password.';
       return;
     }
-    if (!values.password || values.password.length < 6) {
+    if (!values.password) {
       setNewPassIsValid(false);
       setFormInvalid(true);
       errorText = 'Please enter valid password.';
       return;
     }
-    if (!values.confirmPassword || values.confirmPassword.length < 6) {
+    if (!values.confirmPassword) {
       setConfirmPassIsValid(false);
       setFormInvalid(true);
       errorText = 'Please repeat passsword.';
@@ -118,9 +118,6 @@ const UserProfile: React.FC<{}> = () => {
       }
     }
 
-    if (formInvalid) {
-      return;
-    }
     dispatch(
       changePasswordActionSG(sendData, {
         success: () => {
@@ -130,15 +127,12 @@ const UserProfile: React.FC<{}> = () => {
           if (error.response.status === 409) {
             errorText = 'Old password was incorrect!';
             setOldPassIsValid(false);
+            setConfirmPassIsValid(true);
+            setNewPassIsValid(true);
           }
         },
       })
     );
-    setValues({
-      oldPassword: '',
-      password: '',
-      confirmPassword: '',
-    });
   };
 
   return (
