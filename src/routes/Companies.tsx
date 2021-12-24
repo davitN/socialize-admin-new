@@ -13,7 +13,7 @@ import { TableHeaderModel, TableQueryParams } from '../types/table';
 import { PaginationEventModel } from '../types/pagination/pagination';
 import { Button } from 'primereact/button';
 // import { createUseStyles } from 'react-jss';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CompanyModel } from '../types/company';
 
 let queryParams: TableQueryParams = {
@@ -76,6 +76,7 @@ const Companies: React.FC<{}> = () => {
   const navigate = useNavigate();
   const [dataLoading, setDataLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(0);
+  const [searchParams, setSearchParams] = useSearchParams({});
   const LIMIT = 10;
   const dispatch = useDispatch();
   const { companiesData } = useSelector(
@@ -84,6 +85,10 @@ const Companies: React.FC<{}> = () => {
 
   const getData = () => {
     setDataLoading(true);
+    queryParams = {
+      offset: searchParams.get('offset'),
+      limit: searchParams.get('limit'),
+    };
     dispatch(
       getCompaniesActionSG(queryParams, {
         success: () => {
@@ -96,18 +101,17 @@ const Companies: React.FC<{}> = () => {
     );
   };
   useEffect(() => {
-    queryParams = {
-      limit: 10,
-      offset: 0,
-    };
     getData();
-  }, [dispatch]);
+  }, [searchParams]);
 
   const handlePageChange = (event: PaginationEventModel) => {
     setCurrentPage(event.first);
-    queryParams.offset = event.first / LIMIT;
+    queryParams.offset = event.first;
     queryParams.limit = LIMIT;
-    getData();
+    setSearchParams({
+      limit: queryParams.limit.toString(),
+      offset: queryParams.offset.toString(),
+    });
   };
 
   return (
