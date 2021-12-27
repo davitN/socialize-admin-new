@@ -17,12 +17,6 @@ import { createUseStyles } from 'react-jss';
 import TextInput from '../components/shared/form-elements/TextInput';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-let queryParams: TableQueryParams = {
-  limit: 10,
-  offset: 0,
-  searchWord: ''
-}
-
 const useStyles = createUseStyles({
   searchInput: {
     marginRight: '20px',
@@ -76,7 +70,7 @@ const Venues: React.FC<{}> = () => {
   const getData = () => {
     setDataLoading(true);
     const params: TableQueryParams = {
-      limit: searchParams.get('limit'),
+      limit: LIMIT,
       offset: searchParams.get('offset'),
       searchWord: searchParams.get('searchWord')
     }
@@ -90,50 +84,32 @@ const Venues: React.FC<{}> = () => {
     }));
   }
   useEffect(() => {
-    console.log();
-    queryParams = {
-      limit: parseInt(searchParams.get('limit')) || 10,
-      offset: parseInt(searchParams.get('offset')) || 0,
-      searchWord: searchParams.get('searchWord') || ''
-    }
-    console.log((parseInt(queryParams.offset) / parseInt(queryParams.limit)))
-    setCurrentPage(queryParams.offset);
+    setCurrentPage(parseInt(searchParams.get('offset')) || 0);
     setSearchParams({
-      limit: queryParams.limit.toString(),
-      offset: queryParams.offset.toString(),
-      searchWord: queryParams.searchWord
+      offset: searchParams.get('offset') || '0',
+      searchWord: searchParams.get('searchWord') || ''
     });
-    // navigate({
-    //   search: `?${createSearchParams({
-    //     limit: queryParams.limit.toString(),
-    //     offset: queryParams.offset.toString(),
-    //     searchWord: queryParams.searchWord
-    //   })}`
-    // })
   }, [dispatch]);
 
   useEffect(() => {
-    getData();
+    if (searchParams.toString().includes('offset')) {
+      getData();
+    }
   }, [searchParams]);
 
   const handlePageChange = (event: PaginationEventModel) => {
     setCurrentPage(event.first)
-    queryParams.offset = event.first;
-    queryParams.limit = LIMIT;
     setSearchParams({
-      limit: queryParams.limit.toString(),
-      offset: queryParams.offset.toString(),
-      searchWord: queryParams.searchWord
+      offset: event.first.toString(),
+      searchWord: searchParams.get('searchWord')
     });
   };
 
   const handleSearch = (event: string) => {
     setSearchValue(event);
-    queryParams.searchWord = event;
     setSearchParams({
-      limit: queryParams.limit.toString(),
-      offset: queryParams.offset.toString(),
-      searchWord: queryParams.searchWord
+      offset: searchParams.get('offset'),
+      searchWord: event
     });
   }
 
