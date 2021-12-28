@@ -7,6 +7,7 @@ import { topCustomersReducer } from './topCustomersDuck';
 import { venueReducer } from './VenueDuck';
 import { companyReducer } from './companyDuck';
 import { adminManagementReducer } from './adminManagementDuck';
+import { appUsersReducer } from './appUsersDuck';
 
 export {
   mainReducer,
@@ -18,4 +19,5 @@ export {
   venueReducer,
   companyReducer,
   adminManagementReducer,
+  appUsersReducer,
 };

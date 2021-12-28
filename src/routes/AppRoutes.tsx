@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 import UserProfile from './Profile';
 import AdminManagements from './AdminManagements';
 import AdminManagementForm from './AdminManagementForm';
+import AppUsers from './AppUsers';
 
 const AppRoutes = () => {
   const userRole = useSelector(
@@ -69,28 +70,28 @@ const AppRoutes = () => {
                   }
               />
               <Route
-                  path="/company/:id"
-                  element={
-                    <WithAuth>
-                      <CompanyForm />
-                    </WithAuth>
-                  }
+                path="/company/:id"
+                element={
+                  <WithAuth>
+                    <CompanyForm />
+                  </WithAuth>
+                }
               />
               <Route
-                  path="/admin-management"
-                  element={
-                    <WithAuth>
-                      <AdminManagements />
-                    </WithAuth>
-                  }
+                path="/admin-management"
+                element={
+                  <WithAuth>
+                    <AdminManagements />
+                  </WithAuth>
+                }
               />
               <Route
-                  path="/admin-management/:id"
-                  element={
-                    <WithAuth>
-                      <AdminManagementForm />
-                    </WithAuth>
-                  }
+                path="/admin-management/:id"
+                element={
+                  <WithAuth>
+                    <AdminManagementForm />
+                  </WithAuth>
+                }
               />
             </Fragment>
           )}
@@ -107,6 +108,14 @@ const AppRoutes = () => {
             element={
               <WithAuth>
                 <TopCustomers />
+              </WithAuth>
+            }
+          />
+          <Route
+            path="/app-users"
+            element={
+              <WithAuth>
+                <AppUsers />
               </WithAuth>
             }
           />

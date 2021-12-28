@@ -43,14 +43,16 @@ import {
   GET_ADMIN_MANAGEMENTS_SG,
   GET_SELECTED_ADMIN_MANAGEMENT_SG,
   PUT_ADMIN_MANAGEMENT,
-  SAVE_ADMIN_MANAGEMENT
+  SAVE_ADMIN_MANAGEMENT,
 } from '../ducks/adminManagementDuck';
 import {
   getAdminManagementSaga,
   getSelectedAdminManagementSaga,
   putAdminManagementSaga,
-  saveAdminManagementSaga
+  saveAdminManagementSaga,
 } from './adminManagementSaga';
+import { GET_APP_USERS_SG } from '../ducks/appUsersDuck';
+import { getAppUsersSaga } from './appUsersSaga';
 
 function* actionWatcher() {
   yield takeLatest(CHECK_SIGNED_IN, checkSignedInSaga);
@@ -74,7 +76,11 @@ function* actionWatcher() {
   yield takeLatest(SAVE_ADMIN_MANAGEMENT, saveAdminManagementSaga);
   yield takeLatest(PUT_ADMIN_MANAGEMENT, putAdminManagementSaga);
   yield takeLatest(GET_ADMIN_MANAGEMENTS_SG, getAdminManagementSaga);
-  yield takeLatest(GET_SELECTED_ADMIN_MANAGEMENT_SG, getSelectedAdminManagementSaga);
+  yield takeLatest(
+    GET_SELECTED_ADMIN_MANAGEMENT_SG,
+    getSelectedAdminManagementSaga
+  );
+  yield takeLatest(GET_APP_USERS_SG, getAppUsersSaga);
 }
 
 export default function* rootSaga() {

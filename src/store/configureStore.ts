@@ -17,7 +17,8 @@ import {
   topCustomersReducer,
   venueReducer,
   companyReducer,
-  adminManagementReducer
+  adminManagementReducer,
+  appUsersReducer,
 } from './ducks';
 import { RESET_STORE } from './ducks/mainDuck';
 
@@ -32,7 +33,8 @@ const appReducer = combineReducers({
   topCustomersReducer,
   venueReducer,
   companyReducer,
-  adminManagementReducer
+  adminManagementReducer,
+  appUsersReducer,
 });
 
 export type RootState = ReturnType<typeof appReducer>;
@@ -43,8 +45,8 @@ const rootReducer = (state: ReturnType<typeof Object>, action: AnyAction) => {
       mainReducer: {
         isLoading: action.isLoading,
         isSignedIn: false,
-        isVerified: false
-      }
+        isVerified: false,
+      },
     };
     return appReducer(state, action);
   }
@@ -58,15 +60,15 @@ export default function configureStore() {
     // Specify name here, actionsBlacklist, actionsCreators and other options if needed
   });
   const composedEnhancers = composeEnhancers(
-      middlewareEnhancer
-      // other store enhancers if any
+    middlewareEnhancer
+    // other store enhancers if any
   );
 
   const store = createStore(rootReducer, {}, composedEnhancers);
 
   if (process.env.NODE_ENV !== 'production' && (module as any).hot) {
     (module as any).hot.accept('./ducks', () =>
-        store.replaceReducer(rootReducer)
+      store.replaceReducer(rootReducer)
     );
   }
 
