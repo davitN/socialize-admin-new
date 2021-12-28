@@ -25,6 +25,9 @@ const useStyles = createUseStyles({
 })
 
 const Venues: React.FC<{}> = () => {
+  const userRole = useSelector(
+      (state: RootState) => state.authReducer?.userData?.role?.name
+  );
   const tableHeader: TableHeaderModel[] = [
     {
       name: 'Business Name',
@@ -130,11 +133,14 @@ const Venues: React.FC<{}> = () => {
                     }
                   }}
               />
-              <Button
-                  label={'+ Add Venue'}
-                  onClick={() => navigate('new')}
-              >
-              </Button>
+              {
+                userRole === 'SuperAdmin' && (
+                      <Button
+                          label={'+ Add Venue'}
+                          onClick={() => navigate('new')}
+                      />
+                  )
+              }
             </div>
             <DataTable className={'fs-6'}
                        value={venuesData.data.length > 0 ? venuesData.data : []}

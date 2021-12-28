@@ -2,9 +2,12 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 
-const CvSwitcher: React.FC<{ onChange: Function, defaultValue: boolean }> = ({ onChange, defaultValue }) => {
+const CvSwitcher: React.FC<{ onChange: Function, defaultValue: boolean, readonly: boolean }> = ({ onChange, defaultValue, readonly }) => {
   const [active, setActive] = useState(false);
   const onSwitch = () => {
+    if (readonly) {
+      return;
+    }
     onChange(!active);
     setActive(!active);
   };

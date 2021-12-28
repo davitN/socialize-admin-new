@@ -12,8 +12,10 @@ import { Skeleton } from 'primereact/skeleton';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Button } from 'primereact/button';
-import { Post } from '../types/dashboard';
+import { PostModel } from '../types/dashboard';
 import altImg from '../assets/images/alt-profile-img.jpg';
+import { useNavigate } from 'react-router-dom';
+import { LatestPostsModel } from '../types/latest-posts';
 
 const getCustomerTypeColors = (type: string): string => {
   switch (type) {
@@ -28,88 +30,99 @@ const getCustomerTypeColors = (type: string): string => {
   }
 };
 
-const tableHeader = [
-  {
-    name: 'Post',
-    field: '_id',
-    haveTemplate: true,
-    template: (rowData: Post) => (
-      <>
-        {
-          <img
-            data-dz-thumbnail=""
-            height="30"
-            className={'rounded'}
-            alt={rowData.username}
-            src={rowData?.profileImage?.imgURL || altImg}
-          />
-        }{' '}
-        {rowData._id}
-      </>
-    ),
-  },
-  {
-    name: 'Customer Posting',
-    field: 'name',
-    haveTemplate: true,
-    template: (rowData: Post) => (
-      <Fragment>
-        {rowData.firstName} {rowData.lastName}
-      </Fragment>
-    ),
-  },
-  {
-    name: 'Date',
-    field: 'createdAt',
-    haveTemplate: true,
-    template: (rowData: Post) => (
-      <Fragment>
-        {new Date(rowData.createdAt).toLocaleDateString('en-GB', {
-          day: '2-digit',
-          month: 'short',
-        })}
-        , {new Date(rowData.createdAt).getFullYear()}
-      </Fragment>
-    ),
-  },
-  {
-    name: 'Comments',
-    field: 'commentsCount',
-  },
-  {
-    name: 'Customer Type',
-    field: 'customerType',
-    haveTemplate: true,
-    template: (row: Post) => (
-      <Badge
-        className={
-          'font-size-12 badge-soft-' + getCustomerTypeColors(row.customerType)
-        }
-        color={getCustomerTypeColors(row.customerType)}
-        pill
-      >
-        {row.customerType}
-      </Badge>
-    ),
-  },
-  {
-    name: 'Views',
-    field: 'viewsCount',
-  },
-  {
-    name: 'View Details',
-    field: 'viewDetails',
-    haveTemplate: true,
-    template: () => {
-      return (
-        <Button type="button" color="primary" className="btn-sm btn-rounded">
-          View Details
-        </Button>
-      );
-    },
-  },
-];
 const LatestPosts = () => {
+  const navigate = useNavigate();
+  const tableHeader = [
+    {
+      name: 'Post',
+      field: '_id',
+      haveTemplate: true,
+      template: (rowData: PostModel) => (
+          <>
+            {
+              <img
+                  data-dz-thumbnail=""
+                  height="30"
+                  className={'rounded'}
+                  alt={rowData.username}
+                  src={rowData?.profileImage?.imgURL || altImg}
+              />
+            }{' '}
+            {rowData._id}
+          </>
+      ),
+    },
+    {
+      name: 'Customer Posting',
+      field: 'name',
+      haveTemplate: true,
+      template: (rowData: PostModel) => (
+          <Fragment>
+            {rowData.firstName} {rowData.lastName}
+          </Fragment>
+      ),
+    },
+    {
+      name: 'Date',
+      field: 'createdAt',
+      haveTemplate: true,
+      template: (rowData: PostModel) => (
+          <Fragment>
+            {new Date(rowData.createdAt).toLocaleDateString('en-GB', {
+              day: '2-digit',
+              month: 'short',
+            })}
+            , {new Date(rowData.createdAt).getFullYear()}
+          </Fragment>
+      ),
+    },
+    {
+      name: 'Comments',
+      field: 'commentsCount',
+    },
+    {
+      name: 'Customer Type',
+      field: 'customerType',
+      haveTemplate: true,
+      template: (row: PostModel) => (
+          <Badge
+              className={
+                  'font-size-12 badge-soft-' + getCustomerTypeColors(row.customerType)
+              }
+              color={getCustomerTypeColors(row.customerType)}
+              pill
+          >
+            {row.customerType}
+          </Badge>
+      ),
+    },
+    {
+      name: 'Views',
+      field: 'viewsCount',
+    },
+    {
+      name: 'View Details',
+      field: 'viewDetails',
+      haveTemplate: true,
+      template: () => {
+        return (
+            <Button type="button" color="primary" className="btn-sm btn-rounded">
+              View Details
+            </Button>
+        );
+      },
+    },
+    {
+      name: 'View',
+      field: 'view',
+      haveTemplate: true,
+      template: (row: PostModel) => (
+          <Button onClick={() => navigate(row._id)}>
+            <i className="pi pi-cog"/>
+          </Button>
+      )
+    }
+  ];
   const [dataLoading, setDataLoading] = useState<boolean>(true);
   const LIMIT = 10;
   const dispatch = useDispatch();

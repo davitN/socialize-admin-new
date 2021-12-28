@@ -2,8 +2,8 @@ import { all, takeLatest } from 'redux-saga/effects';
 import { checkSignedInSaga } from './mainSaga';
 import { GET_DASHBOARD_DATA_SG } from '../ducks/dashboardDuck';
 import { getDashboardDataSaga } from './dashboardSaga';
-import { GET_LATEST_POSTS_SG } from '../ducks/latestPostsDuck';
-import { getLatestPostsSaga } from './latestPostsSaga';
+import { DELETE_LATEST_POST_SG, GET_LATEST_POST_SG, GET_LATEST_POSTS_SG } from '../ducks/latestPostsDuck';
+import { deleteLatestPostSaga, getLatestPostSaga, getLatestPostsSaga } from './latestPostsSaga';
 import {
   changePasswordSaga,
   logoutSaga,
@@ -63,6 +63,8 @@ function* actionWatcher() {
   yield takeLatest(GET_INITIAL_DATA_SG, getInitialDataSaga);
   yield takeLatest(GET_DASHBOARD_DATA_SG, getDashboardDataSaga);
   yield takeLatest(GET_LATEST_POSTS_SG, getLatestPostsSaga);
+  yield takeLatest(GET_LATEST_POST_SG, getLatestPostSaga);
+  yield takeLatest(DELETE_LATEST_POST_SG, deleteLatestPostSaga);
   yield takeLatest(GET_TOP_CUSTOMERS_SG, getTopCustomersSaga);
   yield takeLatest(SAVE_VENUE, saveVenueSaga);
   yield takeLatest(PUT_VENUE, putVenueSaga);
