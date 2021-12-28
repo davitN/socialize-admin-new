@@ -16,7 +16,7 @@ import { Button } from 'primereact/button';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CompanyModel } from '../types/company';
 
-let queryParams: TableQueryParams = {
+const queryParams: TableQueryParams = {
   offset: 0,
   limit: 10,
 };

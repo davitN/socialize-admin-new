@@ -13,7 +13,7 @@ import {
   Row,
 } from 'reactstrap';
 import { VenueImages, VenueSendModel, VenueStateModel } from '../types/venue';
-import Breadcrumbs from '../components/shared/Breadcrumb';
+// import Breadcrumbs from '../components/shared/Breadcrumb';
 import TextInput from '../components/shared/form-elements/TextInput';
 
 import { createUseStyles } from 'react-jss';
