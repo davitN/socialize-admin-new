@@ -13,7 +13,6 @@ import {
   Row,
 } from 'reactstrap';
 import { VenueImages, VenueSendModel, VenueStateModel } from '../types/venue';
-// import Breadcrumbs from '../components/shared/Breadcrumb';
 import TextInput from '../components/shared/form-elements/TextInput';
 
 import { createUseStyles } from 'react-jss';
@@ -30,6 +29,7 @@ import {
   AutoComplete,
   AutoCompleteCompleteMethodParams,
 } from 'primereact/autocomplete';
+import readImgAsync from '../helpers/utils/readImgAsync';
 
 const useStyles = createUseStyles({
   inputBlock: {
@@ -83,6 +83,10 @@ const useStyles = createUseStyles({
 });
 
 const VenueForm: React.FC<{}> = () => {
+  const userRole = useSelector(
+      (state: RootState) => state.authReducer?.userData?.role?.name
+  );
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const classes = useStyles();
   const [companySearchValue, setCompanySearchValue] = useState('');
@@ -159,6 +163,16 @@ const VenueForm: React.FC<{}> = () => {
     );
   };
 
+  useEffect(() => {
+    setIsSuperAdmin(userRole === 'SuperAdmin');
+  }, [userRole]);
+
+  useEffect(() => {
+    if (isSuperAdmin) {
+      getCompanies();
+    }
+  }, [isSuperAdmin]);
+
   const onSelectCompany = (value: CompanyModel) => {
     if (value._id) {
       setSelectedCompany(value);
@@ -196,7 +210,7 @@ const VenueForm: React.FC<{}> = () => {
     }
   };
   const formNotValid = () => {
-    if (!companySearchValue) {
+    if (!companySearchValue && isSuperAdmin) {
       return true;
     }
     if (!values.company) {
@@ -323,39 +337,10 @@ const VenueForm: React.FC<{}> = () => {
     }
   }, [venueId]);
 
-  const getSizesFromImg = (imgFile: File | any, key: VenueImages) => {
-    const img = document.createElement('img');
-    img.src = imgFile.preview;
-    setTimeout(() => {
-      switch (key) {
-        case 'logo':
-          setValues({
-            ...values,
-            logo: { width: img.width, height: img.height, imgURL: '' },
-          });
-          break;
-        case 'coverThumbnail':
-          setValues({
-            ...values,
-            coverThumbnail: {
-              width: img.width,
-              height: img.height,
-              imgURL: '',
-            },
-          });
-          break;
-        case 'cover':
-          setValues({
-            ...values,
-            cover: { width: img.width, height: img.height, imgURL: '' },
-          });
-          break;
-      }
-    }, 1000);
-  };
-
   function onSwitch(active: boolean) {
-    setValues({ ...values, allowUsersToAccessAfterLeaving: active });
+    if (isSuperAdmin) {
+      setValues({ ...values, allowUsersToAccessAfterLeaving: active });
+    }
   }
 
   function formatBytes(bytes: any, decimals = 2) {
@@ -377,16 +362,48 @@ const VenueForm: React.FC<{}> = () => {
     );
     switch (key) {
       case 'logo':
-        getSizesFromImg(files[0], key);
+        setImgDimensions(files[0], key);
         setLogo(files);
         break;
-      case 'coverThumbnail':
-        getSizesFromImg(files[0], key);
-        setCoverThumbnail(files);
+      case 'cover':
+        setImgDimensions(files[0], key);
+        setCover(files);
+        break;
+    }
+  }
+
+  const setImgDimensions = async (e: any, key: VenueImages) => {
+    const {
+      imgDimension,
+      thumbnail,
+      thumbnailDimension
+    } = await readImgAsync(e);
+    switch (key) {
+      case 'logo':
+        setValues({
+          ...values,
+          logo: {
+            width: imgDimension.width,
+            height: imgDimension.height,
+            imgURL: ''
+          },
+          coverThumbnail: {
+            width: thumbnailDimension.width,
+            height: thumbnailDimension.height,
+            imgURL: ''
+          }
+        });
+        setCoverThumbnail([thumbnail])
         break;
       case 'cover':
-        getSizesFromImg(files[0], key);
-        setCover(files);
+        setValues({
+          ...values,
+          cover: {
+            width: imgDimension.width,
+            height: imgDimension.height,
+            imgURL: ''
+          }
+        });
         break;
     }
   }
@@ -408,24 +425,26 @@ const VenueForm: React.FC<{}> = () => {
                   placeholder="Enter your Business Name"
                   required
               />
-              <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
-                <label>Company</label>
-                <AutoComplete
-                  className={
-                    isSubmitted && !companySearchValue ? classes.inputError : ''
-                  }
-                  completeMethod={searchCompanies}
-                  scrollHeight={'240px'}
-                  value={companySearchValue}
-                  dropdown={true}
-                  field={'name'}
-                  suggestions={filteredCompanies}
-                  onSelect={(e) => onSelectCompany(e.value)}
-                  onChange={(e) => setCompanySearchValue(e.value)}
-                  placeholder="Select a Company"
-                  forceSelection={true}
-                />
-              </div>
+              {isSuperAdmin && (
+                  <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
+                    <label>Company</label>
+                    <AutoComplete
+                        className={
+                          isSubmitted && !companySearchValue ? classes.inputError : ''
+                        }
+                        completeMethod={searchCompanies}
+                        scrollHeight={'240px'}
+                        value={companySearchValue}
+                        dropdown={true}
+                        field={'name'}
+                        suggestions={filteredCompanies}
+                        onSelect={(e) => onSelectCompany(e.value)}
+                        onChange={(e) => setCompanySearchValue(e.value)}
+                        placeholder="Select a Company"
+                        forceSelection={true}
+                    />
+                  </div>
+              )}
               <TextInput
                   customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.location.address) ? classes.inputError : ''}`}
                   value={values.location.address}
@@ -433,6 +452,7 @@ const VenueForm: React.FC<{}> = () => {
                   label="Address"
                   placeholder="Enter your Address"
                   required
+                  readonly={!isSuperAdmin}
               />
               <TextInput
                   customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.location.city) ? classes.inputError : ''}`}
@@ -441,6 +461,7 @@ const VenueForm: React.FC<{}> = () => {
                   label="City"
                   placeholder="City"
                   required
+                  readonly={!isSuperAdmin}
               />
               <TextInput
                   customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
@@ -449,6 +470,7 @@ const VenueForm: React.FC<{}> = () => {
                   label="Province"
                   placeholder="Enter Province"
                   required
+                  readonly={!isSuperAdmin}
               />
               <TextInput
                   customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.location.country) ? classes.inputError : ''}`}
@@ -457,6 +479,7 @@ const VenueForm: React.FC<{}> = () => {
                   label="Country"
                   placeholder="Enter Country"
                   required
+                  readonly={!isSuperAdmin}
               />
               <TextInput
                   customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.profile.webSite) ? classes.inputError : ''}`}
@@ -604,103 +627,6 @@ const VenueForm: React.FC<{}> = () => {
               </FormGroup>
               <FormGroup className="mb-3" row>
                 <Label md="3" className="col-form-label text-start">
-                  Listing Image
-                </Label>
-                <Col
-                    md="9"
-                    className={`flex-horizontal ${classes.dropZoneWrapper}`}
-                >
-                  <Dropzone
-                      onDrop={(acceptedFiles) => {
-                        handleAcceptedFiles('coverThumbnail', acceptedFiles);
-                      }}
-                  >
-                    {({ getRootProps, getInputProps }) => (
-                        <div
-                            className={`dropzone ${(isSubmitted && newMode && coverThumbnailImg.length === 0) ? classes.errorBorder : ''}`}>
-                          <div className="dz-message needsclick" {...getRootProps()}>
-                            <input {...getInputProps()} />
-                            <div className="dz-message needsclick">
-                              <div className="mb-3">
-                                <i className="display-4 text-muted bx bxs-cloud-upload"/>
-                              </div>
-                              <h5>Drop Image here or click to upload.</h5>
-                            </div>
-                          </div>
-                        </div>
-                    )}
-                  </Dropzone>
-                  <div className="dropzone-previews ms-3" id="file-previews">
-                    {
-                        (coverThumbnailImg.length === 0 && values.coverThumbnail.imgURL) && (
-                            <Card
-                                className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
-                            >
-                              <div className="p-2">
-                                <Row className="align-items-center">
-                                  <Col className="col-auto">
-                                    <img
-                                        data-dz-thumbnail=""
-                                        height="80"
-                                        className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
-                                        alt={'coverThumbnailImg'}
-                                        src={values.coverThumbnail.imgURL}
-                                    />
-                                  </Col>
-                                  <Col>
-                                    <Link
-                                        to="#"
-                                        className="text-muted font-weight-bold"
-                                    >
-                                      Listing Image
-                                    </Link>
-                                    <p className="mb-0">
-                                      <strong>{values.coverThumbnail.width} X {values.coverThumbnail.height}</strong>
-                                    </p>
-                                  </Col>
-                                </Row>
-                              </div>
-                            </Card>
-                        )
-                    }
-                    {coverThumbnailImg.map((f: any, i) => {
-                      return (
-                          <Card
-                              className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
-                              key={i + '-file'}
-                          >
-                            <div className="p-2">
-                              <Row className="align-items-center">
-                                <Col className="col-auto">
-                                  <img
-                                      data-dz-thumbnail=""
-                                      height="80"
-                                      className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
-                                      alt={f.name}
-                                      src={f.preview}
-                                  />
-                                </Col>
-                                <Col>
-                                  <Link
-                                      to="#"
-                                      className="text-muted font-weight-bold"
-                                  >
-                                    {f.name}
-                                  </Link>
-                                  <p className="mb-0">
-                                    <strong>{f.formattedSize}</strong>
-                                  </p>
-                                </Col>
-                              </Row>
-                            </div>
-                          </Card>
-                      );
-                    })}
-                  </div>
-                </Col>
-              </FormGroup>
-              <FormGroup className="mb-3" row>
-                <Label md="3" className="col-form-label text-start">
                   Background Image
                 </Label>
                 <Col
@@ -802,48 +728,28 @@ const VenueForm: React.FC<{}> = () => {
                 </Label>
                 <Col md="9" className={'flex-horizontal'}>
                   <CvSwitcher
+                      readonly={!isSuperAdmin}
                       defaultValue={values.allowUsersToAccessAfterLeaving}
                       onChange={(event: boolean) => onSwitch(event)}
                   />
                 </Col>
               </FormGroup>
-              <FormGroup className="mb-3" row>
-                <Label
-                    htmlFor="days-after"
-                    md="3"
-                    className="col-form-label text-start"
-                >
-                  How Many Days After?
-                </Label>
-                <Col md="9">
-                  <Input
-                      type="number"
-                      value={values.accessDaysAfter || ''}
-                      className={`form-control ${(isSubmitted && !values.accessDaysAfter) ? classes.errorBorder : ''}`}
-                      id="days-after"
-                      onChange={event => setValues({
-                        ...values,
-                        accessDaysAfter: parseInt(event.target.value)
-                      })}/>
-                </Col>
-              </FormGroup>
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.accessDaysAfter) ? classes.inputError : ''}`}
+                  value={values.accessDaysAfter}
+                  type={'number'}
+                  handleChange={(num) => setValues({ ...values, accessDaysAfter: parseInt(num) })}
+                  label="How Many Days After?"
+                  required
+                  readonly={!isSuperAdmin}
+              />
               {!newMode && (
-                  <FormGroup className="mb-3" row>
-                    <Label
-                        htmlFor="admin-accounts"
-                        md="3"
-                        className="col-form-label text-start"
-                    >
-                      All time visitors count
-                    </Label>
-                    <Col md="9">
-                      <Input type="number" value={values.allTimeVisitorsCount || ''}
-                             className={`form-control`}
-                             readOnly={true}
-                             id="all-time-visitors-count"
-                      />
-                    </Col>
-                  </FormGroup>
+                  <TextInput
+                      customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                      value={values.allTimeVisitorsCount || ''}
+                      label="All time visitors count"
+                      readonly={true}
+                  />
               )}
               <Button label={'Submit'} type={'submit'} onClick={(event) => submitButton(event)}/>
             </CardBody>

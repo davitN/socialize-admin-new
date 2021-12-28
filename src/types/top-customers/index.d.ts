@@ -1,4 +1,4 @@
-import { Customer, Post } from '../dashboard';
+import { Customer, PostModel } from '../dashboard';
 
 export interface TopCustomersModel {
   count: number,

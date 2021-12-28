@@ -20,6 +20,7 @@
     "availity-reactstrap-validation": "^2.7.1",
     "axios": "^0.24.0",
     "bootstrap": "^5.1.0",
+    "browser-image-compression": "^1.0.17",
     "classnames": "^2.3.1",
     "eslint-config-airbnb-typescript": "^16.0.0",
     "history": "5",

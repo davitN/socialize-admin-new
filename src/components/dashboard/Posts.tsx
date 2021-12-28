@@ -3,7 +3,7 @@ import React from 'react';
 
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { Post } from '../../types/dashboard';
+import { PostModel } from '../../types/dashboard';
 import { Link } from 'react-router-dom';
 import { Button } from 'primereact/button';
 
@@ -33,7 +33,7 @@ const tableHeader = [
     name: 'Post',
     field: '_id',
     haveTemplate: true,
-    template: (rowData: Post) => (
+    template: (rowData: PostModel) => (
       <Link to="#" className="text-body fw-bold">
         {
           <img
@@ -52,7 +52,7 @@ const tableHeader = [
     name: 'Customer Posting',
     field: 'name',
     haveTemplate: true,
-    template: (rowData: Post) => (
+    template: (rowData: PostModel) => (
       <>
         {rowData.firstName} {rowData.lastName}
       </>
@@ -62,7 +62,7 @@ const tableHeader = [
     name: 'Date',
     field: 'createdAt',
     haveTemplate: true,
-    template: (rowData: Post) => (
+    template: (rowData: PostModel) => (
       <>
         {new Date(rowData.createdAt).toLocaleDateString('en-GB', {
           day: '2-digit',
@@ -80,7 +80,7 @@ const tableHeader = [
     name: 'Customer Type',
     field: 'customerType',
     haveTemplate: true,
-    template: (row: Post) => (
+    template: (row: PostModel) => (
       <Badge
         className={
           'font-size-12 badge-soft-' + getCustomerTypeColors(row.customerType)
@@ -109,7 +109,7 @@ const tableHeader = [
     },
   },
 ];
-const Posts: React.FC<{ posts: Post[] }> = ({ posts }) => {
+const Posts: React.FC<{ posts: PostModel[] }> = ({ posts }) => {
   const LIMIT = 5;
 
   return (

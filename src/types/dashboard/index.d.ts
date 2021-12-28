@@ -28,7 +28,7 @@ export interface Customer {
   };
 }
 
-export interface Post {
+export interface PostModel {
   _id: string;
   username: string;
   createdAt: string;
@@ -51,7 +51,7 @@ export interface DashboardData {
   totalVisitorsCount: number;
   companySubscription: CompanySubscription;
   topCustomers: Customer[];
-  latestPosts: Post[];
+  latestPosts: PostModel[];
   customerTrendsThrowYear: CustomerTrend[];
 }
 

@@ -17,6 +17,7 @@ import UserProfile from './Profile';
 import AdminManagements from './AdminManagements';
 import AdminManagementForm from './AdminManagementForm';
 import AppUsers from './AppUsers';
+import LatestPostForm from './LatestPostForm';
 
 const AppRoutes = () => {
   const userRole = useSelector(
@@ -102,6 +103,14 @@ const AppRoutes = () => {
                 <LatestPosts />
               </WithAuth>
             }
+          />
+          <Route
+              path="/latest-posts/:id"
+              element={
+                <WithAuth>
+                  <LatestPostForm />
+                </WithAuth>
+              }
           />
           <Route
             path="/top-customers"

@@ -229,6 +229,7 @@ const CompanyForm: React.FC<{}> = () => {
                     <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
                       <label>Active</label>
                       <CvSwitcher
+                          readonly={false}
                           defaultValue={values.isActive}
                           onChange={(event: boolean) => onSwitch(event)}
                       />
