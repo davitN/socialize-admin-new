@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import Breadcrumbs from '../components/shared/Breadcrumb';
+// import Breadcrumbs from '../components/shared/Breadcrumb';
 import { VenueStateModel } from '../types/venue';
 import { getVenuesActionSG } from '../store/ducks/VenueDuck';
 import { useDispatch, useSelector } from 'react-redux';

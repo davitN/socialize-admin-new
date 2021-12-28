@@ -78,13 +78,6 @@ const UserProfile: React.FC<{}> = () => {
     onChangeState(values);
   });
 
-  //   useEffect(() => {
-  //     setFormInvalid(false);
-  //     setNewPassIsValid(true);
-  //     setOldPassIsValid(true);
-  //     setConfirmPassIsValid(true);
-  //   }, [values]);
-
   const togglePasswordInputs = () => {
     setShowPasswordsForm(true);
   };
