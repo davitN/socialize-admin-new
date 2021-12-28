@@ -35,7 +35,12 @@ const mainRoutes: RouteModel[] = [
     name: 'Admin Management',
     route: '/admin-management',
     iconName: 'bx bx-home-circle',
-  }
+  },
+  {
+    name: 'App Users',
+    route: '/app-users',
+    iconName: 'bx bx-home-circle',
+  },
 ];
 const useStyles = createUseStyles({
   container: { width: '250px', backgroundColor: '#2A3042' },
@@ -47,7 +52,7 @@ const useStyles = createUseStyles({
 
 const SideNav: React.FC<{}> = () => {
   const userRole = useSelector(
-      (state: RootState) => state.authReducer?.userData?.role?.name
+    (state: RootState) => state.authReducer?.userData?.role?.name
   );
   const [routes, setRoutes] = useState<RouteModel[]>([]);
   const classes = useStyles();
@@ -55,18 +60,21 @@ const SideNav: React.FC<{}> = () => {
   const [activeRoute, setActiveRoute] = useState('');
 
   useEffect(() => {
-    const activeRoutes: RouteModel[] = mainRoutes.filter(route => {
+    const activeRoutes: RouteModel[] = mainRoutes.filter((route) => {
       if (userRole === 'SuperAdmin') {
         return true;
       }
-      if (route.route === '/company' || route.route === '/venues' || route.route === '/admin-management') {
+      if (
+        route.route === '/company' ||
+        route.route === '/venues' ||
+        route.route === '/admin-management'
+      ) {
         return false;
       }
       return true;
-    })
-    setRoutes(activeRoutes)
+    });
+    setRoutes(activeRoutes);
   }, [userRole]);
-
 
   React.useEffect(() => {
     setActiveRoute(location.pathname);
