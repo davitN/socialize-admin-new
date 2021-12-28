@@ -8,7 +8,7 @@ import { AppUsersModel } from '../../types/appUsers';
 import { setAppUsersAction } from '../ducks/appUsersDuck';
 
 export function* getAppUsersSaga({
-    params,
+  params,
   callbacks,
 }: {
   params: TableQueryParams;
@@ -16,7 +16,10 @@ export function* getAppUsersSaga({
   type: string;
 }) {
   try {
-    const res: AppUsersModel = yield axiosInstance.get("/app_user/get_app_users", {params});
+    const res: AppUsersModel = yield axiosInstance.get(
+      '/app_user/get_app_users',
+      { params }
+    );
     yield put(setAppUsersAction(res));
     callbacks?.success && callbacks.success();
   } catch (error: any) {
@@ -26,6 +29,35 @@ export function* getAppUsersSaga({
         type: 'error',
         message: error.response?.data.message,
         showError: false,
+      })
+    );
+  }
+}
+
+export function* appUsersVerifySaga({
+  callbacks,
+  id,
+  data,
+}: {
+  callbacks: CallBacks;
+  id: string;
+  data: AppUsersModel;
+  type: string;
+}) {
+  try {
+    const res: AppUsersModel = yield axiosInstance.put(
+      `/app_user/verify/${id}`,
+      data
+    );
+    yield put(setAppUsersAction(res));
+    callbacks?.success && callbacks.success();
+  } catch (err: any) {
+    callbacks?.error && callbacks.error(err.response?.data.message);
+    yield put(
+      notifyAction({
+        type: 'error',
+        message: err.response?.data.message,
+        showError: true,
       })
     );
   }

@@ -322,6 +322,7 @@ const VenueForm: React.FC<{}> = () => {
   }, [companiesData]);
 
   useEffect(() => {
+    getCompanies();
     if (venueId === 'new') {
       setNewMode(true);
     } else if (venueId) {

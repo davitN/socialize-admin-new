@@ -2,7 +2,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 
 import { Card, CardBody, Form } from 'reactstrap';
-import Breadcrumbs from '../components/shared/Breadcrumb';
+// import Breadcrumbs from '../components/shared/Breadcrumb';
 
 import { createUseStyles } from 'react-jss';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -229,6 +229,7 @@ const CompanyForm: React.FC<{}> = () => {
                     <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
                       <label>Active</label>
                       <CvSwitcher
+                          readonly={false}
                           defaultValue={values.isActive}
                           onChange={(event: boolean) => onSwitch(event)}
                       />

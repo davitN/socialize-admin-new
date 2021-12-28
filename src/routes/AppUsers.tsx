@@ -2,98 +2,93 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 
+import { confirmPopup } from 'primereact/confirmpopup';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Paginator } from 'primereact/paginator';
 import { Skeleton } from 'primereact/skeleton';
-// import { createUseStyles } from 'react-jss';
+import { createUseStyles } from 'react-jss';
 import { Card, CardBody } from 'reactstrap';
 import { Button } from 'primereact/button';
 // import TextInput from '../components/shared/form-elements/TextInput';
 import { RootState } from '../store/configureStore';
-import { getAppUsersActionSG } from '../store/ducks/appUsersDuck';
+import {
+  appUsersVerifyActionSG,
+  getAppUsersActionSG,
+} from '../store/ducks/appUsersDuck';
 import { PaginationEventModel } from '../types/pagination/pagination';
 import { TableHeaderModel, TableQueryParams } from '../types/table';
 import { AppUsersDataModel } from '../types/appUsers';
 import altImg from '../assets/images/alt-profile-img.jpg';
+import notificationService from '../services/notification.service';
 
-// const useStyles = createUseStyles({
-//   searchInput: {
-//     marginRight: '20px',
-//     width: '200px',
-//   },
-// });
-
-let queryParams: TableQueryParams = {
-  offset: 0,
-  limit: 10,
-};
-
-const tableHeader: TableHeaderModel[] = [
-  {
-    name: 'Name',
-    field: 'firstName',
-    haveTemplate: true,
-    template: (rowData: AppUsersDataModel) => (
-      <>
-        <img
-          className={'rounded'}
-          height="30"
-          width="30"
-          src={rowData?.profileImage?.imgURL || altImg}
-        />{' '}
-        {rowData.firstName} {rowData.lastName}
-      </>
-    ),
+const useStyles = createUseStyles({
+  button: {
+    minWidth: '117.11px',
   },
-  {
-    name: 'Username',
-    field: 'username',
-  },
-  {
-    name: 'Gender',
-    field: 'gender',
-  },
-  {
-    name: 'Phone',
-    field: 'phone',
-  },
-  {
-    name: 'Veirfied',
-    field: 'isVerified',
-    haveTemplate: true,
-    template: (rowData: AppUsersDataModel) => (
-      <>{rowData.isVerified ? 'Yes' : 'No'}</>
-    ),
-  },
-  {
-    name: 'Verify',
-    field: 'isVerified',
-    haveTemplate: true,
-    template: (rowData: AppUsersDataModel) => (
-      <>
-        <Button label={'Verify'} disabled={rowData.isVerified ? true : false} />
-      </>
-    ),
-  },
-];
+});
 
 const AppUsers = () => {
-  const [searchValue, setSearchValue] = useState('');
-  // const classes = useStyles();
+  const classes = useStyles();
+  const tableHeader: TableHeaderModel[] = [
+    {
+      name: 'Name',
+      field: 'firstName',
+      haveTemplate: true,
+      template: (rowData: AppUsersDataModel) => (
+        <>
+          <img
+            className={'rounded'}
+            height="30"
+            width="30"
+            src={rowData?.profileImage?.imgURL || altImg}
+          />{' '}
+          {rowData.firstName} {rowData.lastName}
+        </>
+      ),
+    },
+    {
+      name: 'Username',
+      field: 'username',
+    },
+    {
+      name: 'Gender',
+      field: 'gender',
+    },
+    {
+      name: 'Phone',
+      field: 'phone',
+    },
+    {
+      name: 'Verify',
+      field: 'isVerified',
+      haveTemplate: true,
+      template: (rowData: AppUsersDataModel) => (
+        <>
+          <Button
+            label={rowData.isVerified ? 'Verified' : 'Verify'}
+            onClick={(event) => verifyHandler(event, rowData)}
+            className={classes.button}
+            icon={rowData.isVerified ? 'pi pi-check' : ''}
+            disabled={rowData.isVerified ? true : false}
+          />
+        </>
+      ),
+    },
+  ];
+
   const [searchParams, setSearchParams] = useSearchParams({});
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [dataLoading, setDataLoading] = useState<boolean>(true);
   const dispatch = useDispatch();
   const { appUsers } = useSelector((state: RootState) => state.appUsersReducer);
   const LIMIT = 10;
-  console.log(appUsers);
 
   const getData = () => {
     setDataLoading(true);
     const params: TableQueryParams = {
       offset: searchParams.get('offset'),
-      limit: searchParams.get('limit'),
+      limit: LIMIT,
     };
     dispatch(
       getAppUsersActionSG(params, {
@@ -107,46 +102,51 @@ const AppUsers = () => {
     );
   };
   useEffect(() => {
-    queryParams = {
-      offset: parseInt(searchParams.get('offset')) || 0,
-      limit: parseInt(searchParams.get('limit')) || 10,
-      searchWord: searchParams.get('searchWord') || '',
-    };
-    console.log(parseInt(queryParams.offset) / parseInt(queryParams.limit));
-    setCurrentPage(queryParams.offset);
+    setCurrentPage(parseInt(searchParams.get('offset')) || 0);
     setSearchParams({
-      limit: queryParams.limit.toString(),
-      offset: queryParams.offset.toString(),
+      offset: searchParams.get('offset') || '0',
     });
-    // navigate({
-    //   search: `?${createSearchParams({
-    //     limit: queryParams.limit.toString(),
-    //     offset: queryParams.offset.toString(),
-    //     searchWord: queryParams.searchWord
-    //   })}`
-    // })
   }, [searchParams]);
 
   useEffect(() => {
-    getData();
+    if (searchParams.toString().includes('offset')) {
+      getData();
+    }
   }, [searchParams]);
 
   const handlePageChange = (event: PaginationEventModel) => {
     setCurrentPage(event.first);
-    queryParams.offset = event.first;
-    queryParams.limit = LIMIT;
     setSearchParams({
-      offset: queryParams.offset.toString(),
-      limit: queryParams.limit.toString(),
+      offset: event.first.toString(),
     });
   };
 
-  const handleSearch = (event: string) => {
-    setSearchValue(event);
-    queryParams.searchWord = event;
-    setSearchParams({
-      offset: queryParams.offset.toString(),
-      limit: queryParams.limit.toString(),
+  const putData = (data: AppUsersDataModel) => {
+    setDataLoading(true);
+    const newData: AppUsersDataModel = {
+      ...data,
+      isVerified: true,
+    };
+    dispatch(
+      appUsersVerifyActionSG(data._id, newData, {
+        success: () => {
+          setDataLoading(false);
+          notificationService.success('User successfully verified!');
+          getData()
+        },
+        error: () => {
+          setDataLoading(false);
+        },
+      })
+    );
+  };
+
+  const verifyHandler = (event: any, data: AppUsersDataModel) => {
+    const confirm = confirmPopup({
+      target: event.currentTarget,
+      message: 'Are you sure you want to verify this user?',
+      accept: () => putData(data),
+      reject: () => confirm.hide,
     });
   };
 
@@ -154,23 +154,9 @@ const AppUsers = () => {
     <div className="page-content">
       <Card>
         <CardBody>
-          {/* <div className={`mb-2 flex-horizontal justify-content-end`}>
-            <TextInput
-              customClasses={classes.searchInput}
-              icon={<i className="pi pi-search" />}
-              placeholder="Search..."
-              value={searchValue}
-              handleChange={(val) => {
-                if (handleSearch) {
-                  handleSearch(val);
-                  setCurrentPage(0);
-                }
-              }}
-            />
-          </div> */}
           <DataTable
             className={'fs-6'}
-            value={appUsers.data.length > 0 ? appUsers.data : []}
+            value={appUsers?.data?.length > 0 ? appUsers.data : []}
             responsiveLayout="scroll"
             rows={LIMIT}
             emptyMessage="Data not found..."

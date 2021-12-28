@@ -1,10 +1,11 @@
 import { AnyAction } from 'redux';
 import { CallBacks } from '../../types/main';
 import { TableQueryParams } from '../../types/table';
-import { AppUsersModel } from '../../types/appUsers';
+import { AppUsersDataModel, AppUsersModel } from '../../types/appUsers';
 
 export const GET_APP_USERS_SG = 'socialize/main/getAppUsers_SG';
 export const SET_APP_USERS = 'socialize/main/setAppUsers';
+export const APP_USERS_VERIFY_SG = 'socialize/main/appUsersVerify_SG';
 
 const initialState: { appUsers: AppUsersModel } = {
   appUsers: {
@@ -37,5 +38,16 @@ export const getAppUsersActionSG = (
 ) => ({
   params,
   type: GET_APP_USERS_SG,
+  callbacks,
+});
+
+export const appUsersVerifyActionSG = (
+  id: string,
+  data: AppUsersDataModel,
+  callbacks: CallBacks
+) => ({
+  type: APP_USERS_VERIFY_SG,
+  id,
+  data,
   callbacks,
 });
