@@ -43,31 +43,31 @@ const AppRoutes = () => {
               </WithAuth>
             }
           />
+          <Route
+              path="/venues"
+              element={
+                <WithAuth>
+                  <Venues />
+                </WithAuth>
+              }
+          />
+          <Route
+              path="/venues/:id"
+              element={
+                <WithAuth>
+                  <VenueForm />
+                </WithAuth>
+              }
+          />
           {userRole === 'SuperAdmin' && (
             <Fragment>
               <Route
-                path="/venues"
-                element={
-                  <WithAuth>
-                    <Venues />
-                  </WithAuth>
-                }
-              />
-              <Route
-                path="/venues/:id"
-                element={
-                  <WithAuth>
-                    <VenueForm />
-                  </WithAuth>
-                }
-              />
-              <Route
-                path="/company"
-                element={
-                  <WithAuth>
-                    <Companies />
-                  </WithAuth>
-                }
+                  path="/company"
+                  element={
+                    <WithAuth>
+                      <Companies />
+                    </WithAuth>
+                  }
               />
               <Route
                 path="/company/:id"

@@ -64,11 +64,9 @@ const SideNav: React.FC<{}> = () => {
       if (userRole === 'SuperAdmin') {
         return true;
       }
-      if (
-        route.route === '/company' ||
-        route.route === '/venues' ||
-        route.route === '/admin-management'
-      ) {
+      if (route.route === '/company' ||
+          // route.route === '/venues' ||
+          route.route === '/admin-management') {
         return false;
       }
       return true;
