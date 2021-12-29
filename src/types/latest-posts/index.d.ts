@@ -37,7 +37,7 @@ interface PostDetailCommentModel {
     _id: string,
   }
   postId: string,
-  subComments: PostDetailCommentModel[]
+  subComments?: PostDetailCommentModel[]
   tagPersons: []
   text: string,
   __v: number,

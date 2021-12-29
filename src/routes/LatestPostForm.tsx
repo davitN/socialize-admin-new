@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Card, CardBody, Form } from 'reactstrap';
 
@@ -8,15 +8,19 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'primereact/button';
 import { useDispatch } from 'react-redux';
 import TextInput from '../components/shared/form-elements/TextInput';
-import { deleteSelectedPostActionSG, getSelectedPostActionSG } from '../store/ducks/latestPostsDuck';
+import { Tree } from 'primereact/tree';
+import {
+  deleteSelectedPostActionSG,
+  getSelectedPostActionSG,
+} from '../store/ducks/latestPostsDuck';
 import { PostDetailModel } from '../types/latest-posts';
 import altImg from '../assets/images/alt-profile-img.jpg';
 
 const useStyles = createUseStyles({
   inputError: {
     '& input': {
-      borderColor: '#ff4a4a'
-    }
+      borderColor: '#ff4a4a',
+    },
   },
   buttonStyles: {
     backgroundColor: '#991a1a',
@@ -24,38 +28,41 @@ const useStyles = createUseStyles({
     '&:hover': {
       backgroundColor: '#d51c1c!important',
       borderColor: '#d51c1c!important',
-    }
+    },
   },
   inputBlock: {
     '& label': {
       width: '200px',
       marginBottom: 0,
-      textAlign: 'start'
+      textAlign: 'start',
     },
     '& input': {
       width: 'calc(100% - 200px)',
       borderRadius: '0.25rem',
-    }
+    },
   },
   multiSelectClass: {
     height: '40px',
     '& label': {
       width: '200px',
-      textAlign: 'start'
+      textAlign: 'start',
     },
     '& .p-multiselect': {
       width: 'calc(100% - 200px)',
       borderRadius: '0.25rem',
-      height: '100%'
-    }
+      height: '100%',
+    },
   },
   formLabel: {
     width: '200px',
   },
   formValue: {
-    width: 'calc(100% - 200px)'
-  }
-})
+    width: 'calc(100% - 200px)',
+  },
+  treeBox: {
+    border: '1px solid #dee2e6',
+  },
+});
 
 const LatestPostForm: React.FC<{}> = () => {
   const classes = useStyles();
@@ -63,25 +70,81 @@ const LatestPostForm: React.FC<{}> = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id: postId } = useParams();
-  // const { companySubscriptionData } = useSelector((state: RootState) => state.companyReducer);
   const [values, setValues] = useState<PostDetailModel>({
-    comments: []
-  })
+    comments: [
+      {
+        _id: '',
+        createdAt: '',
+        likes: null,
+        owner: {
+          birthday: '',
+          firstName: '',
+          gender: '',
+          lastName: '',
+          profileImage: {
+            height: null,
+            width: null,
+            imgURL: '',
+          },
+          username: '',
+          _id: '',
+        },
+        postId: '',
+        tagPersons: [],
+        text: '',
+        __v: null,
+        subComments: [],
+      },
+    ],
+  });
+
+  const dataToUse = values.comments.map((comment) => ({
+    key: comment._id,
+    label: ` ${comment.text}`,
+    children: [
+      {
+        key: `${comment._id}-${comment.owner.username}`,
+        label: `Owner: ${comment.owner.username}`,
+      },
+      {
+        ...(comment.subComments &&
+          comment.subComments.map((subComment) => ({
+            key: `${comment._id}-${subComment._id}`,
+            label: subComment.text,
+            children: [
+              {
+                key: `${subComment._id}-${subComment.owner.username}`,
+                label: `${subComment.owner.username}`,
+              },
+              {
+                ...(subComment.subComments &&
+                  subComment.subComments.map((subSubComment) => ({
+                    key: `${subComment._id}-${subSubComment._id}`,
+                    label: subSubComment.text,
+                  }))),
+              },
+            ],
+          }))),
+      },
+    ],
+  }));
 
   const getSelectedPost = (id: string) => {
-    dispatch(getSelectedPostActionSG(id, {
-      success: (res: PostDetailModel) => {
-        setValues({ ...values, ...res });
-      },
-      error: () => {
-        navigate(-1);
-      }
-    }))
-  }
+    dispatch(
+      getSelectedPostActionSG(id, {
+        success: (res: PostDetailModel) => {
+          setValues({ ...values, ...res });
+        },
+        error: () => {
+          navigate(-1);
+        },
+      })
+    );
+  };
 
   useEffect(() => {
     if (postId === 'new') {
-      setNewMode(true)
+      setNewMode(true);
     } else if (postId) {
       setNewMode(false);
       getSelectedPost(postId);
@@ -90,81 +153,86 @@ const LatestPostForm: React.FC<{}> = () => {
 
   const deletePost = (event: Event) => {
     event.preventDefault();
-    dispatch(deleteSelectedPostActionSG(postId, {
-      success: () => {
-        navigate(-1);
-      },
-      error: () => {
-        navigate(-1);
-      }
-    }))
-  }
+    dispatch(
+      deleteSelectedPostActionSG(postId, {
+        success: () => {
+          navigate(-1);
+        },
+        error: () => {
+          navigate(-1);
+        },
+      })
+    );
+  };
 
   return (
-      <div className="page-content">
+    <div className="page-content">
+      <Card>
+        <CardBody>
+          <Form>
+            {values.image?.imgURL && (
+              <div className={`flex-horizontal mb-3 ${classes.inputBlock}`}>
+                <label>Image</label>
+                <img
+                  data-dz-thumbnail=""
+                  height={values.image.height / 3}
+                  width={values.image.width / 3}
+                  className={'rounded'}
+                  src={values.image.imgURL || altImg}
+                />
+              </div>
+            )}
+            <TextInput
+              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+              value={values._id}
+              label="Post Id"
+              readonly={true}
+            />
+            <TextInput
+              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+              value={values.text}
+              label="Text"
+              readonly={true}
+            />
+            <TextInput
+              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+              value={values.likesCount}
+              label="Likes count"
+              readonly={true}
+            />
+            <TextInput
+              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+              value={values.commentsCount}
+              label="Comments count"
+              readonly={true}
+            />
+            <TextInput
+              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+              value={new Date(values.createdAt).toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+              })}
+              label="Date"
+              readonly={true}
+            />
+            <Button
+              className={classes.buttonStyles}
+              label={'Delete Post'}
+              onClick={() => deletePost(event)}
+              type={'button'}
+            />
+          </Form>
+        </CardBody>
+      </Card>
+      {dataToUse.length > 0 && (
         <Card>
           <CardBody>
-            {/*<CardTitle className={'text-start'}>Location Information</CardTitle>*/}
-            {/*<CardSubtitle className="mb-4 text-start">*/}
-            {/*  Make sure your location information is accurate.*/}
-            {/*</CardSubtitle>*/}
-            <Form>
-              {values.image?.imgURL && (
-                  <div className={`flex-horizontal mb-3 ${classes.inputBlock}`}>
-                    <label>Image</label>
-                    <img
-                        data-dz-thumbnail=""
-                        height={values.image.height / 3}
-                        width={values.image.width / 3}
-                        className={'rounded'}
-                        src={values.image.imgURL || altImg}
-                    />
-                  </div>
-              )}
-              <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-                  value={values._id}
-                  label="Post Id"
-                  readonly={true}
-              />
-              <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-                  value={values.text}
-                  label="Text"
-                  readonly={true}
-              />
-              <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-                  value={values.likesCount}
-                  label="Likes count"
-                  readonly={true}
-              />
-              <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-                  value={values.commentsCount}
-                  label="Comments count"
-                  readonly={true}
-              />
-              <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-                  value={new Date(values.createdAt).toLocaleDateString('en-GB', {
-                    day: '2-digit',
-                    month: 'short',
-                    year: 'numeric'
-                  })}
-                  label="Date"
-                  readonly={true}
-              />
-              <Button
-                  className={classes.buttonStyles}
-                  label={'Delete Post'}
-                  onClick={() => deletePost(event)}
-                  type={'button'}
-              />
-            </Form>
+            <Tree value={dataToUse} />
           </CardBody>
         </Card>
-      </div>
+      )}
+    </div>
   );
 };
 
