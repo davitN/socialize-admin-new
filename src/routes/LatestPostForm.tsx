@@ -13,7 +13,7 @@ import {
   deleteSelectedPostActionSG,
   getSelectedPostActionSG,
 } from '../store/ducks/latestPostsDuck';
-import { PostDetailModel } from '../types/latest-posts';
+import { PostDetailCommentModel, PostDetailModel } from '../types/latest-posts';
 import altImg from '../assets/images/alt-profile-img.jpg';
 
 const useStyles = createUseStyles({
@@ -98,47 +98,66 @@ const LatestPostForm: React.FC<{}> = () => {
     ],
   });
 
-  const dataToUse = values.comments.map((comment) => ({
-    key: comment._id,
-    label: ` ${comment.text}`,
-    children: [
-      {
-        key: `${comment._id}-${comment.owner.username}`,
-        label: `Owner: ${comment.owner.username}`,
-      },
-      {
+  const nodeTemplate = (node: { label: string, data: PostDetailCommentModel }, options: any) => {
+    switch (node.label) {
+      case 'LEVEL_1':
+        return <span>
+          <img src={node.data?.image?.imgURL || ''} alt=""/>
+        </span>
+      default:
+        return <span>{node.label}</span>
+    }
+
+  }
+
+  const setNodes = () => {
+    return values.comments.map((comment) => ({
+      key: comment._id,
+      label: 'LEVEL_1',
+      data: comment,
+      children: [
+        {
+          key: `${comment._id}-${comment.owner.username}`,
+          label: `Owner: ${comment.owner.username}`,
+        },
         ...(comment.subComments &&
-          comment.subComments.map((subComment) => ({
-            key: `${comment._id}-${subComment._id}`,
-            label: subComment.text,
-            children: [
-              {
-                key: `${subComment._id}-${subComment.owner.username}`,
-                label: `${subComment.owner.username}`,
-              },
-              {
-                ...(subComment.subComments &&
-                  subComment.subComments.map((subSubComment) => ({
-                    key: `${subComment._id}-${subSubComment._id}`,
-                    label: subSubComment.text,
-                  }))),
-              },
-            ],
-          }))),
-      },
-    ],
-  }));
+            comment.subComments.map((subComment) => ({
+              key: `${comment._id}-${subComment._id}`,
+              label: subComment.text,
+              children: [
+                {
+                  key: `${subComment._id}-${subComment.owner.username}`,
+                  label: `${subComment.owner.username}`,
+                },
+                ...(subComment.subSubComments &&
+                    subComment.subSubComments.map((subSubComment) => ({
+                      key: `${subComment._id}-${subSubComment._id}`,
+                      label: subSubComment.text,
+                    }))),
+              ],
+            }))),
+      ],
+    }))
+  }
+
+  const [treeData, setTreeData] = useState<any>(setNodes());
+
+  useEffect(() => {
+    if (values.comments.length > 0) {
+      setTreeData(setNodes());
+    }
+  }, [values]);
 
   const getSelectedPost = (id: string) => {
     dispatch(
-      getSelectedPostActionSG(id, {
-        success: (res: PostDetailModel) => {
-          setValues({ ...values, ...res });
-        },
-        error: () => {
-          navigate(-1);
-        },
-      })
+        getSelectedPostActionSG(id, {
+          success: (res: PostDetailModel) => {
+            setValues({ ...values, ...res });
+          },
+          error: () => {
+            navigate(-1);
+          },
+        })
     );
   };
 
@@ -154,85 +173,85 @@ const LatestPostForm: React.FC<{}> = () => {
   const deletePost = (event: Event) => {
     event.preventDefault();
     dispatch(
-      deleteSelectedPostActionSG(postId, {
-        success: () => {
-          navigate(-1);
-        },
-        error: () => {
-          navigate(-1);
-        },
-      })
+        deleteSelectedPostActionSG(postId, {
+          success: () => {
+            navigate(-1);
+          },
+          error: () => {
+            navigate(-1);
+          },
+        })
     );
   };
 
   return (
-    <div className="page-content">
-      <Card>
-        <CardBody>
-          <Form>
-            {values.image?.imgURL && (
-              <div className={`flex-horizontal mb-3 ${classes.inputBlock}`}>
-                <label>Image</label>
-                <img
-                  data-dz-thumbnail=""
-                  height={values.image.height / 3}
-                  width={values.image.width / 3}
-                  className={'rounded'}
-                  src={values.image.imgURL || altImg}
-                />
-              </div>
-            )}
-            <TextInput
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-              value={values._id}
-              label="Post Id"
-              readonly={true}
-            />
-            <TextInput
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-              value={values.text}
-              label="Text"
-              readonly={true}
-            />
-            <TextInput
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-              value={values.likesCount}
-              label="Likes count"
-              readonly={true}
-            />
-            <TextInput
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-              value={values.commentsCount}
-              label="Comments count"
-              readonly={true}
-            />
-            <TextInput
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-              value={new Date(values.createdAt).toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-              })}
-              label="Date"
-              readonly={true}
-            />
-            <Button
-              className={classes.buttonStyles}
-              label={'Delete Post'}
-              onClick={() => deletePost(event)}
-              type={'button'}
-            />
-          </Form>
-        </CardBody>
-      </Card>
-      {dataToUse.length > 0 && (
+      <div className="page-content">
         <Card>
           <CardBody>
-            <Tree value={dataToUse} />
+            <Form>
+              {values.image?.imgURL && (
+                  <div className={`flex-horizontal mb-3 ${classes.inputBlock}`}>
+                    <label>Image</label>
+                    <img
+                        data-dz-thumbnail=""
+                        height={values.image.height / 3}
+                        width={values.image.width / 3}
+                        className={'rounded'}
+                        src={values.image.imgURL || altImg}
+                    />
+                  </div>
+              )}
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  value={values._id}
+                  label="Post Id"
+                  readonly={true}
+              />
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  value={values.text}
+                  label="Text"
+                  readonly={true}
+              />
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  value={values.likesCount}
+                  label="Likes count"
+                  readonly={true}
+              />
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  value={values.commentsCount}
+                  label="Comments count"
+                  readonly={true}
+              />
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  value={new Date(values.createdAt).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                  })}
+                  label="Date"
+                  readonly={true}
+              />
+              <Button
+                  className={classes.buttonStyles}
+                  label={'Delete Post'}
+                  onClick={() => deletePost(event)}
+                  type={'button'}
+              />
+            </Form>
           </CardBody>
         </Card>
-      )}
-    </div>
+        {treeData.length > 0 && (
+            <Card>
+              <CardBody>
+                <Tree value={treeData} nodeTemplate={nodeTemplate}/>
+              </CardBody>
+            </Card>
+        )}
+      </div>
   );
 };
 
