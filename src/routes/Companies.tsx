@@ -9,17 +9,12 @@ import { Column } from 'primereact/column';
 import { Skeleton } from 'primereact/skeleton';
 import { Paginator } from 'primereact/paginator';
 import { RootState } from '../store/configureStore';
-import { TableHeaderModel, TableQueryParams } from '../types/table';
+import { TableHeaderModel } from '../types/table';
 import { PaginationEventModel } from '../types/pagination/pagination';
 import { Button } from 'primereact/button';
 // import { createUseStyles } from 'react-jss';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CompanyModel } from '../types/company';
-
-const queryParams: TableQueryParams = {
-  offset: 0,
-  limit: 10,
-};
 
 // const useStyles = createUseStyles({
 //   searchInput: {
@@ -85,8 +80,12 @@ const Companies: React.FC<{}> = () => {
 
   const getData = () => {
     setDataLoading(true);
+    const params = {
+      limit: LIMIT,
+      offset: searchParams.get('offset'),
+    };
     dispatch(
-      getCompaniesActionSG(queryParams, {
+      getCompaniesActionSG(params, {
         success: () => {
           setDataLoading(false);
         },
@@ -98,21 +97,19 @@ const Companies: React.FC<{}> = () => {
   };
 
   useEffect(() => {
-    setCurrentPage(queryParams.offset);
+    setCurrentPage(parseInt(searchParams.get('offset')) || 0);
     setSearchParams({
-      offset: queryParams.offset.toString(),
-      limit: queryParams.limit.toString(),
+      offset: searchParams.get('offset') || '0',
     });
-    getData();
+    if (searchParams.toString().includes('offset')) {
+      getData();
+    }
   }, [searchParams]);
 
   const handlePageChange = (event: PaginationEventModel) => {
     setCurrentPage(event.first);
-    queryParams.offset = event.first;
-    queryParams.limit = LIMIT;
     setSearchParams({
-      limit: queryParams.limit.toString(),
-      offset: queryParams.offset.toString(),
+      offset: event.first.toString(),
     });
   };
 

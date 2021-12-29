@@ -18,6 +18,7 @@ import AdminManagements from './AdminManagements';
 import AdminManagementForm from './AdminManagementForm';
 import AppUsers from './AppUsers';
 import LatestPostForm from './LatestPostForm';
+import AppUserForm from './AppUsersForm';
 
 const AppRoutes = () => {
   const userRole = useSelector(
@@ -45,30 +46,30 @@ const AppRoutes = () => {
             }
           />
           <Route
-              path="/venues"
-              element={
-                <WithAuth>
-                  <Venues />
-                </WithAuth>
-              }
+            path="/venues"
+            element={
+              <WithAuth>
+                <Venues />
+              </WithAuth>
+            }
           />
           <Route
-              path="/venues/:id"
-              element={
-                <WithAuth>
-                  <VenueForm />
-                </WithAuth>
-              }
+            path="/venues/:id"
+            element={
+              <WithAuth>
+                <VenueForm />
+              </WithAuth>
+            }
           />
           {userRole === 'SuperAdmin' && (
             <Fragment>
               <Route
-                  path="/company"
-                  element={
-                    <WithAuth>
-                      <Companies />
-                    </WithAuth>
-                  }
+                path="/company"
+                element={
+                  <WithAuth>
+                    <Companies />
+                  </WithAuth>
+                }
               />
               <Route
                 path="/company/:id"
@@ -105,12 +106,12 @@ const AppRoutes = () => {
             }
           />
           <Route
-              path="/latest-posts/:id"
-              element={
-                <WithAuth>
-                  <LatestPostForm />
-                </WithAuth>
-              }
+            path="/latest-posts/:id"
+            element={
+              <WithAuth>
+                <LatestPostForm />
+              </WithAuth>
+            }
           />
           <Route
             path="/top-customers"
@@ -125,6 +126,14 @@ const AppRoutes = () => {
             element={
               <WithAuth>
                 <AppUsers />
+              </WithAuth>
+            }
+          />
+          <Route
+            path="/app-users/:id"
+            element={
+              <WithAuth>
+                <AppUserForm />
               </WithAuth>
             }
           />
