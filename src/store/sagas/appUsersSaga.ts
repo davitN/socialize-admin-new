@@ -4,7 +4,7 @@ import axiosInstance from '../../services/interceptor.service';
 import { CallBacks } from '../../types/main';
 import { notifyAction } from '../ducks/mainDuck';
 import { TableQueryParams } from '../../types/table';
-import { AppUsersModel } from '../../types/appUsers';
+import { AppUsersDataModel, AppUsersModel } from '../../types/appUsers';
 import { setAppUsersAction } from '../ducks/appUsersDuck';
 
 export function* getAppUsersSaga({
@@ -51,6 +51,31 @@ export function* appUsersVerifySaga({
     );
     yield put(setAppUsersAction(res));
     callbacks?.success && callbacks.success();
+  } catch (err: any) {
+    callbacks?.error && callbacks.error(err.response?.data.message);
+    yield put(
+      notifyAction({
+        type: 'error',
+        message: err.response?.data.message,
+        showError: true,
+      })
+    );
+  }
+}
+
+export function* getSelectedAppUserSaga({
+  userId,
+  callbacks,
+}: {
+  userId: string;
+  callbacks: CallBacks;
+  type: string;
+}) {
+  try {
+    const res: AppUsersDataModel = yield axiosInstance.get(
+      `/app_user/get/${userId}`
+    );
+    callbacks?.success && callbacks.success(res);
   } catch (err: any) {
     callbacks?.error && callbacks.error(err.response?.data.message);
     yield put(

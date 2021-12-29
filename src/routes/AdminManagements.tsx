@@ -8,17 +8,12 @@ import { Column } from 'primereact/column';
 import { Skeleton } from 'primereact/skeleton';
 import { Paginator } from 'primereact/paginator';
 import { RootState } from '../store/configureStore';
-import { TableHeaderModel, TableQueryParams } from '../types/table';
+import { TableHeaderModel } from '../types/table';
 import { PaginationEventModel } from '../types/pagination/pagination';
 import { Button } from 'primereact/button';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getAdminManagementsActionSG } from '../store/ducks/adminManagementDuck';
 import { AdminModel } from '../types/admin';
-
-let queryParams: TableQueryParams = {
-  offset: 0,
-  limit: 10,
-};
 
 const AdminManagements: React.FC<{}> = () => {
   const tableHeader: TableHeaderModel[] = [
@@ -56,7 +51,6 @@ const AdminManagements: React.FC<{}> = () => {
     },
   ];
 
-  //   const classes = useStyles();
   const navigate = useNavigate();
   const [dataLoading, setDataLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(0);
@@ -69,8 +63,12 @@ const AdminManagements: React.FC<{}> = () => {
 
   const getData = () => {
     setDataLoading(true);
+    const params = {
+      limit: LIMIT,
+      offset: searchParams.get('offset'),
+    };
     dispatch(
-      getAdminManagementsActionSG(queryParams, {
+      getAdminManagementsActionSG(params, {
         success: () => {
           setDataLoading(false);
         },
@@ -82,36 +80,23 @@ const AdminManagements: React.FC<{}> = () => {
   };
 
   useEffect(() => {
-    queryParams = {
-      limit: parseInt(searchParams.get('limit')) || 10,
-      offset: parseInt(searchParams.get('offset')) || 0,
-    };
-    setCurrentPage(queryParams.offset);
+    setCurrentPage(parseInt(searchParams.get('offset')) || 0);
     setSearchParams({
-      limit: queryParams.limit.toString(),
-      offset: queryParams.offset.toString(),
-      searchWord: queryParams.searchWord,
+      offset: searchParams.get('offset') || '0',
     });
   }, []);
 
   useEffect(() => {
-    setCurrentPage(queryParams.offset);
-    setSearchParams({
-      limit: queryParams.limit.toString(),
-      offset: queryParams.offset.toString(),
-    });
-    getData();
+    if (searchParams.toString().includes('offset')) {
+      getData();
+    }
   }, [searchParams]);
 
   const handlePageChange = (event: PaginationEventModel) => {
     setCurrentPage(event.first);
-    queryParams.offset = event.first;
-    queryParams.limit = LIMIT;
     setSearchParams({
-      limit: queryParams.limit.toString(),
-      offset: queryParams.offset.toString(),
+      offset: event.first.toString(),
     });
-    getData();
   };
 
   return (

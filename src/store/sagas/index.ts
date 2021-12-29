@@ -2,8 +2,16 @@ import { all, takeLatest } from 'redux-saga/effects';
 import { checkSignedInSaga } from './mainSaga';
 import { GET_DASHBOARD_DATA_SG } from '../ducks/dashboardDuck';
 import { getDashboardDataSaga } from './dashboardSaga';
-import { DELETE_LATEST_POST_SG, GET_LATEST_POST_SG, GET_LATEST_POSTS_SG } from '../ducks/latestPostsDuck';
-import { deleteLatestPostSaga, getLatestPostSaga, getLatestPostsSaga } from './latestPostsSaga';
+import {
+  DELETE_LATEST_POST_SG,
+  GET_LATEST_POST_SG,
+  GET_LATEST_POSTS_SG,
+} from '../ducks/latestPostsDuck';
+import {
+  deleteLatestPostSaga,
+  getLatestPostSaga,
+  getLatestPostsSaga,
+} from './latestPostsSaga';
 import {
   changePasswordSaga,
   logoutSaga,
@@ -51,8 +59,16 @@ import {
   putAdminManagementSaga,
   saveAdminManagementSaga,
 } from './adminManagementSaga';
-import { APP_USERS_VERIFY_SG, GET_APP_USERS_SG } from '../ducks/appUsersDuck';
-import { appUsersVerifySaga, getAppUsersSaga } from './appUsersSaga';
+import {
+  APP_USERS_VERIFY_SG,
+  GET_APP_USERS_SG,
+  GET_SELECTED_APP_USER_SG,
+} from '../ducks/appUsersDuck';
+import {
+  appUsersVerifySaga,
+  getAppUsersSaga,
+  getSelectedAppUserSaga,
+} from './appUsersSaga';
 
 function* actionWatcher() {
   yield takeLatest(CHECK_SIGNED_IN, checkSignedInSaga);
@@ -84,6 +100,7 @@ function* actionWatcher() {
   );
   yield takeLatest(GET_APP_USERS_SG, getAppUsersSaga);
   yield takeLatest(APP_USERS_VERIFY_SG, appUsersVerifySaga);
+  yield takeLatest(GET_SELECTED_APP_USER_SG, getSelectedAppUserSaga);
 }
 
 export default function* rootSaga() {

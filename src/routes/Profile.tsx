@@ -50,7 +50,6 @@ const useStyles = createUseStyles({
 let errorText = '';
 
 const UserProfile: React.FC<{}> = () => {
-  const [formInvalid, setFormInvalid] = useState(false);
   const [oldPassIsValid, setOldPassIsValid] = useState(true);
   const [newPassIsValid, setNewPassIsValid] = useState(true);
   const [confirmPassIsValid, setConfirmPassIsValid] = useState(true);
@@ -87,26 +86,22 @@ const UserProfile: React.FC<{}> = () => {
 
     if (!values.oldPassword) {
       setOldPassIsValid(false);
-      setFormInvalid(true);
       errorText = 'Please enter valid password.';
       return;
     }
     if (!values.password) {
       setNewPassIsValid(false);
-      setFormInvalid(true);
       errorText = 'Please enter valid password.';
       return;
     }
     if (!values.confirmPassword) {
       setConfirmPassIsValid(false);
-      setFormInvalid(true);
       errorText = 'Please repeat passsword.';
       return;
     } else {
       if (values.confirmPassword !== values.password) {
         errorText = 'Passwords do not match!';
         setConfirmPassIsValid(false);
-        setFormInvalid(true);
         return;
       }
     }

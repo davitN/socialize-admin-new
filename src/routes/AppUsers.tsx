@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 
 import { confirmPopup } from 'primereact/confirmpopup';
 import { Column } from 'primereact/column';
@@ -75,6 +75,18 @@ const AppUsers = () => {
         </>
       ),
     },
+    {
+      name: 'View',
+      field: 'view',
+      haveTemplate: true,
+      template: (rowData: AppUsersDataModel) => (
+        <>
+          <Button onClick={() => navigate(rowData._id)}>
+            <i className="pi pi-cog" />
+          </Button>
+        </>
+      ),
+    },
   ];
 
   const [searchParams, setSearchParams] = useSearchParams({});
@@ -83,6 +95,7 @@ const AppUsers = () => {
   const dispatch = useDispatch();
   const { appUsers } = useSelector((state: RootState) => state.appUsersReducer);
   const LIMIT = 10;
+  const navigate = useNavigate();
 
   const getData = () => {
     setDataLoading(true);
@@ -132,7 +145,7 @@ const AppUsers = () => {
         success: () => {
           setDataLoading(false);
           notificationService.success('User successfully verified!');
-          getData()
+          getData();
         },
         error: () => {
           setDataLoading(false);
