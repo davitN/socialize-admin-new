@@ -15,7 +15,6 @@ import { Button } from 'primereact/button';
 import { PostModel } from '../types/dashboard';
 import altImg from '../assets/images/alt-profile-img.jpg';
 import { useNavigate } from 'react-router-dom';
-import { LatestPostsModel } from '../types/latest-posts';
 
 const getCustomerTypeColors = (type: string): string => {
   switch (type) {
