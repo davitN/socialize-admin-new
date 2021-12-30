@@ -133,6 +133,12 @@ const LatestPostForm: React.FC<{}> = () => {
           key: `${comment._id}-${comment.owner.username}`,
           label: `Owner: ${comment.owner.username}`,
         },
+        comment.tagPersons.length > 0 && {
+          key: `${comment._id}-${comment.tagPersons.length}`,
+          label: `Tags: ${comment.tagPersons.map(
+            (tagPerson: any) => `${' '} ${tagPerson.username}`
+          )}`,
+        },
         ...(comment.subComments &&
           comment.subComments.map((subComment) => ({
             key: `${comment._id}-${subComment._id}`,
@@ -142,6 +148,12 @@ const LatestPostForm: React.FC<{}> = () => {
                 key: `${subComment._id}-${subComment.owner.username}`,
                 label: `Owner: ${subComment.owner.username}`,
               },
+              subComment.tagPersons.length > 0 && {
+                key: `${subComment._id}-${subComment.tagPersons.length}`,
+                label: `Tags: ${subComment.tagPersons.map(
+                  (tagPerson: any) => `${' '} ${tagPerson.username}`
+                )}`,
+              },
               ...(subComment.subSubComments &&
                 subComment.subSubComments.map((subSubComment) => ({
                   key: `${subComment._id}-${subSubComment._id}`,
@@ -150,6 +162,12 @@ const LatestPostForm: React.FC<{}> = () => {
                     {
                       key: `${subSubComment._id}-${subSubComment.owner.username}`,
                       label: `Owner: ${subSubComment.owner.username}`,
+                    },
+                    subSubComment.tagPersons.length > 0 && {
+                      key: `${subSubComment._id}-${subSubComment.tagPersons.length}`,
+                      label: `Tags: ${comment.tagPersons.map(
+                        (tagPerson: any) => `${' '} ${tagPerson.username}`
+                      )}`,
                     },
                   ],
                 }))),
