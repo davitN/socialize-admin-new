@@ -10,7 +10,7 @@ import { Skeleton } from 'primereact/skeleton';
 import { createUseStyles } from 'react-jss';
 import { Card, CardBody } from 'reactstrap';
 import { Button } from 'primereact/button';
-// import TextInput from '../components/shared/form-elements/TextInput';
+import TextInput from '../components/shared/form-elements/TextInput';
 import { RootState } from '../store/configureStore';
 import {
   appUsersVerifyActionSG,
@@ -21,8 +21,19 @@ import { TableHeaderModel, TableQueryParams } from '../types/table';
 import { AppUsersDataModel } from '../types/appUsers';
 import altImg from '../assets/images/alt-profile-img.jpg';
 import notificationService from '../services/notification.service';
+import { Dropdown } from 'primereact/dropdown';
 
 const useStyles = createUseStyles({
+  searchInput: {
+    maxWidth: '150px',
+    marginRight: '20px',
+    '& input': {
+      fontSize: '0.7rem',
+    },
+  },
+  clearButton: {
+    marginRight: '10px',
+  },
   button: {
     minWidth: '117.11px',
   },
@@ -91,17 +102,30 @@ const AppUsers = () => {
 
   const [searchParams, setSearchParams] = useSearchParams({});
   const [currentPage, setCurrentPage] = useState<number>(0);
+  const [phoneFilter, setPhoneFilter] = useState('');
+  const [usernameFilter, setUsernameFilter] = useState('');
+  const [nameFilter, setNameFilter] = useState('');
+  const [genderFilter, setGenderFilter] = useState('');
+  const [isVerifiedFilter, setIsVerifiedFilter] = useState('');
   const [dataLoading, setDataLoading] = useState<boolean>(true);
   const dispatch = useDispatch();
   const { appUsers } = useSelector((state: RootState) => state.appUsersReducer);
   const LIMIT = 10;
   const navigate = useNavigate();
 
+  const arrayOfGender = ['Male', 'Female'];
+  const arrayOfIsVerified = ['Yes', 'No'];
+
   const getData = () => {
     setDataLoading(true);
     const params: TableQueryParams = {
       offset: searchParams.get('offset'),
       limit: LIMIT,
+      phoneFilter: searchParams.get('phoneFilter'),
+      nameFilter: searchParams.get('nameFilter'),
+      usernameFilter: searchParams.get('usernameFilter'),
+      genderFilter: searchParams.get('genderFilter'),
+      isVerifiedFilter: searchParams.get('isVerifiedFilter') || '',
     };
     dispatch(
       getAppUsersActionSG(params, {
@@ -118,6 +142,11 @@ const AppUsers = () => {
     setCurrentPage(parseInt(searchParams.get('offset')) || 0);
     setSearchParams({
       offset: searchParams.get('offset') || '0',
+      phoneFilter: searchParams.get('phoneFilter') || '',
+      nameFilter: searchParams.get('nameFilter') || '',
+      usernameFilter: searchParams.get('usernameFilter') || '',
+      genderFilter: searchParams.get('genderFilter') || '',
+      isVerifiedFilter: searchParams.get('isVerifiedFilter') || '',
     });
   }, [searchParams]);
 
@@ -131,6 +160,11 @@ const AppUsers = () => {
     setCurrentPage(event.first);
     setSearchParams({
       offset: event.first.toString(),
+      phoneFilter: searchParams.get('phoneFilter') || '',
+      nameFilter: searchParams.get('nameFilter') || '',
+      usernameFilter: searchParams.get('usernameFilter') || '',
+      genderFilter: searchParams.get('genderFilter') || '',
+      isVerifiedFilter: searchParams.get('isVerifiedFilter') || '',
     });
   };
 
@@ -163,10 +197,159 @@ const AppUsers = () => {
     });
   };
 
+  const handleNameFilter = (event: any) => {
+    setNameFilter(event);
+    setSearchParams({
+      offset: searchParams.get('offset'),
+      nameFilter: event,
+      phoneFilter: searchParams.get('phoneFilter') || '',
+      usernameFilter: searchParams.get('emailFilter') || '',
+      genderFilter: searchParams.get('genderFilter') || '',
+      isVerifiedFilter: searchParams.get('isVerifiedFilter') || '',
+    });
+  };
+
+  const handlePhoneFilter = (event: any) => {
+    setPhoneFilter(event);
+    setSearchParams({
+      offset: searchParams.get('offset'),
+      phoneFilter: event,
+      nameFilter: searchParams.get('nameFilter'),
+      usernameFilter: searchParams.get('usernameFilter'),
+      genderFilter: searchParams.get('genderFilter'),
+      isVerifiedFilter: searchParams.get('isVerifiedFilter'),
+    });
+  };
+
+  const handleUsernameFilter = (event: any) => {
+    setUsernameFilter(event);
+    setSearchParams({
+      offset: searchParams.get('offset'),
+      usernameFilter: event,
+      phoneFilter: searchParams.get('phoneFilter'),
+      nameFilter: searchParams.get('nameFilter'),
+      genderFilter: searchParams.get('genderFilter'),
+      isVerifiedFilter: searchParams.get('isVerifiedFilter'),
+    });
+  };
+
+  const handleGenderFilter = (event: any) => {
+    setGenderFilter(event);
+    setSearchParams({
+      offset: searchParams.get('offset'),
+      usernameFilter: searchParams.get('usernameFilter'),
+      phoneFilter: searchParams.get('phoneFilter'),
+      nameFilter: searchParams.get('nameFilter'),
+      genderFilter: event || '',
+      isVerifiedFilter: searchParams.get('isVerifiedFilter'),
+    });
+  };
+
+  const handleIsVerifiedFilter = (event: any) => {
+    let verifiedBoolean = '';
+    if (event === 'Yes') {
+      verifiedBoolean = 'true';
+    } else if (event === 'No') {
+      verifiedBoolean = 'false';
+    } else verifiedBoolean = '';
+
+    setIsVerifiedFilter(event);
+    setSearchParams({
+      offset: searchParams.get('offset'),
+      usernameFilter: searchParams.get('usernameFilter'),
+      phoneFilter: searchParams.get('phoneFilter'),
+      nameFilter: searchParams.get('nameFilter'),
+      genderFilter: searchParams.get('genderFilter'),
+      isVerifiedFilter: verifiedBoolean,
+    });
+  };
+
+  const clearFilterHandler = () => {
+    setSearchParams({
+      offset: searchParams.get('offset'),
+      phoneFilter: '',
+      nameFilter: '',
+      usernameFilter: '',
+      genderFilter: '',
+      isVerifiedFilter: '',
+    });
+    setUsernameFilter('');
+    setNameFilter('');
+    setPhoneFilter('');
+    setGenderFilter('');
+    setIsVerifiedFilter('');
+    getData();
+  };
+
   return (
     <div className="page-content">
       <Card>
         <CardBody>
+          <div className={`mb-2 flex-horizontal justify-content-end`}>
+            <TextInput
+              value={usernameFilter}
+              customClasses={classes.searchInput}
+              icon={<i className="pi pi-search" />}
+              placeholder="Search by Username..."
+              handleChange={(value) => {
+                if (handleUsernameFilter) {
+                  handleUsernameFilter(value);
+                  setCurrentPage(0);
+                }
+              }}
+            />
+            <TextInput
+              value={nameFilter}
+              customClasses={classes.searchInput}
+              icon={<i className="pi pi-search" />}
+              placeholder="Search by Name..."
+              handleChange={(value) => {
+                if (handleNameFilter) {
+                  handleNameFilter(value);
+                  setCurrentPage(0);
+                }
+              }}
+            />
+            <TextInput
+              value={phoneFilter}
+              customClasses={classes.searchInput}
+              icon={<i className="pi pi-search" />}
+              placeholder="Search by Phone..."
+              handleChange={(value) => {
+                if (handlePhoneFilter) {
+                  handlePhoneFilter(value);
+                  setCurrentPage(0);
+                }
+              }}
+            />
+            <Dropdown
+              options={arrayOfGender}
+              className={classes.searchInput}
+              placeholder={genderFilter ? genderFilter : 'Gender'}
+              value={genderFilter}
+              showClear={genderFilter ? true : false}
+              onChange={(event) => {
+                handleGenderFilter(event.value);
+                setGenderFilter(event.value);
+              }}
+            />
+            <Dropdown
+              options={arrayOfIsVerified}
+              className={classes.searchInput}
+              placeholder={'Verified'}
+              value={isVerifiedFilter}
+              showClear={isVerifiedFilter ? true : false}
+              onChange={(event) => {
+                handleIsVerifiedFilter(event.value);
+                setIsVerifiedFilter(event.value);
+              }}
+            />
+            <Button
+              label={'Clear Filter'}
+              onClick={clearFilterHandler}
+              className={classes.clearButton}
+            />
+          </div>
           <DataTable
             className={'fs-6'}
             value={appUsers?.data?.length > 0 ? appUsers.data : []}

@@ -20,8 +20,14 @@ import { Dropdown } from 'primereact/dropdown';
 
 const useStyles = createUseStyles({
   searchInput: {
-    maxWidth: '200px',
+    maxWidth: '150px',
     marginRight: '20px',
+    '& input': {
+      fontSize: '0.7rem',
+    },
+  },
+  clearButton: {
+    marginRight: '10px',
   },
 });
 
@@ -40,6 +46,19 @@ const AdminManagements: React.FC<{}> = () => {
     {
       name: 'Role',
       field: 'role.name',
+    },
+    {
+      name: 'Company',
+      field: 'company.name',
+      haveTemplate: true,
+      template: (row: AdminModel) =>
+        row.company && (
+          <>
+            <Button onClick={() => navigate(`company/${row.company._id}`)}>
+              {row?.company?.name}
+            </Button>
+          </>
+        ),
     },
     {
       name: 'Email',
@@ -66,8 +85,8 @@ const AdminManagements: React.FC<{}> = () => {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [searchParams, setSearchParams] = useSearchParams({});
   const [phoneFilter, setPhoneFilter] = useState('');
-  const [emailFilter, setEmailFilter] = useState('');
   const [nameFilter, setNameFilter] = useState('');
+  const [emailFilter, setEmailFilter] = useState('');
   const LIMIT = 10;
   const dispatch = useDispatch();
   const { adminManagements } = useSelector(
@@ -83,6 +102,8 @@ const AdminManagements: React.FC<{}> = () => {
   const roles = useSelector(
     (state: RootState) => state.initialDataReducer?.initialData?.roles
   );
+
+  console.log(roles);
   const classes = useStyles();
 
   const getData = () => {
@@ -111,12 +132,10 @@ const AdminManagements: React.FC<{}> = () => {
     setCurrentPage(parseInt(searchParams.get('offset')) || 0);
     setSearchParams({
       offset: searchParams.get('offset') || '0',
-    });
-  }, []);
-
-  useEffect(() => {
-    setSearchParams({
-      offset: searchParams.get('offset') || '0',
+      phoneFilter: searchParams.get('phoneFilter') || '',
+      nameFilter: searchParams.get('nameFilter') || '',
+      emailFilter: searchParams.get('emailFilter') || '',
+      roleFilter: searchParams.get('roleFilter') || '',
     });
   }, []);
 
@@ -130,6 +149,10 @@ const AdminManagements: React.FC<{}> = () => {
     setCurrentPage(event.first);
     setSearchParams({
       offset: event.first.toString(),
+      phoneFilter: searchParams.get('phoneFilter') || '',
+      nameFilter: searchParams.get('nameFilter') || '',
+      emailFilter: searchParams.get('emailFilter') || '',
+      roleFilter: searchParams.get('roleFilter') || '',
     });
   };
 
@@ -138,6 +161,9 @@ const AdminManagements: React.FC<{}> = () => {
     setSearchParams({
       offset: searchParams.get('offset'),
       nameFilter: event,
+      phoneFilter: searchParams.get('phoneFilter') || '',
+      emailFilter: searchParams.get('emailFilter') || '',
+      roleFilter: searchParams.get('roleFilter') || '',
     });
   };
 
@@ -146,6 +172,9 @@ const AdminManagements: React.FC<{}> = () => {
     setSearchParams({
       offset: searchParams.get('offset'),
       phoneFilter: event,
+      nameFilter: searchParams.get('nameFilter') || '',
+      emailFilter: searchParams.get('emailFilter') || '',
+      roleFilter: searchParams.get('roleFilter') || '',
     });
   };
 
@@ -154,6 +183,9 @@ const AdminManagements: React.FC<{}> = () => {
     setSearchParams({
       offset: searchParams.get('offset'),
       emailFilter: event,
+      phoneFilter: searchParams.get('phoneFilter'),
+      nameFilter: searchParams.get('nameFilter'),
+      roleFilter: searchParams.get('roleFilter'),
     });
   };
 
@@ -162,7 +194,25 @@ const AdminManagements: React.FC<{}> = () => {
     setSearchParams({
       offset: searchParams.get('offset'),
       roleFilter: event?._id || '',
+      phoneFilter: searchParams.get('phoneFilter'),
+      nameFilter: searchParams.get('nameFilter'),
+      emailFilter: searchParams.get('emailFilter'),
     });
+  };
+
+  const clearFilterHandler = () => {
+    setSearchParams({
+      offset: searchParams.get('offset'),
+      phoneFilter: '',
+      nameFilter: '',
+      emailFilter: '',
+      roleFilter: '',
+    });
+    setEmailFilter('');
+    setNameFilter('');
+    setPhoneFilter('');
+    setSelectedRole(null);
+    getData();
   };
 
   return (
@@ -210,9 +260,7 @@ const AdminManagements: React.FC<{}> = () => {
               options={roles}
               optionLabel={'name'}
               className={classes.searchInput}
-              placeholder={
-                selectedRole?.name ? selectedRole?.name : 'Filter by Role'
-              }
+              placeholder={selectedRole?.name ? selectedRole?.name : 'Roles'}
               value={selectedRole}
               showClear={selectedRole?.name ? true : false}
               onChange={(event) => {
@@ -221,9 +269,11 @@ const AdminManagements: React.FC<{}> = () => {
               }}
             />
             <Button
-              label={'+ Add Admin Management'}
-              onClick={() => navigate('new')}
+              label={'Clear Filter'}
+              onClick={clearFilterHandler}
+              className={classes.clearButton}
             />
+            <Button label={'+ Add Admin'} onClick={() => navigate('new')} />
           </div>
           <DataTable
             className={'fs-6'}

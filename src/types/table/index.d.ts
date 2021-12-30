@@ -7,6 +7,9 @@ export interface TableQueryParams {
   nameFilter?: string;
   emailFilter?: string;
   roleFilter?: string;
+  usernameFilter?: string;
+  genderFilter?: string;
+  isVerifiedFilter?: string;
 }
 
 export interface TableHeaderModel {
