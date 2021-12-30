@@ -109,14 +109,14 @@ const LatestPostForm: React.FC<{}> = () => {
     switch (node.label) {
       case 'LEVEL_1':
         return (
-          <div className={classes.treeBox}>
-            <img
-              src={node.data?.image?.imgURL || ''}
-              className={classes.image}
-              alt=""
-            />{' '}
-            {node.data.text}
-          </div>
+            <div className={classes.treeBox}>
+              <img
+                  src={node.data?.image?.imgURL || ''}
+                  className={classes.image}
+                  alt=""
+              />{' '}
+              {node.data.text}
+            </div>
         );
       default:
         return <div className={classes.treeBox}>{node.label}</div>;
@@ -133,46 +133,46 @@ const LatestPostForm: React.FC<{}> = () => {
           key: `${comment._id}-${comment.owner.username}`,
           label: `Owner: ${comment.owner.username}`,
         },
-        comment.tagPersons.length > 0 && {
+        ...((comment.tagPersons.length > 0) ? [{
           key: `${comment._id}-${comment.tagPersons.length}`,
           label: `Tags: ${comment.tagPersons.map(
-            (tagPerson: any) => `${' '} ${tagPerson.username}`
+              (tagPerson: any) => `${' '} ${tagPerson.username}`
           )}`,
-        },
-        ...(comment.subComments &&
-          comment.subComments.map((subComment) => ({
-            key: `${comment._id}-${subComment._id}`,
-            label: subComment.text,
-            children: [
-              {
-                key: `${subComment._id}-${subComment.owner.username}`,
-                label: `Owner: ${subComment.owner.username}`,
-              },
-              subComment.tagPersons.length > 0 && {
-                key: `${subComment._id}-${subComment.tagPersons.length}`,
-                label: `Tags: ${subComment.tagPersons.map(
-                  (tagPerson: any) => `${' '} ${tagPerson.username}`
-                )}`,
-              },
-              ...(subComment.subSubComments &&
-                subComment.subSubComments.map((subSubComment) => ({
-                  key: `${subComment._id}-${subSubComment._id}`,
-                  label: subSubComment.text,
-                  children: [
-                    {
-                      key: `${subSubComment._id}-${subSubComment.owner.username}`,
-                      label: `Owner: ${subSubComment.owner.username}`,
-                    },
-                    subSubComment.tagPersons.length > 0 && {
-                      key: `${subSubComment._id}-${subSubComment.tagPersons.length}`,
-                      label: `Tags: ${comment.tagPersons.map(
-                        (tagPerson: any) => `${' '} ${tagPerson.username}`
-                      )}`,
-                    },
-                  ],
-                }))),
-            ],
-          }))),
+        }] : []),
+        ...(comment.subComments ?
+            comment.subComments.map((subComment) => ({
+              key: `${comment._id}-${subComment._id}`,
+              label: subComment.text,
+              children: [
+                {
+                  key: `${subComment._id}-${subComment.owner.username}`,
+                  label: `Owner: ${subComment.owner.username}`,
+                },
+                ...((subComment.tagPersons.length > 0) ? [{
+                  key: `${subComment._id}-${subComment.tagPersons.length}`,
+                  label: `Tags: ${subComment.tagPersons.map(
+                      (tagPerson: any) => `${' '} ${tagPerson.username}`
+                  )}`,
+                }] : []),
+                ...(subComment.subSubComments ?
+                    subComment.subSubComments.map((subSubComment) => ({
+                      key: `${subComment._id}-${subSubComment._id}`,
+                      label: subSubComment.text,
+                      children: [
+                        {
+                          key: `${subSubComment._id}-${subSubComment.owner.username}`,
+                          label: `Owner: ${subSubComment.owner.username}`,
+                        },
+                        ...((subSubComment.tagPersons.length > 0) ? [{
+                          key: `${subSubComment._id}-${subSubComment.tagPersons.length}`,
+                          label: `Tags: ${comment.tagPersons.map(
+                              (tagPerson: any) => `${' '} ${tagPerson.username}`
+                          )}`,
+                        }] : []),
+                      ],
+                    })) : []),
+              ],
+            })) : []),
       ],
     }));
   };
@@ -187,14 +187,14 @@ const LatestPostForm: React.FC<{}> = () => {
 
   const getSelectedPost = (id: string) => {
     dispatch(
-      getSelectedPostActionSG(id, {
-        success: (res: PostDetailModel) => {
-          setValues({ ...values, ...res });
-        },
-        error: () => {
-          navigate(-1);
-        },
-      })
+        getSelectedPostActionSG(id, {
+          success: (res: PostDetailModel) => {
+            setValues({ ...values, ...res });
+          },
+          error: () => {
+            navigate(-1);
+          },
+        })
     );
   };
 
@@ -210,85 +210,85 @@ const LatestPostForm: React.FC<{}> = () => {
   const deletePost = (event: Event) => {
     event.preventDefault();
     dispatch(
-      deleteSelectedPostActionSG(postId, {
-        success: () => {
-          navigate(-1);
-        },
-        error: () => {
-          navigate(-1);
-        },
-      })
+        deleteSelectedPostActionSG(postId, {
+          success: () => {
+            navigate(-1);
+          },
+          error: () => {
+            navigate(-1);
+          },
+        })
     );
   };
 
   return (
-    <div className="page-content">
-      <Card>
-        <CardBody>
-          <Form>
-            {values.image?.imgURL && (
-              <div className={`flex-horizontal mb-3 ${classes.inputBlock}`}>
-                <label>Image</label>
-                <img
-                  data-dz-thumbnail=""
-                  height={values.image.height / 3}
-                  width={values.image.width / 3}
-                  className={'rounded'}
-                  src={values.image.imgURL || altImg}
-                />
-              </div>
-            )}
-            <TextInput
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-              value={values._id}
-              label="Post Id"
-              readonly={true}
-            />
-            <TextInput
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-              value={values.text}
-              label="Text"
-              readonly={true}
-            />
-            <TextInput
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-              value={values.likesCount}
-              label="Likes count"
-              readonly={true}
-            />
-            <TextInput
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-              value={values.commentsCount}
-              label="Comments count"
-              readonly={true}
-            />
-            <TextInput
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-              value={new Date(values.createdAt).toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-              })}
-              label="Date"
-              readonly={true}
-            />
-            <Button
-              className={classes.buttonStyles}
-              label={'Delete Post'}
-              onClick={() => deletePost(event)}
-              type={'button'}
-            />
-          </Form>
-        </CardBody>
-      </Card>
-      {values.comments.length > 0 && (
+      <div className="page-content">
         <Card>
           <CardBody>
-            <Tree value={treeData} nodeTemplate={nodeTemplate} />
+            <Form>
+              {values.image?.imgURL && (
+                  <div className={`flex-horizontal mb-3 ${classes.inputBlock}`}>
+                    <label>Image</label>
+                    <img
+                        data-dz-thumbnail=""
+                        height={values.image.height / 3}
+                        width={values.image.width / 3}
+                        className={'rounded'}
+                        src={values.image.imgURL || altImg}
+                    />
+                  </div>
+              )}
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  value={values._id}
+                  label="Post Id"
+                  readonly={true}
+              />
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  value={values.text}
+                  label="Text"
+                  readonly={true}
+              />
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  value={values.likesCount}
+                  label="Likes count"
+                  readonly={true}
+              />
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  value={values.commentsCount}
+                  label="Comments count"
+                  readonly={true}
+              />
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  value={new Date(values.createdAt).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                  })}
+                  label="Date"
+                  readonly={true}
+              />
+              <Button
+                  className={classes.buttonStyles}
+                  label={'Delete Post'}
+                  onClick={() => deletePost(event)}
+                  type={'button'}
+              />
+            </Form>
           </CardBody>
         </Card>
-      )}
-    </div>
+        {values.comments.length > 0 && (
+            <Card>
+              <CardBody>
+                <Tree value={treeData} nodeTemplate={nodeTemplate}/>
+              </CardBody>
+            </Card>
+        )}
+      </div>
   );
 };
 
