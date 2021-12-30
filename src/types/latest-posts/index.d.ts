@@ -35,9 +35,15 @@ interface PostDetailCommentModel {
     profileImage: ImageModel
     username: string,
     _id: string,
+  },
+  image?: {
+    height: number,
+    imgURL: string,
+    width: number,
   }
   postId: string,
-  subComments: PostDetailCommentModel[]
+  subComments?: PostDetailCommentModel[]
+  subSubComments?: PostDetailCommentModel[]
   tagPersons: []
   text: string,
   __v: number,

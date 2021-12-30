@@ -14,6 +14,16 @@ import { Button } from 'primereact/button';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getAdminManagementsActionSG } from '../store/ducks/adminManagementDuck';
 import { AdminModel } from '../types/admin';
+import TextInput from '../components/shared/form-elements/TextInput';
+import { createUseStyles } from 'react-jss';
+import { Dropdown } from 'primereact/dropdown';
+
+const useStyles = createUseStyles({
+  searchInput: {
+    maxWidth: '200px',
+    marginRight: '20px',
+  },
+});
 
 const AdminManagements: React.FC<{}> = () => {
   const tableHeader: TableHeaderModel[] = [
@@ -55,17 +65,35 @@ const AdminManagements: React.FC<{}> = () => {
   const [dataLoading, setDataLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [searchParams, setSearchParams] = useSearchParams({});
+  const [phoneFilter, setPhoneFilter] = useState('');
+  const [emailFilter, setEmailFilter] = useState('');
+  const [nameFilter, setNameFilter] = useState('');
   const LIMIT = 10;
   const dispatch = useDispatch();
   const { adminManagements } = useSelector(
     (state: RootState) => state.adminManagementReducer
   );
+  const [selectedRole, setSelectedRole] = useState<{
+    _id: string;
+    name: string;
+  }>({
+    _id: '',
+    name: '',
+  });
+  const roles = useSelector(
+    (state: RootState) => state.initialDataReducer?.initialData?.roles
+  );
+  const classes = useStyles();
 
   const getData = () => {
     setDataLoading(true);
     const params = {
       limit: LIMIT,
       offset: searchParams.get('offset'),
+      phoneFilter: searchParams.get('phoneFilter'),
+      nameFilter: searchParams.get('nameFilter'),
+      emailFilter: searchParams.get('emailFilter'),
+      roleFilter: searchParams.get('roleFilter'),
     };
     dispatch(
       getAdminManagementsActionSG(params, {
@@ -87,6 +115,12 @@ const AdminManagements: React.FC<{}> = () => {
   }, []);
 
   useEffect(() => {
+    setSearchParams({
+      offset: searchParams.get('offset') || '0',
+    });
+  }, []);
+
+  useEffect(() => {
     if (searchParams.toString().includes('offset')) {
       getData();
     }
@@ -99,11 +133,93 @@ const AdminManagements: React.FC<{}> = () => {
     });
   };
 
+  const handleNameFilter = (event: any) => {
+    setNameFilter(event);
+    setSearchParams({
+      offset: searchParams.get('offset'),
+      nameFilter: event,
+    });
+  };
+
+  const handlePhoneFilter = (event: any) => {
+    setPhoneFilter(event);
+    setSearchParams({
+      offset: searchParams.get('offset'),
+      phoneFilter: event,
+    });
+  };
+
+  const handleEmailFilter = (event: any) => {
+    setEmailFilter(event);
+    setSearchParams({
+      offset: searchParams.get('offset'),
+      emailFilter: event,
+    });
+  };
+
+  const handleRoleChange = (event: any) => {
+    setSelectedRole(event);
+    setSearchParams({
+      offset: searchParams.get('offset'),
+      roleFilter: event?._id || '',
+    });
+  };
+
   return (
     <div className="page-content">
       <Card>
         <CardBody>
           <div className={`mb-2 flex-horizontal justify-content-end`}>
+            <TextInput
+              value={nameFilter}
+              customClasses={classes.searchInput}
+              icon={<i className="pi pi-search" />}
+              placeholder="Search by Name..."
+              handleChange={(value) => {
+                if (handleNameFilter) {
+                  handleNameFilter(value);
+                  setCurrentPage(0);
+                }
+              }}
+            />
+            <TextInput
+              value={emailFilter}
+              customClasses={classes.searchInput}
+              icon={<i className="pi pi-search" />}
+              placeholder="Search by Email..."
+              handleChange={(value) => {
+                if (handleEmailFilter) {
+                  handleEmailFilter(value);
+                  setCurrentPage(0);
+                }
+              }}
+            />
+            <TextInput
+              value={phoneFilter}
+              customClasses={classes.searchInput}
+              icon={<i className="pi pi-search" />}
+              placeholder="Search by Phone..."
+              handleChange={(value) => {
+                if (handlePhoneFilter) {
+                  handlePhoneFilter(value);
+                  setCurrentPage(0);
+                }
+              }}
+            />
+            <Dropdown
+              options={roles}
+              optionLabel={'name'}
+              className={classes.searchInput}
+              placeholder={
+                selectedRole?.name ? selectedRole?.name : 'Filter by Role'
+              }
+              value={selectedRole}
+              showClear={selectedRole?.name ? true : false}
+              onChange={(event) => {
+                setSelectedRole(event.value);
+                handleRoleChange(event.value);
+              }}
+            />
             <Button
               label={'+ Add Admin Management'}
               onClick={() => navigate('new')}
