@@ -148,7 +148,16 @@ const AppUsers = () => {
       genderFilter: searchParams.get('genderFilter') || '',
       isVerifiedFilter: searchParams.get('isVerifiedFilter') || '',
     });
-  }, [searchParams]);
+    setNameFilter(searchParams.get('nameFilter') || '');
+    setUsernameFilter(searchParams.get('usernameFilter') || '');
+    setPhoneFilter(searchParams.get('phoneFilter') || '');
+    setGenderFilter(searchParams.get('genderFilter') || '');
+    if (searchParams.get('isVerifiedFilter') === 'true') {
+      setIsVerifiedFilter('Yes');
+    } else if (searchParams.get('isVerifiedFilter') === 'false') {
+      setIsVerifiedFilter('No');
+    }
+  }, []);
 
   useEffect(() => {
     if (searchParams.toString().includes('offset')) {
@@ -197,7 +206,7 @@ const AppUsers = () => {
     });
   };
 
-  const handleNameFilter = (event: any) => {
+  const handleNameFilter = (event: string) => {
     setNameFilter(event);
     setSearchParams({
       offset: searchParams.get('offset'),
@@ -209,7 +218,7 @@ const AppUsers = () => {
     });
   };
 
-  const handlePhoneFilter = (event: any) => {
+  const handlePhoneFilter = (event: string) => {
     setPhoneFilter(event);
     setSearchParams({
       offset: searchParams.get('offset'),
@@ -221,7 +230,7 @@ const AppUsers = () => {
     });
   };
 
-  const handleUsernameFilter = (event: any) => {
+  const handleUsernameFilter = (event: string) => {
     setUsernameFilter(event);
     setSearchParams({
       offset: searchParams.get('offset'),
@@ -233,7 +242,7 @@ const AppUsers = () => {
     });
   };
 
-  const handleGenderFilter = (event: any) => {
+  const handleGenderFilter = (event: string) => {
     setGenderFilter(event);
     setSearchParams({
       offset: searchParams.get('offset'),
@@ -245,7 +254,7 @@ const AppUsers = () => {
     });
   };
 
-  const handleIsVerifiedFilter = (event: any) => {
+  const handleIsVerifiedFilter = (event: string) => {
     let verifiedBoolean = '';
     if (event === 'Yes') {
       verifiedBoolean = 'true';
@@ -278,7 +287,6 @@ const AppUsers = () => {
     setPhoneFilter('');
     setGenderFilter('');
     setIsVerifiedFilter('');
-    getData();
   };
 
   return (
@@ -327,7 +335,7 @@ const AppUsers = () => {
               className={classes.searchInput}
               placeholder={genderFilter ? genderFilter : 'Gender'}
               value={genderFilter}
-              showClear={genderFilter ? true : false}
+              showClear={!!genderFilter}
               onChange={(event) => {
                 handleGenderFilter(event.value);
                 setGenderFilter(event.value);
@@ -338,7 +346,7 @@ const AppUsers = () => {
               className={classes.searchInput}
               placeholder={'Verified'}
               value={isVerifiedFilter}
-              showClear={isVerifiedFilter ? true : false}
+              showClear={!!isVerifiedFilter}
               onChange={(event) => {
                 handleIsVerifiedFilter(event.value);
                 setIsVerifiedFilter(event.value);

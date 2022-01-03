@@ -54,7 +54,7 @@ const AdminManagements: React.FC<{}> = () => {
       template: (row: AdminModel) =>
         row.company && (
           <>
-            <Button onClick={() => navigate(`company/${row.company._id}`)}>
+            <Button onClick={() => navigate(`/company/${row.company._id}`)}>
               {row?.company?.name}
             </Button>
           </>
@@ -103,7 +103,17 @@ const AdminManagements: React.FC<{}> = () => {
     (state: RootState) => state.initialDataReducer?.initialData?.roles
   );
 
-  console.log(roles);
+  useEffect(() => {
+    const roleFilter = searchParams.get('roleFilter');
+    if (roles.length > 0 && roleFilter) {
+      const selectedRole = roles.find(item => item._id === roleFilter);
+      if (selectedRole) {
+        setSelectedRole(selectedRole)
+      }
+    }
+  }, [roles]);
+
+
   const classes = useStyles();
 
   const getData = () => {
@@ -137,6 +147,9 @@ const AdminManagements: React.FC<{}> = () => {
       emailFilter: searchParams.get('emailFilter') || '',
       roleFilter: searchParams.get('roleFilter') || '',
     });
+    setNameFilter(searchParams.get('nameFilter') || '');
+    setPhoneFilter(searchParams.get('phoneFilter') || '');
+    setEmailFilter(searchParams.get('emailFilter') || '');
   }, []);
 
   useEffect(() => {
@@ -156,7 +169,7 @@ const AdminManagements: React.FC<{}> = () => {
     });
   };
 
-  const handleNameFilter = (event: any) => {
+  const handleNameFilter = (event: string) => {
     setNameFilter(event);
     setSearchParams({
       offset: searchParams.get('offset'),
@@ -167,7 +180,7 @@ const AdminManagements: React.FC<{}> = () => {
     });
   };
 
-  const handlePhoneFilter = (event: any) => {
+  const handlePhoneFilter = (event: string) => {
     setPhoneFilter(event);
     setSearchParams({
       offset: searchParams.get('offset'),
@@ -178,7 +191,7 @@ const AdminManagements: React.FC<{}> = () => {
     });
   };
 
-  const handleEmailFilter = (event: any) => {
+  const handleEmailFilter = (event: string) => {
     setEmailFilter(event);
     setSearchParams({
       offset: searchParams.get('offset'),
@@ -189,7 +202,7 @@ const AdminManagements: React.FC<{}> = () => {
     });
   };
 
-  const handleRoleChange = (event: any) => {
+  const handleRoleChange = (event: { _id: string, name: string }) => {
     setSelectedRole(event);
     setSearchParams({
       offset: searchParams.get('offset'),
@@ -212,7 +225,6 @@ const AdminManagements: React.FC<{}> = () => {
     setNameFilter('');
     setPhoneFilter('');
     setSelectedRole(null);
-    getData();
   };
 
   return (
@@ -262,7 +274,7 @@ const AdminManagements: React.FC<{}> = () => {
               className={classes.searchInput}
               placeholder={selectedRole?.name ? selectedRole?.name : 'Roles'}
               value={selectedRole}
-              showClear={selectedRole?.name ? true : false}
+              showClear={!!selectedRole?.name}
               onChange={(event) => {
                 setSelectedRole(event.value);
                 handleRoleChange(event.value);
