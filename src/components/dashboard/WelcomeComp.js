@@ -4,7 +4,7 @@ import React from 'react';
 import { Row, Col, Card, CardBody } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
-import avatar1 from '../../assets/images/users/avatar-1.jpg';
+import altImg from '../../assets/images/alt-profile-img.jpg';
 import profileImg from '../../assets/images/profile-img.png';
 
 const WelcomeComp = (props) => {
@@ -29,13 +29,15 @@ const WelcomeComp = (props) => {
             <Col sm="4">
               <div className="avatar-md profile-user-wid mb-4">
                 <img
-                  src={avatar1}
+                  src={altImg}
                   alt=""
                   className="img-thumbnail rounded-circle"
                 />
               </div>
               {/* eslint-disable-next-line react/prop-types */}
-              <h5 className="font-size-15 text-truncate">{props.userData.firstName + ' ' + props.userData.lastName}</h5>
+              <h5 className="font-size-15 text-truncate">
+                {props.userData.firstName + ' ' + props.userData.lastName}
+              </h5>
               <p className="text-muted mb-0 text-truncate">UI/UX Designer</p>
             </Col>
             <Col sm="8">
@@ -44,12 +46,16 @@ const WelcomeComp = (props) => {
                   <Col xs="6">
                     <h5 className="font-size-15">Total Visits</h5>
                     {/* eslint-disable-next-line react/prop-types */}
-                    <p className="text-muted mb-0">{props.dashboardData.totalVisitsCount}</p>
+                    <p className="text-muted mb-0">
+                      {props.dashboardData.totalVisitsCount}
+                    </p>
                   </Col>
                   <Col xs="6">
                     <h5 className="font-size-15">Total Customers</h5>
                     {/* eslint-disable-next-line react/prop-types */}
-                    <p className="text-muted mb-0">{props.dashboardData.totalVisitorsCount}</p>
+                    <p className="text-muted mb-0">
+                      {props.dashboardData.totalVisitorsCount}
+                    </p>
                   </Col>
                 </Row>
                 <div className="mt-4">

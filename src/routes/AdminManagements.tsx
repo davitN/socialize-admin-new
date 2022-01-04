@@ -172,7 +172,7 @@ const AdminManagements: React.FC<{}> = () => {
   const handleNameFilter = (event: string) => {
     setNameFilter(event);
     setSearchParams({
-      offset: searchParams.get('offset'),
+      offset: '0',
       nameFilter: event,
       phoneFilter: searchParams.get('phoneFilter') || '',
       emailFilter: searchParams.get('emailFilter') || '',
@@ -183,7 +183,7 @@ const AdminManagements: React.FC<{}> = () => {
   const handlePhoneFilter = (event: string) => {
     setPhoneFilter(event);
     setSearchParams({
-      offset: searchParams.get('offset'),
+      offset: '0',
       phoneFilter: event,
       nameFilter: searchParams.get('nameFilter') || '',
       emailFilter: searchParams.get('emailFilter') || '',
@@ -194,7 +194,7 @@ const AdminManagements: React.FC<{}> = () => {
   const handleEmailFilter = (event: string) => {
     setEmailFilter(event);
     setSearchParams({
-      offset: searchParams.get('offset'),
+      offset: '0',
       emailFilter: event,
       phoneFilter: searchParams.get('phoneFilter'),
       nameFilter: searchParams.get('nameFilter'),
@@ -205,7 +205,7 @@ const AdminManagements: React.FC<{}> = () => {
   const handleRoleChange = (event: { _id: string, name: string }) => {
     setSelectedRole(event);
     setSearchParams({
-      offset: searchParams.get('offset'),
+      offset: '0',
       roleFilter: event?._id || '',
       phoneFilter: searchParams.get('phoneFilter'),
       nameFilter: searchParams.get('nameFilter'),
@@ -215,7 +215,7 @@ const AdminManagements: React.FC<{}> = () => {
 
   const clearFilterHandler = () => {
     setSearchParams({
-      offset: searchParams.get('offset'),
+      offset: '0',
       phoneFilter: '',
       nameFilter: '',
       emailFilter: '',
