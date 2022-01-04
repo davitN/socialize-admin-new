@@ -22,140 +22,144 @@ import AppUserForm from './AppUsersForm';
 
 const AppRoutes = () => {
   const userRole = useSelector(
-    (state: RootState) => state.authReducer?.userData?.role?.name
+      (state: RootState) => state.authReducer?.userData?.role?.name
   );
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />}>
-          <Route path="/" element={<Navigate to="/auth" />} />
-          <Route
-            path="/dashboard"
-            element={
-              <WithAuth>
-                <Dashboard />
-              </WithAuth>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <WithAuth>
-                <UserProfile />
-              </WithAuth>
-            }
-          />
-          <Route
-            path="/venues"
-            element={
-              <WithAuth>
-                <Venues />
-              </WithAuth>
-            }
-          />
-          <Route
-            path="/venues/:id"
-            element={
-              <WithAuth>
-                <VenueForm />
-              </WithAuth>
-            }
-          />
-          {userRole === 'SuperAdmin' && (
-            <Fragment>
-              <Route
-                path="/company"
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App/>}>
+            <Route path="/" element={<Navigate to="/auth"/>}/>
+            <Route
+                path="/dashboard"
                 element={
                   <WithAuth>
-                    <Companies />
+                    <Dashboard/>
                   </WithAuth>
                 }
-              />
-              <Route
-                path="/company/:id"
+            />
+            <Route
+                path="/profile"
                 element={
                   <WithAuth>
-                    <CompanyForm />
+                    <UserProfile/>
                   </WithAuth>
                 }
-              />
-              <Route
-                path="/admin-management"
+            />
+            {userRole !== 'CompanyAdministrator' && (
+                <Fragment>
+                  <Route
+                      path="/venues"
+                      element={
+                        <WithAuth>
+                          <Venues/>
+                        </WithAuth>
+                      }
+                  />
+                  <Route
+                      path="/venues/:id"
+                      element={
+                        <WithAuth>
+                          <VenueForm/>
+                        </WithAuth>
+                      }
+                  />
+                </Fragment>
+            )}
+            {userRole === 'SuperAdmin' && (
+                <Fragment>
+                  <Route
+                      path="/company"
+                      element={
+                        <WithAuth>
+                          <Companies/>
+                        </WithAuth>
+                      }
+                  />
+                  <Route
+                      path="/company/:id"
+                      element={
+                        <WithAuth>
+                          <CompanyForm/>
+                        </WithAuth>
+                      }
+                  />
+                  <Route
+                      path="/admin-management"
+                      element={
+                        <WithAuth>
+                          <AdminManagements/>
+                        </WithAuth>
+                      }
+                  />
+                  <Route
+                      path="/admin-management/:id"
+                      element={
+                        <WithAuth>
+                          <AdminManagementForm/>
+                        </WithAuth>
+                      }
+                  />
+                  <Route
+                      path="/app-users"
+                      element={
+                        <WithAuth>
+                          <AppUsers/>
+                        </WithAuth>
+                      }
+                  />
+                  <Route
+                      path="/app-users/:id"
+                      element={
+                        <WithAuth>
+                          <AppUserForm/>
+                        </WithAuth>
+                      }
+                  />
+                </Fragment>
+            )}
+            <Route
+                path="/latest-posts"
                 element={
                   <WithAuth>
-                    <AdminManagements />
+                    <LatestPosts/>
                   </WithAuth>
                 }
-              />
-              <Route
-                path="/admin-management/:id"
+            />
+            <Route
+                path="/latest-posts/:id"
                 element={
                   <WithAuth>
-                    <AdminManagementForm />
+                    <LatestPostForm/>
                   </WithAuth>
                 }
-              />
-            </Fragment>
-          )}
-          <Route
-            path="/latest-posts"
-            element={
-              <WithAuth>
-                <LatestPosts />
-              </WithAuth>
-            }
-          />
-          <Route
-            path="/latest-posts/:id"
-            element={
-              <WithAuth>
-                <LatestPostForm />
-              </WithAuth>
-            }
-          />
-          <Route
-            path="/top-customers"
-            element={
-              <WithAuth>
-                <TopCustomers />
-              </WithAuth>
-            }
-          />
-          <Route
-            path="/app-users"
-            element={
-              <WithAuth>
-                <AppUsers />
-              </WithAuth>
-            }
-          />
-          <Route
-            path="/app-users/:id"
-            element={
-              <WithAuth>
-                <AppUserForm />
-              </WithAuth>
-            }
-          />
-          <Route
-            path="auth"
-            element={
-              <WithoutAuth>
-                <Login />
-              </WithoutAuth>
-            }
-          />
-          <Route
-            path="*"
-            element={
-              <main style={{ padding: '1rem' }}>
-                <p>{"There's nothing here!"}</p>
-              </main>
-            }
-          />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+            />
+            <Route
+                path="/top-customers"
+                element={
+                  <WithAuth>
+                    <TopCustomers/>
+                  </WithAuth>
+                }
+            />
+            <Route
+                path="auth"
+                element={
+                  <WithoutAuth>
+                    <Login/>
+                  </WithoutAuth>
+                }
+            />
+            <Route
+                path="*"
+                element={
+                  <main style={{ padding: '1rem' }}>
+                    <p>{"There's nothing here!"}</p>
+                  </main>
+                }
+            />
+          </Route>
+        </Routes>
+      </BrowserRouter>
   );
 };
 
