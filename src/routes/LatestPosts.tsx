@@ -37,18 +37,17 @@ const LatestPosts = () => {
       field: '_id',
       haveTemplate: true,
       template: (rowData: PostModel) => (
-          <>
-            {
-              <img
-                  data-dz-thumbnail=""
-                  height="30"
-                  className={'rounded'}
-                  alt={rowData.username}
-                  src={rowData?.profileImage?.imgURL || altImg}
-              />
-            }{' '}
-            {rowData._id}
-          </>
+        <>
+          {rowData?.postImage?.imgURL && (
+            <img
+              data-dz-thumbnail=""
+              height="50"
+              className={'rounded'}
+              src={rowData?.postImage?.imgURL}
+            />
+          )}{' '}
+          {rowData.text}
+        </>
       ),
     },
     {
@@ -56,9 +55,17 @@ const LatestPosts = () => {
       field: 'name',
       haveTemplate: true,
       template: (rowData: PostModel) => (
-          <Fragment>
-            {rowData.firstName} {rowData.lastName}
-          </Fragment>
+        <Fragment>
+          {rowData?.profileImage?.imgURL && (
+            <img
+              data-dz-thumbnail=""
+              height="30"
+              className={'rounded'}
+              src={rowData?.profileImage?.imgURL || altImg}
+            />
+          )}{' '}
+          {rowData.firstName} {rowData.lastName}
+        </Fragment>
       ),
     },
     {
@@ -66,13 +73,13 @@ const LatestPosts = () => {
       field: 'createdAt',
       haveTemplate: true,
       template: (rowData: PostModel) => (
-          <Fragment>
-            {new Date(rowData.createdAt).toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: 'short',
-            })}
-            , {new Date(rowData.createdAt).getFullYear()}
-          </Fragment>
+        <Fragment>
+          {new Date(rowData.createdAt).toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+          })}
+          , {new Date(rowData.createdAt).getFullYear()}
+        </Fragment>
       ),
     },
     {
@@ -84,15 +91,15 @@ const LatestPosts = () => {
       field: 'customerType',
       haveTemplate: true,
       template: (row: PostModel) => (
-          <Badge
-              className={
-                  'font-size-12 badge-soft-' + getCustomerTypeColors(row.customerType)
-              }
-              color={getCustomerTypeColors(row.customerType)}
-              pill
-          >
-            {row.customerType}
-          </Badge>
+        <Badge
+          className={
+            'font-size-12 badge-soft-' + getCustomerTypeColors(row.customerType)
+          }
+          color={getCustomerTypeColors(row.customerType)}
+          pill
+        >
+          {row.customerType}
+        </Badge>
       ),
     },
     {
@@ -100,27 +107,15 @@ const LatestPosts = () => {
       field: 'viewsCount',
     },
     {
-      name: 'View Details',
-      field: 'viewDetails',
-      haveTemplate: true,
-      template: () => {
-        return (
-            <Button type="button" color="primary" className="btn-sm btn-rounded">
-              View Details
-            </Button>
-        );
-      },
-    },
-    {
       name: 'View',
       field: 'view',
       haveTemplate: true,
       template: (row: PostModel) => (
-          <Button onClick={() => navigate(row._id)}>
-            <i className="pi pi-cog"/>
-          </Button>
-      )
-    }
+        <Button onClick={() => navigate(row._id)}>
+          <i className="pi pi-cog" />
+        </Button>
+      ),
+    },
   ];
   const [dataLoading, setDataLoading] = useState<boolean>(true);
   const LIMIT = 10;

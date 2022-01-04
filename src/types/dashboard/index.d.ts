@@ -42,6 +42,12 @@ export interface PostModel {
     height?: number;
     imgURL?: string;
   };
+  postImage?: {
+    height: number;
+    imgURL: string;
+    width: number;
+  };
+  text: string;
 }
 
 export interface DashboardData {
