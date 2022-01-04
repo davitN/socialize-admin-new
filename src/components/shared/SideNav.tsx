@@ -26,12 +26,12 @@ const mainRoutes: RouteModel[] = [
   {
     name: 'Latest Posts',
     route: '/latest-posts',
-    iconName: 'bx bx-home-circle',
+    iconName: 'bx bxs-detail',
   },
   {
     name: 'Top Customers',
     route: '/top-customers',
-    iconName: 'bx bx-home-circle',
+    iconName: 'bx bxs-user-detail',
   },
   {
     name: 'Admin Management',
