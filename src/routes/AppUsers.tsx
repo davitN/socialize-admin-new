@@ -209,7 +209,7 @@ const AppUsers = () => {
   const handleNameFilter = (event: string) => {
     setNameFilter(event);
     setSearchParams({
-      offset: searchParams.get('offset'),
+      offset: '0',
       nameFilter: event,
       phoneFilter: searchParams.get('phoneFilter') || '',
       usernameFilter: searchParams.get('emailFilter') || '',
@@ -221,7 +221,7 @@ const AppUsers = () => {
   const handlePhoneFilter = (event: string) => {
     setPhoneFilter(event);
     setSearchParams({
-      offset: searchParams.get('offset'),
+      offset: '0',
       phoneFilter: event,
       nameFilter: searchParams.get('nameFilter'),
       usernameFilter: searchParams.get('usernameFilter'),
@@ -233,7 +233,7 @@ const AppUsers = () => {
   const handleUsernameFilter = (event: string) => {
     setUsernameFilter(event);
     setSearchParams({
-      offset: searchParams.get('offset'),
+      offset: '0',
       usernameFilter: event,
       phoneFilter: searchParams.get('phoneFilter'),
       nameFilter: searchParams.get('nameFilter'),
@@ -245,7 +245,7 @@ const AppUsers = () => {
   const handleGenderFilter = (event: string) => {
     setGenderFilter(event);
     setSearchParams({
-      offset: searchParams.get('offset'),
+      offset: '0',
       usernameFilter: searchParams.get('usernameFilter'),
       phoneFilter: searchParams.get('phoneFilter'),
       nameFilter: searchParams.get('nameFilter'),
@@ -264,7 +264,7 @@ const AppUsers = () => {
 
     setIsVerifiedFilter(event);
     setSearchParams({
-      offset: searchParams.get('offset'),
+      offset: '0',
       usernameFilter: searchParams.get('usernameFilter'),
       phoneFilter: searchParams.get('phoneFilter'),
       nameFilter: searchParams.get('nameFilter'),
@@ -275,7 +275,7 @@ const AppUsers = () => {
 
   const clearFilterHandler = () => {
     setSearchParams({
-      offset: searchParams.get('offset'),
+      offset: '0',
       phoneFilter: '',
       nameFilter: '',
       usernameFilter: '',
