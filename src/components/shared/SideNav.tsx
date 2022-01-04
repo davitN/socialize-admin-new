@@ -4,6 +4,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/configureStore';
 import { RouteModel } from '../../types/route';
+const logoImgPath = `${process.env.PUBLIC_URL}/logo.png`;
+
 
 const mainRoutes: RouteModel[] = [
   {
@@ -24,12 +26,12 @@ const mainRoutes: RouteModel[] = [
   {
     name: 'Latest Posts',
     route: '/latest-posts',
-    iconName: 'bx bx-home-circle',
+    iconName: 'bx bxs-detail',
   },
   {
     name: 'Top Customers',
     route: '/top-customers',
-    iconName: 'bx bx-home-circle',
+    iconName: 'bx bxs-user-detail',
   },
   {
     name: 'Admin Management',
@@ -47,6 +49,9 @@ const useStyles = createUseStyles({
   logo: {
     height: '70px',
     color: '#FFF',
+    '& img': {
+      height: 50
+    }
   },
 });
 
@@ -85,7 +90,9 @@ const SideNav: React.FC<{}> = () => {
   }, [location]);
   return (
       <div className={`flex-vertical vertical-filled ${classes.container}`}>
-        <div className={`flex-center ${classes.logo}`}>LOGO</div>
+        <div className={`flex-center ${classes.logo}`}>
+          <img src={logoImgPath} alt="logo"/>
+        </div>
         <div id="sidebar-menu">
           <ul className="metismenu list-unstyled" id="side-menu">
             <li className="menu-title text-start">Menu</li>

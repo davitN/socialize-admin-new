@@ -145,7 +145,6 @@ const AdminManagementForm: React.FC<{}> = () => {
   };
 
   useEffect(() => {
-    console.log(selectedRole);
     setValues({ ...values, roleId: selectedRole._id });
   }, [selectedRole]);
 
@@ -160,8 +159,8 @@ const AdminManagementForm: React.FC<{}> = () => {
     dispatch(
       getSelectedAdminManagementActionSG(adminId, {
         success: (res: AdminModel) => {
-          setSelectedRole(res.role);
           setValues({ ...values, ...res, roleId: res.role._id });
+          setSelectedRole(res.role);
           if (res.role.name === 'CompanyOwner' || selectedRole.name === 'CompanyAdministrator') {
             setSelectedCompany(res.company);
           }
@@ -199,12 +198,16 @@ const AdminManagementForm: React.FC<{}> = () => {
     );
     if (newMode) {
       return regexp.test(values.password);
-    } else {
-      if (values.password) {
-        return regexp.test(values.password);
-      }
-      return true;
     }
+    return true;
+    // if (newMode) {
+    //   return regexp.test(values.password);
+    // } else {
+    //   if (values.password) {
+    //     return regexp.test(values.password);
+    //   }
+    //   return true;
+    // }
   };
 
   const handleValidation = () => {
@@ -411,26 +414,28 @@ const AdminManagementForm: React.FC<{}> = () => {
               placeholder="Enter Email"
               required
             />
-            <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
-              <label>Password</label>
-              <Password
-                className={`${
-                  validation.submitted && !validation.password
-                    ? classes.inputError
-                    : ''
-                }`}
-                value={values.password}
-                onChange={(e) =>
-                  setValues({ ...values, password: e.target.value })
-                }
-                type={'password'}
-                placeholder="Enter Password"
-                toggleMask={true}
-                feedback={false}
-                required
-                autoComplete={'off'}
-              />
-            </div>
+            {newMode && (
+                <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
+                  <label>Password</label>
+                  <Password
+                      className={`${
+                          validation.submitted && !validation.password
+                              ? classes.inputError
+                              : ''
+                      }`}
+                      value={values.password}
+                      onChange={(e) =>
+                          setValues({ ...values, password: e.target.value })
+                      }
+                      type={'password'}
+                      placeholder="Enter Password"
+                      toggleMask={true}
+                      feedback={false}
+                      required
+                      autoComplete={'off'}
+                  />
+                </div>
+            )}
             <Button
               label={'Submit'}
               onClick={() => submitButton(event)}
