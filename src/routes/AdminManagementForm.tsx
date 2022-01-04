@@ -162,7 +162,7 @@ const AdminManagementForm: React.FC<{}> = () => {
         success: (res: AdminModel) => {
           setSelectedRole(res.role);
           setValues({ ...values, ...res, roleId: res.role._id });
-          if (res.role.name === 'CompanyOwner') {
+          if (res.role.name === 'CompanyOwner' || selectedRole.name === 'CompanyAdministrator') {
             setSelectedCompany(res.company);
           }
         },
@@ -236,7 +236,7 @@ const AdminManagementForm: React.FC<{}> = () => {
     ) {
       return;
     }
-    if (selectedRole.name === 'CompanyOwner' && !values.companyId) {
+    if (selectedRole.name === 'CompanyOwner' || selectedRole.name === 'CompanyAdministrator' && !values.companyId) {
       return;
     }
     if (newMode) {
@@ -249,7 +249,7 @@ const AdminManagementForm: React.FC<{}> = () => {
         roleId: values.roleId,
         password: values.password,
       };
-      if (selectedRole.name === 'CompanyOwner') {
+      if (selectedRole.name === 'CompanyOwner' || selectedRole.name === 'CompanyAdministrator') {
         newData.companyId = values.companyId;
       }
       dispatch(
@@ -270,7 +270,7 @@ const AdminManagementForm: React.FC<{}> = () => {
         roleId: values.roleId,
         password: values.password,
       };
-      if (selectedRole.name === 'CompanyOwner') {
+      if (selectedRole.name === 'CompanyOwner' || selectedRole.name === 'CompanyAdministrator') {
         sendData.companyId = values.companyId;
       }
       dispatch(
@@ -362,7 +362,7 @@ const AdminManagementForm: React.FC<{}> = () => {
                 }
               />
             </div>
-            {selectedRole.name === 'CompanyOwner' && (
+            {(selectedRole.name === 'CompanyOwner' || selectedRole.name === 'CompanyAdministrator') && (
               <div
                 className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}
               >
