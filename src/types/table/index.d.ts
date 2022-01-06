@@ -10,6 +10,7 @@ export interface TableQueryParams {
   usernameFilter?: string;
   genderFilter?: string;
   isVerifiedFilter?: string;
+  statusFilter?: string;
 }
 
 export interface TableHeaderModel {

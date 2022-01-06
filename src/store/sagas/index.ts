@@ -69,6 +69,11 @@ import {
   getAppUsersSaga,
   getSelectedAppUserSaga,
 } from './appUsersSaga';
+import {
+  GET_REPORTED_COMMENTS_SG,
+  GET_REPORTED_POSTS_SG,
+} from '../ducks/reportsDuck';
+import { getReportedCommentsSaga, getReportedPostsSaga } from './reportsSaga';
 
 function* actionWatcher() {
   yield takeLatest(CHECK_SIGNED_IN, checkSignedInSaga);
@@ -101,6 +106,8 @@ function* actionWatcher() {
   yield takeLatest(GET_APP_USERS_SG, getAppUsersSaga);
   yield takeLatest(APP_USERS_VERIFY_SG, appUsersVerifySaga);
   yield takeLatest(GET_SELECTED_APP_USER_SG, getSelectedAppUserSaga);
+  yield takeLatest(GET_REPORTED_POSTS_SG, getReportedPostsSaga);
+  yield takeLatest(GET_REPORTED_COMMENTS_SG, getReportedCommentsSaga);
 }
 
 export default function* rootSaga() {

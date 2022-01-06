@@ -7,7 +7,7 @@ export interface LatestPostsModel {
 }
 
 export interface PostDetailModel {
-  comments: PostDetailCommentModel[],
+  comments?: PostDetailCommentModel[],
   commentsCount?: number,
   contentType?: string,
   createdAt?: string,

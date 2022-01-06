@@ -8,6 +8,7 @@ import { venueReducer } from './VenueDuck';
 import { companyReducer } from './companyDuck';
 import { adminManagementReducer } from './adminManagementDuck';
 import { appUsersReducer } from './appUsersDuck';
+import { reportsReducer } from './reportsDuck';
 
 export {
   mainReducer,
@@ -20,4 +21,5 @@ export {
   companyReducer,
   adminManagementReducer,
   appUsersReducer,
+  reportsReducer,
 };
