@@ -15,7 +15,7 @@ export interface VenueStateModel {
     country: string,
     point: {
       type: string,
-      coordinates: Array<number>
+      coordinates: Array<number | ''>
     },
     state: string,
     street: string,
