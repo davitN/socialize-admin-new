@@ -30,6 +30,8 @@ import {
   AutoCompleteCompleteMethodParams,
 } from 'primereact/autocomplete';
 import readImgAsync from '../helpers/utils/readImgAsync';
+import { InputNumber } from 'primereact/inputnumber';
+import { InputText } from 'primereact/inputtext';
 
 const useStyles = createUseStyles({
   inputBlock: {
@@ -38,7 +40,7 @@ const useStyles = createUseStyles({
       marginBottom: 0,
       textAlign: 'start',
     },
-    '& input': {
+    '& > input': {
       width: 'calc(100% - 200px)',
       borderRadius: '0.25rem',
     },
@@ -50,6 +52,17 @@ const useStyles = createUseStyles({
   },
   errorBorder: {
     borderColor: '#ff4a4a',
+  },
+  coordinateClass: {
+    '& input': {
+      height: 36
+    },
+    '& span.title': {
+      marginRight: 10
+    },
+    '& .divider': {
+      margin: '0px 20px',
+    }
   },
   multiSelectClass: {
     height: '40px',
@@ -103,7 +116,7 @@ const VenueForm: React.FC<{}> = () => {
   const [coverThumbnailImg, setCoverThumbnail] = useState([]);
   const [coverImg, setCover] = useState([]);
   const { companiesData } = useSelector(
-    (state: RootState) => state.companyReducer
+      (state: RootState) => state.companyReducer
   );
   const [values, setValues] = useState<VenueStateModel>({
     accessDaysAfter: null,
@@ -127,7 +140,7 @@ const VenueForm: React.FC<{}> = () => {
       country: '',
       point: {
         type: 'Point',
-        coordinates: [41.123123, 44.123123],
+        coordinates: [0, 0],
       },
       street: '',
     },
@@ -149,17 +162,17 @@ const VenueForm: React.FC<{}> = () => {
 
   const getCompanies = () => {
     dispatch(
-      getCompaniesActionSG(
-        { offset: 0, limit: 1000000 },
-        {
-          success: () => {
-            //
-          },
-          error: () => {
-            //
-          },
-        }
-      )
+        getCompaniesActionSG(
+            { offset: 0, limit: 1000000 },
+            {
+              success: () => {
+                //
+              },
+              error: () => {
+                //
+              },
+            }
+        )
     );
   };
 
@@ -259,7 +272,7 @@ const VenueForm: React.FC<{}> = () => {
         results = [...companiesData.data];
       } else {
         results = companiesData.data.filter((item) =>
-          item.name.toLowerCase().includes(event.query.toLowerCase())
+            item.name.toLowerCase().includes(event.query.toLowerCase())
         );
       }
       setFilteredCompanies(results);
@@ -268,35 +281,37 @@ const VenueForm: React.FC<{}> = () => {
 
   const submitButton = (event: any) => {
     event.preventDefault();
+    console.log(values.location.point.coordinates);
+    return;
     setIsSubmitted(true);
     if (formNotValid()) {
       return;
     }
     if (newMode) {
       dispatch(
-        saveVenueAction(sendData, {
-          success: () => {
-            navigate(-1);
-          },
-          error: () => {
-            //
-          },
-        })
-      );
-    } else {
-      dispatch(
-        putVenueAction(
-          values._id,
-          { ...sendData },
-          {
+          saveVenueAction(sendData, {
             success: () => {
               navigate(-1);
             },
             error: () => {
               //
             },
-          }
-        )
+          })
+      );
+    } else {
+      dispatch(
+          putVenueAction(
+              values._id,
+              { ...sendData },
+              {
+                success: () => {
+                  navigate(-1);
+                },
+                error: () => {
+                  //
+                },
+              }
+          )
       );
     }
   };
@@ -313,7 +328,7 @@ const VenueForm: React.FC<{}> = () => {
   useEffect(() => {
     if (!newMode && values.company) {
       const company = companiesData.data.find(
-        (item) => item._id === values.company
+          (item) => item._id === values.company
       );
       if (company) {
         setSelectedCompany(company);
@@ -327,7 +342,7 @@ const VenueForm: React.FC<{}> = () => {
     } else if (venueId) {
       setNewMode(false);
       const selectedVenue: VenueStateModel = venuesData.data.find(
-        (item) => item._id === venueId
+          (item) => item._id === venueId
       );
       if (!selectedVenue) {
         navigate(-1);
@@ -354,10 +369,10 @@ const VenueForm: React.FC<{}> = () => {
 
   function handleAcceptedFiles(key: VenueImages, files: any) {
     files.map((file: any) =>
-      Object.assign(file, {
-        preview: URL.createObjectURL(file),
-        formattedSize: formatBytes(file.size),
-      })
+        Object.assign(file, {
+          preview: URL.createObjectURL(file),
+          formattedSize: formatBytes(file.size),
+        })
     );
     switch (key) {
       case 'logo':
@@ -480,6 +495,68 @@ const VenueForm: React.FC<{}> = () => {
                   required
                   readonly={!isSuperAdmin}
               />
+              <div className={`flex-horizontal mb-3 ${classes.inputBlock}`}>
+                <label>Coordinates</label>
+                <div className={`coordinate-inputs flex-horizontal ${classes.coordinateClass}`}>
+                  <span className="title">Latitude:</span>
+                  <InputText
+                      value={values.location.point.coordinates[0]}
+                      onChange={(e) => {
+                        const value = parseFloat(e.target.value);
+                        const min = -90;
+                        const max = 90;
+                        setValues({
+                          ...values,
+                          location: {
+                            ...values.location,
+                            point: {
+                              ...values.location.point,
+                              coordinates: [
+                                isNaN(value) ? '' : (
+                                    value < min ? min : (
+                                        value > max ? max : value
+                                    )
+                                ),
+                                values.location.point.coordinates[1]
+                              ]
+                            }
+                          }
+                        })
+                      }}
+                      type={'number'}
+                      required={true}
+                  />
+                  <div className="divider">-</div>
+                  <span className="title">Longitude:</span>
+                  <InputText
+                      value={values.location.point.coordinates[1]}
+                      onChange={(e) => {
+                        const value = parseFloat(e.target.value);
+                        const min = -180;
+                        const max = 180;
+                        setValues({
+                          ...values,
+                          location: {
+                            ...values.location,
+                            point: {
+                              ...values.location.point,
+                              coordinates: [
+                                values.location.point.coordinates[0],
+                                isNaN(value) ? '' : (
+                                    value < min ? min : (
+                                        value > max ? max : value
+                                    )
+                                ),
+                              ]
+                            }
+                          }
+                        })
+                      }}
+                      type={'number'}
+                      required={true}
+                  />
+                </div>
+              </div>
               <TextInput
                   customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.profile.webSite) ? classes.inputError : ''}`}
                   value={values.profile.webSite}
