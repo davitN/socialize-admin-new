@@ -30,7 +30,6 @@ import {
   AutoCompleteCompleteMethodParams,
 } from 'primereact/autocomplete';
 import readImgAsync from '../helpers/utils/readImgAsync';
-import { InputNumber } from 'primereact/inputnumber';
 import { InputText } from 'primereact/inputtext';
 
 const useStyles = createUseStyles({
@@ -140,7 +139,7 @@ const VenueForm: React.FC<{}> = () => {
       country: '',
       point: {
         type: 'Point',
-        coordinates: [0, 0],
+        coordinates: ['', ''],
       },
       street: '',
     },
@@ -241,6 +240,9 @@ const VenueForm: React.FC<{}> = () => {
     if (!values.location.country) {
       return true;
     }
+    if (values.location.point.coordinates[0] === '' || values.location.point.coordinates[1] === '') {
+      return true;
+    }
     if (!values.profile.webSite) {
       return true;
     }
@@ -282,8 +284,8 @@ const VenueForm: React.FC<{}> = () => {
   const submitButton = (event: any) => {
     event.preventDefault();
     console.log(values.location.point.coordinates);
-    return;
     setIsSubmitted(true);
+    return;
     if (formNotValid()) {
       return;
     }
@@ -500,6 +502,7 @@ const VenueForm: React.FC<{}> = () => {
                 <div className={`coordinate-inputs flex-horizontal ${classes.coordinateClass}`}>
                   <span className="title">Latitude:</span>
                   <InputText
+                      className={`${(values.location.point.coordinates[0] === '' && isSubmitted) ? classes.errorBorder : ''}`}
                       value={values.location.point.coordinates[0]}
                       onChange={(e) => {
                         const value = parseFloat(e.target.value);
@@ -529,6 +532,7 @@ const VenueForm: React.FC<{}> = () => {
                   <div className="divider">-</div>
                   <span className="title">Longitude:</span>
                   <InputText
+                      className={`${(values.location.point.coordinates[1] === '' && isSubmitted) ? classes.errorBorder : ''}`}
                       value={values.location.point.coordinates[1]}
                       onChange={(e) => {
                         const value = parseFloat(e.target.value);

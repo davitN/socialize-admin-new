@@ -70,7 +70,6 @@ const useStyles = createUseStyles({
 
 const LatestPostForm: React.FC<{}> = () => {
   const classes = useStyles();
-  const [newMode, setNewMode] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id: postId } = useParams();
@@ -215,9 +214,8 @@ const LatestPostForm: React.FC<{}> = () => {
 
   useEffect(() => {
     if (postId === 'new') {
-      setNewMode(true);
+      // new mode
     } else if (postId) {
-      setNewMode(false);
       getSelectedPost(postId);
     }
   }, [postId]);
@@ -245,6 +243,7 @@ const LatestPostForm: React.FC<{}> = () => {
               <div className={`flex-horizontal mb-3 ${classes.inputBlock}`}>
                 <label>Image</label>
                 <img
+                  alt={'profile'}
                   data-dz-thumbnail=""
                   height={values.image.height / 3}
                   width={values.image.width / 3}

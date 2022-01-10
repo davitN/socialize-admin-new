@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 
@@ -49,6 +49,7 @@ const AppUsers = () => {
       template: (rowData: AppUsersDataModel) => (
         <>
           <img
+            alt={'profile'}
             className={'rounded'}
             height="30"
             width="30"
@@ -81,7 +82,7 @@ const AppUsers = () => {
             onClick={(event) => verifyHandler(event, rowData)}
             className={classes.button}
             icon={rowData.isVerified ? 'pi pi-check' : ''}
-            disabled={rowData.isVerified ? true : false}
+            disabled={rowData.isVerified}
           />
         </>
       ),
@@ -197,7 +198,7 @@ const AppUsers = () => {
     );
   };
 
-  const verifyHandler = (event: any, data: AppUsersDataModel) => {
+  const verifyHandler = (event: React.MouseEvent<HTMLButtonElement>, data: AppUsersDataModel) => {
     const confirm = confirmPopup({
       target: event.currentTarget,
       message: 'Are you sure you want to verify this user?',
@@ -255,7 +256,7 @@ const AppUsers = () => {
   };
 
   const handleIsVerifiedFilter = (event: string) => {
-    let verifiedBoolean = '';
+    let verifiedBoolean: string;
     if (event === 'Yes') {
       verifiedBoolean = 'true';
     } else if (event === 'No') {

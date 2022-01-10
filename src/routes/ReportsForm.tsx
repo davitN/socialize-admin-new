@@ -135,7 +135,7 @@ const ReportsForm = () => {
               {
                 key: `${comment._id}-${comment.tagPersons.length}`,
                 label: `Tags: ${comment.tagPersons.map(
-                  (tagPerson: any) => `${' '} ${tagPerson.username}`
+                  (tagPerson: { username: string }) => `${' '} ${tagPerson.username}`
                 )}`,
               },
             ]
@@ -154,7 +154,7 @@ const ReportsForm = () => {
                       {
                         key: `${subComment._id}-${subComment.tagPersons.length}`,
                         label: `Tags: ${subComment.tagPersons.map(
-                          (tagPerson: any) => `${' '} ${tagPerson.username}`
+                          (tagPerson: { username: string }) => `${' '} ${tagPerson.username}`
                         )}`,
                       },
                     ]
@@ -173,7 +173,7 @@ const ReportsForm = () => {
                               {
                                 key: `${subSubComment._id}-${subSubComment.tagPersons.length}`,
                                 label: `Tags: ${comment.tagPersons.map(
-                                  (tagPerson: any) =>
+                                  (tagPerson: { username: string }) =>
                                     `${' '} ${tagPerson.username}`
                                 )}`,
                               },
@@ -189,7 +189,7 @@ const ReportsForm = () => {
     }));
   };
 
-  const [treeData, setTreeData] = useState<any>(setNodes());
+  const [treeData, setTreeData] = useState(setNodes());
 
   useEffect(() => {
     if (values.comments.length > 0) {
@@ -237,6 +237,7 @@ const ReportsForm = () => {
               <div className={`flex-horizontal mb-3 ${classes.inputBlock}`}>
                 <label>Image</label>
                 <img
+                  alt={'profile'}
                   data-dz-thumbnail=""
                   height={values.image.height / 3}
                   width={values.image.width / 3}

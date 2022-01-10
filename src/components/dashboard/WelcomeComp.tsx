@@ -6,8 +6,9 @@ import { Link } from 'react-router-dom';
 
 import altImg from '../../assets/images/alt-profile-img.jpg';
 import profileImg from '../../assets/images/profile-img.png';
+import { DashboardData } from '../../types/dashboard';
 
-const WelcomeComp = (props) => {
+const WelcomeComp = (props: { userData: { firstName: string, lastName: string }, dashboardData: DashboardData }) => {
   return (
     <React.Fragment>
       <Card className="overflow-hidden">
@@ -36,7 +37,7 @@ const WelcomeComp = (props) => {
               </div>
               {/* eslint-disable-next-line react/prop-types */}
               <h5 className="font-size-15 text-truncate">
-                {props.userData.firstName + ' ' + props.userData.lastName}
+                {props.userData?.firstName + ' ' + props.userData.lastName}
               </h5>
               <p className="text-muted mb-0 text-truncate">UI/UX Designer</p>
             </Col>
@@ -61,7 +62,7 @@ const WelcomeComp = (props) => {
                 <div className="mt-4">
                   <Link to="" className="btn btn-primary  btn-sm">
                     Upgrade to Business Elite{' '}
-                    <i className="mdi mdi-arrow-right ms-1"></i>
+                    <i className="mdi mdi-arrow-right ms-1"/>
                   </Link>
                 </div>
               </div>

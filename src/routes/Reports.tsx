@@ -54,6 +54,7 @@ const Reports = () => {
         <>
           {row?.reporter?.profileImage?.imgURL && (
             <img
+              alt={'profile'}
               data-dz-thumbnail=""
               height="30"
               className={'rounded'}
@@ -72,6 +73,7 @@ const Reports = () => {
         <>
           {row?.postOwner?.profileImage?.imgURL && (
             <img
+              alt={'post'}
               data-dz-thumbnail=""
               height="30"
               className={'rounded'}
@@ -90,6 +92,7 @@ const Reports = () => {
         <>
           {row.post?.image?.imgURL && (
             <img
+              alt={'post'}
               data-dz-thumbnail=""
               height="30"
               className={'rounded'}
@@ -108,6 +111,7 @@ const Reports = () => {
         <>
           {row?.comment?.image?.imgURL && (
             <img
+              alt={'comment'}
               data-dz-thumbnail=""
               height="30"
               className={'rounded'}
@@ -233,7 +237,7 @@ const Reports = () => {
   //   });
   // };
 
-  const handleStatusFilter = (event: any) => {
+  const handleStatusFilter = (event: string) => {
     setSelectedStatusFilter(event);
     setSearchParams({
       offset: '0',
@@ -267,7 +271,7 @@ const Reports = () => {
               }
               value={selectedReportFilter}
               className={'mb-3'}
-              onChange={(e: any) => {
+              onChange={(e) => {
                 // handleReportFilter(e);
                 setSelectedReportFilter(e.value);
                 setSearchParams({
@@ -287,7 +291,7 @@ const Reports = () => {
               value={selectedStatusFilter}
               className={'mb-3'}
               showClear={!!selectedStatusFilter}
-              onChange={(e: any) => {
+              onChange={(e) => {
                 setSelectedStatusFilter(e.value);
                 handleStatusFilter(e.value);
               }}
