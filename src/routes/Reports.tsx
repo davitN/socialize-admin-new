@@ -141,7 +141,7 @@ const Reports = () => {
       field: 'view',
       haveTemplate: true,
       template: (row: ReportDetailsModel) => (
-        <Button onClick={() => navigate(row._id)}>
+        <Button onClick={() => navigate(row.post._id)}>
           <i className="pi pi-cog" />
         </Button>
       ),

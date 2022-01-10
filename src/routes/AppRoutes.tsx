@@ -20,6 +20,7 @@ import AppUsers from './AppUsers';
 import LatestPostForm from './LatestPostForm';
 import AppUserForm from './AppUsersForm';
 import Reports from './Reports';
+import ReportsForm from './ReportsForm';
 
 const AppRoutes = () => {
   const userRole = useSelector(
@@ -121,6 +122,14 @@ const AppRoutes = () => {
                 element={
                   <WithAuth>
                     <Reports />
+                  </WithAuth>
+                }
+              />
+              <Route
+                path="/reports/:id"
+                element={
+                  <WithAuth>
+                    <ReportsForm />
                   </WithAuth>
                 }
               />
