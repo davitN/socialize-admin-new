@@ -68,14 +68,16 @@ const CompanyForm: React.FC<{}> = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [validation, setValidation] = useState<{
+    name: boolean,
     email: boolean,
     phone: boolean,
-    name: boolean,
+    ambassador: boolean,
     submitted: boolean
   }>({
-    email: false,
     name: false,
+    email: false,
     phone: false,
+    ambassador: false,
     submitted: false
   });
   let ambassadorTimeout: any;
@@ -119,6 +121,7 @@ const CompanyForm: React.FC<{}> = () => {
   useEffect(() => {
     if (selectedAmbassador) {
       setAmbassadorSearchValue(selectedAmbassador.firstName);
+      setValues({...values, ambassadorId: selectedAmbassador._id})
     }
   }, [selectedAmbassador]);
 
@@ -149,9 +152,11 @@ const CompanyForm: React.FC<{}> = () => {
   const getSelectedCompany = (companyId: string) => {
     dispatch(getSelectedCompanyActionSG(companyId, {
       success: (res: CompanyModel) => {
-        setValues(res);
         setPaidTillDate(new Date(res.paidTill));
         setValues({ ...values, ...res });
+        if (res.ambassador) {
+          setSelectedAmbassador(res.ambassador);
+        }
       }
     }))
   }
@@ -161,6 +166,7 @@ const CompanyForm: React.FC<{}> = () => {
       ...validation,
       name: !!values.name,
       phone: !!values.phone,
+      ambassador: !!values.ambassadorId,
       email: new RegExp('^[^@]+@[^@]{2,}\\.[^@]{2,}$').test(values.email)
     });
   };
@@ -174,7 +180,7 @@ const CompanyForm: React.FC<{}> = () => {
   const submitButton = (event: Event) => {
     event.preventDefault();
     setValidation({ ...validation, submitted: true });
-    if (!(validation.name && validation.phone && validation.email)) {
+    if (!(validation.name && validation.phone && validation.email && validation.ambassador)) {
       return;
     }
     const sendData: CompanyModel | any = values;
@@ -183,7 +189,8 @@ const CompanyForm: React.FC<{}> = () => {
       const newData: CompanyModel = {
         email: sendData.email,
         phone: sendData.phone,
-        name: sendData.name
+        name: sendData.name,
+        ambassadorId: sendData.ambassadorId
       }
       dispatch(saveCompanyAction(newData, {
         success: () => {
@@ -260,6 +267,7 @@ const CompanyForm: React.FC<{}> = () => {
               <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
                 <label>Ambassador</label>
                 <AutoComplete
+                    className={(validation.submitted && !validation.ambassador) ? classes.inputError : ''}
                     dropdown={true}
                     value={ambassadorSearchValue}
                     field={'firstName'}

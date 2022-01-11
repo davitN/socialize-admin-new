@@ -6,7 +6,9 @@ import { TableQueryParams } from '../../types/table';
 export const SAVE_VENUE = 'socialize/main/saveVenue';
 export const PUT_VENUE = 'socialize/main/putVenue';
 export const GET_VENUES_SG = 'socialize/main/getVenues_sg';
+export const GET_VENUE_SG = 'socialize/main/getVenue_sg';
 export const SET_VENUES = 'socialize/main/setVenues';
+export const GET_COMPANY_AMBASSADOR_SG = 'socialize/main/getCompanyAmbassador';
 
 const initialState: { venuesData: VenuesTableModel } = {
   venuesData: {
@@ -31,6 +33,18 @@ export const venueReducer = (state = initialState, action: AnyAction) => {
 export const setVenuesAction = (venues: VenuesTableModel) => ({
   type: SET_VENUES,
   payload: venues,
+});
+
+export const getCompanyAmbassadorAction = (companyId: string, callbacks: CallBacks) => ({
+  type: GET_COMPANY_AMBASSADOR_SG,
+  companyId,
+  callbacks
+});
+
+export const getVenueActionSG = (venueId: string, callbacks: CallBacks) => ({
+  type: GET_VENUE_SG,
+  venueId,
+  callbacks
 });
 
 export const getVenuesActionSG = (

@@ -33,6 +33,12 @@ const useStyles = createUseStyles({
   borderError: {
     borderColor: '#ff4a4a',
   },
+  passwordHint: {
+    width: 200,
+    marginLeft: 'auto',
+    marginBottom: -5,
+    listStyle: 'disc'
+  },
   inputBlock: {
     '& label': {
       width: '200px',
@@ -430,7 +436,12 @@ const AdminManagementForm: React.FC<{}> = () => {
                       type={'password'}
                       placeholder="Enter Password"
                       toggleMask={true}
-                      feedback={false}
+                      content={() => (<ul className={classes.passwordHint}>
+                        <li>At least one lowercase</li>
+                        <li>At least one uppercase</li>
+                        <li>At least one numeric</li>
+                        <li>Minimum 6 characters</li>
+                      </ul>)}
                       required
                       autoComplete={'off'}
                   />

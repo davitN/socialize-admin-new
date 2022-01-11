@@ -22,7 +22,12 @@ import CvSwitcher from '../components/shared/switcher';
 import { Button } from 'primereact/button';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/configureStore';
-import { putVenueAction, saveVenueAction } from '../store/ducks/VenueDuck';
+import {
+  getCompanyAmbassadorAction,
+  getVenueActionSG,
+  putVenueAction,
+  saveVenueAction
+} from '../store/ducks/VenueDuck';
 import { getCompaniesActionSG } from '../store/ducks/companyDuck';
 import { CompanyModel } from '../types/company';
 import {
@@ -31,6 +36,8 @@ import {
 } from 'primereact/autocomplete';
 import readImgAsync from '../helpers/utils/readImgAsync';
 import { InputText } from 'primereact/inputtext';
+import { AdminModel, AdminTableModel } from '../types/admin';
+import { getAdminManagementsActionSG } from '../store/ducks/adminManagementDuck';
 
 const useStyles = createUseStyles({
   inputBlock: {
@@ -95,10 +102,13 @@ const useStyles = createUseStyles({
 });
 
 const VenueForm: React.FC<{}> = () => {
+  const [selectedAmbassador, setSelectedAmbassador] = useState<AdminModel | null>(null);
+  const [ambassadorSearchValue, setAmbassadorSearchValue] = useState('');
+  const [filteredAmbassadors, setFilteredAmbassadors] = useState([]);
   const userRole = useSelector(
       (state: RootState) => state.authReducer?.userData?.role?.name
   );
-  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [canEdit, setCanEdit] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const classes = useStyles();
   const [companySearchValue, setCompanySearchValue] = useState('');
@@ -117,6 +127,8 @@ const VenueForm: React.FC<{}> = () => {
   const { companiesData } = useSelector(
       (state: RootState) => state.companyReducer
   );
+
+  let ambassadorTimeout: any;
   const [values, setValues] = useState<VenueStateModel>({
     accessDaysAfter: null,
     company: '',
@@ -143,7 +155,7 @@ const VenueForm: React.FC<{}> = () => {
       },
       street: '',
     },
-    inObjectRadiusInMeters: 100,
+    inObjectRadiusInMeters: '',
     logo: {
       width: null,
       height: null,
@@ -176,14 +188,14 @@ const VenueForm: React.FC<{}> = () => {
   };
 
   useEffect(() => {
-    setIsSuperAdmin(userRole === 'SuperAdmin');
+    setCanEdit((userRole === 'SuperAdmin' || userRole === 'Ambassador'));
   }, [userRole]);
 
   useEffect(() => {
-    if (isSuperAdmin) {
+    if (canEdit) {
       getCompanies();
     }
-  }, [isSuperAdmin]);
+  }, [canEdit]);
 
   const onSelectCompany = (value: CompanyModel) => {
     if (value._id) {
@@ -191,10 +203,24 @@ const VenueForm: React.FC<{}> = () => {
     }
   };
 
+  const ambassadorOptionTemplate = (item: AdminModel) => `${item.firstName} ${item.lastName}`;
+
   useEffect(() => {
     if (selectedCompany._id) {
       setValues({ ...values, company: selectedCompany._id });
       setCompanySearchValue(selectedCompany.name);
+      if (selectedCompany.ambassador) {
+        setSelectedAmbassador({...selectedCompany.ambassador});
+      } else {
+        setSelectedAmbassador(null)
+        dispatch(getCompanyAmbassadorAction(selectedCompany._id, {
+          success: (res: AdminModel) => {
+            if (res) {
+              setSelectedAmbassador(res);
+            }
+          }
+        }))
+      }
     }
   }, [selectedCompany]);
 
@@ -222,10 +248,13 @@ const VenueForm: React.FC<{}> = () => {
     }
   };
   const formNotValid = () => {
-    if (!companySearchValue && isSuperAdmin) {
+    if (!companySearchValue && canEdit) {
       return true;
     }
     if (!values.company) {
+      return true;
+    }
+    if (!values.ambassadorId) {
       return true;
     }
     if (!values.profile.name) {
@@ -241,6 +270,9 @@ const VenueForm: React.FC<{}> = () => {
       return true;
     }
     if (values.location.point.coordinates[0] === '' || values.location.point.coordinates[1] === '') {
+      return true;
+    }
+    if (!values.inObjectRadiusInMeters) {
       return true;
     }
     if (!values.profile.webSite) {
@@ -267,6 +299,17 @@ const VenueForm: React.FC<{}> = () => {
     return false;
   };
 
+  const getVenue = (id: string) => {
+    dispatch(getVenueActionSG(id, {
+      success: (res: VenueStateModel) => {
+        console.log(res.ambassador);
+      },
+      error: () => {
+        navigate(-1);
+      }
+    }))
+  }
+
   const searchCompanies = (event: AutoCompleteCompleteMethodParams) => {
     setTimeout(() => {
       let results;
@@ -281,11 +324,42 @@ const VenueForm: React.FC<{}> = () => {
     }, 250);
   };
 
+  const getAmbassadors = (nameFilter: string) => {
+    dispatch(getAdminManagementsActionSG({
+      offset: 0,
+      limit: 5,
+      nameFilter,
+      roleFilter: '61dbe55ee0825a337841d4b8'
+    }, {
+      success: (res: AdminTableModel) => {
+        setFilteredAmbassadors(res.data);
+      }
+    }))
+  }
+
+  useEffect(() => {
+    if (selectedAmbassador) {
+      setAmbassadorSearchValue(selectedAmbassador.firstName);
+      setValues({...values, ambassadorId: selectedAmbassador._id})
+    } else {
+      setAmbassadorSearchValue('');
+      setValues({...values, ambassadorId: ''})
+    }
+  }, [selectedAmbassador]);
+
+  const searchAmbassadors = (event: AutoCompleteCompleteMethodParams) => {
+    if (ambassadorTimeout) {
+      clearTimeout(ambassadorTimeout)
+    }
+    ambassadorTimeout = setTimeout(() => {
+      getAmbassadors(event.query);
+    }, 300);
+  };
+
   const submitButton = (event: any) => {
     event.preventDefault();
-    console.log(values.location.point.coordinates);
+    console.log(values);
     setIsSubmitted(true);
-    return;
     if (formNotValid()) {
       return;
     }
@@ -343,6 +417,7 @@ const VenueForm: React.FC<{}> = () => {
       setNewMode(true);
     } else if (venueId) {
       setNewMode(false);
+      getVenue(venueId);
       const selectedVenue: VenueStateModel = venuesData.data.find(
           (item) => item._id === venueId
       );
@@ -354,7 +429,7 @@ const VenueForm: React.FC<{}> = () => {
   }, [venueId]);
 
   function onSwitch(active: boolean) {
-    if (isSuperAdmin) {
+    if (canEdit) {
       setValues({ ...values, allowUsersToAccessAfterLeaving: active });
     }
   }
@@ -441,7 +516,7 @@ const VenueForm: React.FC<{}> = () => {
                   placeholder="Enter your Business Name"
                   required
               />
-              {isSuperAdmin && (
+              {canEdit && (
                   <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
                     <label>Company</label>
                     <AutoComplete
@@ -461,6 +536,27 @@ const VenueForm: React.FC<{}> = () => {
                     />
                   </div>
               )}
+              {userRole === 'SuperAdmin' && (
+                  <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
+                    <label>Ambassador</label>
+                    <AutoComplete
+                        className={(isSubmitted && !values.ambassadorId) ? classes.inputError : ''}
+                        dropdown={true}
+                        value={ambassadorSearchValue}
+                        field={'firstName'}
+                        itemTemplate={ambassadorOptionTemplate}
+                        suggestions={filteredAmbassadors}
+                        completeMethod={searchAmbassadors}
+                        onChange={(e) => {
+                          if (e.value || e.value === '') {
+                            setAmbassadorSearchValue(e.value)
+                          }
+                        }}
+                        onSelect={(e) => setSelectedAmbassador(e.value)}
+                        forceSelection={true}
+                    />
+                  </div>
+              )}
               <TextInput
                   customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.location.address) ? classes.inputError : ''}`}
                   value={values.location.address}
@@ -468,7 +564,7 @@ const VenueForm: React.FC<{}> = () => {
                   label="Address"
                   placeholder="Enter your Address"
                   required
-                  readonly={!isSuperAdmin}
+                  readonly={!canEdit}
               />
               <TextInput
                   customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.location.city) ? classes.inputError : ''}`}
@@ -477,7 +573,7 @@ const VenueForm: React.FC<{}> = () => {
                   label="City"
                   placeholder="City"
                   required
-                  readonly={!isSuperAdmin}
+                  readonly={!canEdit}
               />
               <TextInput
                   customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
@@ -486,7 +582,7 @@ const VenueForm: React.FC<{}> = () => {
                   label="Province"
                   placeholder="Enter Province"
                   required
-                  readonly={!isSuperAdmin}
+                  readonly={!canEdit}
               />
               <TextInput
                   customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.location.country) ? classes.inputError : ''}`}
@@ -495,7 +591,7 @@ const VenueForm: React.FC<{}> = () => {
                   label="Country"
                   placeholder="Enter Country"
                   required
-                  readonly={!isSuperAdmin}
+                  readonly={!canEdit}
               />
               <div className={`flex-horizontal mb-3 ${classes.inputBlock}`}>
                 <label>Coordinates</label>
@@ -561,6 +657,15 @@ const VenueForm: React.FC<{}> = () => {
                   />
                 </div>
               </div>
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.inObjectRadiusInMeters) ? classes.inputError : ''}`}
+                  value={values.inObjectRadiusInMeters}
+                  type={'number'}
+                  handleChange={(num) => setValues({ ...values, inObjectRadiusInMeters: parseInt(num) })}
+                  label="Radius in meters"
+                  required
+                  readonly={!canEdit}
+              />
               <TextInput
                   customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.profile.webSite) ? classes.inputError : ''}`}
                   value={values.profile.webSite}
@@ -808,7 +913,7 @@ const VenueForm: React.FC<{}> = () => {
                 </Label>
                 <Col md="9" className={'flex-horizontal'}>
                   <CvSwitcher
-                      readonly={!isSuperAdmin}
+                      readonly={!canEdit}
                       defaultValue={values.allowUsersToAccessAfterLeaving}
                       onChange={(event: boolean) => onSwitch(event)}
                   />
@@ -821,7 +926,7 @@ const VenueForm: React.FC<{}> = () => {
                   handleChange={(num) => setValues({ ...values, accessDaysAfter: parseInt(num) })}
                   label="How Many Days After?"
                   required
-                  readonly={!isSuperAdmin}
+                  readonly={!canEdit}
               />
               {!newMode && (
                   <TextInput

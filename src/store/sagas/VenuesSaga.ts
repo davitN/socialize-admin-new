@@ -6,6 +6,7 @@ import { notifyAction } from '../ducks/mainDuck';
 import { VenueSendModel, VenuesTableModel } from '../../types/venue';
 import { TableQueryParams } from '../../types/table';
 import { setVenuesAction } from '../ducks/VenueDuck';
+import { AdminModel } from '../../types/admin';
 
 export function* getVenuesSaga({ params, callbacks }: {
   params: TableQueryParams;
@@ -28,13 +29,32 @@ export function* getVenuesSaga({ params, callbacks }: {
   }
 }
 
+export function* getVenueSaga({ venueId, callbacks }: {
+  venueId: string
+  callbacks: CallBacks;
+  type: string;
+}) {
+  try {
+    const res: AdminModel = yield axiosInstance.get(`/place/get/${venueId}`);
+    callbacks?.success && callbacks.success(res);
+  } catch (error: any) {
+    callbacks?.error && callbacks.error(error.response?.data.message);
+    yield put(
+        notifyAction({
+          type: 'error',
+          message: error.response?.data.message,
+          showError: false,
+        })
+    );
+  }
+}
+
 export function* saveVenueSaga({ data, callbacks }: {
   data: VenueSendModel;
   callbacks: CallBacks;
   type: string;
 }) {
   try {
-    console.log(data);
     const formData = new FormData();
     formData.append('data', JSON.stringify(data.data));
     formData.append('logo', data.logo);

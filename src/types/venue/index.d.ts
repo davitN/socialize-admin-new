@@ -1,9 +1,13 @@
+import { AdminModel } from '../admin';
+
 export interface VenueStateModel {
   _id?: string,
   company: string
   allowUsersToAccessAfterLeaving: boolean,
   accessDaysAfter: number,
-  inObjectRadiusInMeters: number,
+  ambassadorId?: string,
+  ambassador?: AdminModel,
+  inObjectRadiusInMeters: number | '',
   allTimeVisitorsCount?: number,
   logo: VenueImageModel,
   cover: VenueImageModel,
