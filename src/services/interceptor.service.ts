@@ -83,18 +83,9 @@ const onResponseRejected = (error: AxiosError) => {
     error.response.status === 404 ||
     error.response.status === 403
   ) {
-    if (
-      // eslint-disable-next-line no-constant-condition
-      true
-      // navigationService.getCurrentRoute()?.name !== 'Ping' &&
-      // navigationService.getCurrentRoute()?.name !== 'EnableNotifications' &&
-      // navigationService.getCurrentRoute()?.name !== 'EnableLocation' &&
-      // navigationService.getCurrentRoute()?.name !== 'EnterPassword'
-    ) {
-      // _navigator?.current?.resetRoot();
-      localStorage.setItem('authData', '');
-      storeRegistry?.getStore().dispatch(resetStoreAction());
-    }
+    console.log(error);
+    localStorage.setItem('authData', '');
+    storeRegistry?.getStore().dispatch(resetStoreAction());
   }
   return Promise.reject({ ...error });
 };

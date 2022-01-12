@@ -6,7 +6,6 @@ import { RootState } from '../../store/configureStore';
 import { RouteModel } from '../../types/route';
 const logoImgPath = `${process.env.PUBLIC_URL}/logo.png`;
 
-
 const mainRoutes: RouteModel[] = [
   {
     name: 'Dashboard',
@@ -27,6 +26,11 @@ const mainRoutes: RouteModel[] = [
     name: 'Latest Posts',
     route: '/latest-posts',
     iconName: 'bx bxs-detail',
+  },
+  {
+    name: 'Reports',
+    route: '/reports',
+    iconName: 'bx bxs-megaphone',
   },
   {
     name: 'Top Customers',
@@ -50,14 +54,14 @@ const useStyles = createUseStyles({
     height: '70px',
     color: '#FFF',
     '& img': {
-      height: 50
-    }
+      height: 50,
+    },
   },
 });
 
 const SideNav: React.FC<{}> = () => {
   const userRole = useSelector(
-      (state: RootState) => state.authReducer?.userData?.role?.name
+    (state: RootState) => state.authReducer?.userData?.role?.name
   );
   const [routes, setRoutes] = useState<RouteModel[]>([]);
   const classes = useStyles();
@@ -69,9 +73,11 @@ const SideNav: React.FC<{}> = () => {
       if (userRole === 'SuperAdmin') {
         return true;
       }
-      if (route.route === '/company' ||
-          route.route === '/app-users' ||
-          route.route === '/admin-management') {
+      if (
+        route.route === '/company' ||
+        route.route === '/app-users' ||
+        route.route === '/admin-management'
+      ) {
         return false;
       }
       if (userRole === 'CompanyAdministrator') {
@@ -89,34 +95,34 @@ const SideNav: React.FC<{}> = () => {
     // runs on location, i.e. route, change
   }, [location]);
   return (
-      <div className={`flex-vertical vertical-filled ${classes.container}`}>
-        <div className={`flex-center ${classes.logo}`}>
-          <img src={logoImgPath} alt="logo"/>
-        </div>
-        <div id="sidebar-menu">
-          <ul className="metismenu list-unstyled" id="side-menu">
-            <li className="menu-title text-start">Menu</li>
-            {routes.map((item, index) => {
-              return (
-                  <li
-                      key={`main_route_${index}`}
-                      className={`${item.route === activeRoute ? 'mm-active' : ''}`}
-                  >
-                    <Link
-                        to={item.route}
-                        className={`text-start ${
-                            item.route === activeRoute ? 'mm-active' : ''
-                        }`}
-                    >
-                      <i className={item.iconName}/>
-                      <span>{item.name}</span>
-                    </Link>
-                  </li>
-              );
-            })}
-          </ul>
-        </div>
+    <div className={`flex-vertical vertical-filled ${classes.container}`}>
+      <div className={`flex-center ${classes.logo}`}>
+        <img src={logoImgPath} alt="logo" />
       </div>
+      <div id="sidebar-menu">
+        <ul className="metismenu list-unstyled" id="side-menu">
+          <li className="menu-title text-start">Menu</li>
+          {routes.map((item, index) => {
+            return (
+              <li
+                key={`main_route_${index}`}
+                className={`${item.route === activeRoute ? 'mm-active' : ''}`}
+              >
+                <Link
+                  to={item.route}
+                  className={`text-start ${
+                    item.route === activeRoute ? 'mm-active' : ''
+                  }`}
+                >
+                  <i className={item.iconName} />
+                  <span>{item.name}</span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
   );
 };
 

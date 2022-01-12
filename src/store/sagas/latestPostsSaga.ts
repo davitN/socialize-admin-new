@@ -58,7 +58,7 @@ export function* deleteLatestPostSaga({ postId, callbacks, }: {
   type: string;
 }) {
   try {
-    const res: PostModel = yield axiosInstance.delete(`/post/delete/${postId}`);
+    yield axiosInstance.delete(`/post/delete/${postId}`);
     callbacks?.success && callbacks.success();
   } catch (error: any) {
     callbacks?.error && callbacks.error(error.response?.data.message);

@@ -29,10 +29,10 @@ import {
 } from '../ducks/authDuck';
 import { GET_TOP_CUSTOMERS_SG } from '../ducks/topCustomersDuck';
 import { getTopCustomersSaga } from './topCustomersSaga';
-import { getVenuesSaga, putVenueSaga, saveVenueSaga } from './VenuesSaga';
-import { GET_VENUES_SG, PUT_VENUE, SAVE_VENUE } from '../ducks/VenueDuck';
+import { getVenueSaga, getVenuesSaga, putVenueSaga, saveVenueSaga } from './VenuesSaga';
+import { GET_COMPANY_AMBASSADOR_SG, GET_VENUE_SG, GET_VENUES_SG, PUT_VENUE, SAVE_VENUE } from '../ducks/VenueDuck';
 import {
-  getCompaniesSaga,
+  getCompaniesSaga, getCompanyAmbassadorSaga,
   getCompanySubscriptionsSaga,
   getSelectedCompanySaga,
   putCompanySaga,
@@ -69,6 +69,11 @@ import {
   getAppUsersSaga,
   getSelectedAppUserSaga,
 } from './appUsersSaga';
+import {
+  GET_REPORTED_COMMENTS_SG,
+  GET_REPORTED_POSTS_SG,
+} from '../ducks/reportsDuck';
+import { getReportedCommentsSaga, getReportedPostsSaga } from './reportsSaga';
 
 function* actionWatcher() {
   yield takeLatest(CHECK_SIGNED_IN, checkSignedInSaga);
@@ -85,22 +90,26 @@ function* actionWatcher() {
   yield takeLatest(SAVE_VENUE, saveVenueSaga);
   yield takeLatest(PUT_VENUE, putVenueSaga);
   yield takeLatest(GET_VENUES_SG, getVenuesSaga);
+  yield takeLatest(GET_VENUE_SG, getVenueSaga);
   yield takeLatest(SAVE_COMPANY, saveCompanySaga);
   yield takeLatest(PUT_COMPANY, putCompanySaga);
   yield takeLatest(GET_COMPANIES_SG, getCompaniesSaga);
   yield takeLatest(GET_COMPANY_SUBSCRIPTION_SG, getCompanySubscriptionsSaga);
   yield takeLatest(GET_SELECTED_COMPANY_SG, getSelectedCompanySaga);
+  yield takeLatest(GET_COMPANY_AMBASSADOR_SG, getCompanyAmbassadorSaga);
   yield takeLatest(REQUEST_PASSWORD_CHANGE_SG, changePasswordSaga);
   yield takeLatest(SAVE_ADMIN_MANAGEMENT, saveAdminManagementSaga);
   yield takeLatest(PUT_ADMIN_MANAGEMENT, putAdminManagementSaga);
   yield takeLatest(GET_ADMIN_MANAGEMENTS_SG, getAdminManagementSaga);
   yield takeLatest(
-    GET_SELECTED_ADMIN_MANAGEMENT_SG,
-    getSelectedAdminManagementSaga
+      GET_SELECTED_ADMIN_MANAGEMENT_SG,
+      getSelectedAdminManagementSaga
   );
   yield takeLatest(GET_APP_USERS_SG, getAppUsersSaga);
   yield takeLatest(APP_USERS_VERIFY_SG, appUsersVerifySaga);
   yield takeLatest(GET_SELECTED_APP_USER_SG, getSelectedAppUserSaga);
+  yield takeLatest(GET_REPORTED_POSTS_SG, getReportedPostsSaga);
+  yield takeLatest(GET_REPORTED_COMMENTS_SG, getReportedCommentsSaga);
 }
 
 export default function* rootSaga() {

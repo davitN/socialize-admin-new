@@ -17,6 +17,9 @@ import {
 } from '../store/ducks/companyDuck';
 import TextInput from '../components/shared/form-elements/TextInput';
 import { Calendar, CalendarChangeParams } from 'primereact/calendar';
+import { AutoComplete, AutoCompleteCompleteMethodParams } from 'primereact/autocomplete';
+import { getAdminManagementsActionSG } from '../store/ducks/adminManagementDuck';
+import { AdminModel, AdminTableModel } from '../types/admin';
 
 const useStyles = createUseStyles({
   inputError: {
@@ -41,7 +44,7 @@ const useStyles = createUseStyles({
       width: '200px',
       textAlign: 'start'
     },
-    '& .p-multiselect': {
+    '& .p-autocomplete': {
       width: 'calc(100% - 200px)',
       borderRadius: '0.25rem',
       height: '100%'
@@ -57,21 +60,27 @@ const useStyles = createUseStyles({
 
 const CompanyForm: React.FC<{}> = () => {
   const classes = useStyles();
+  const [selectedAmbassador, setSelectedAmbassador] = useState<AdminModel | null>(null);
+  const [ambassadorSearchValue, setAmbassadorSearchValue] = useState('');
+  const [filteredAmbassadors, setFilteredAmbassadors] = useState([]);
   const [paidTillDate, setPaidTillDate] = useState<Date>(new Date());
   const [newMode, setNewMode] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [validation, setValidation] = useState<{
+    name: boolean,
     email: boolean,
     phone: boolean,
-    name: boolean,
+    ambassador: boolean,
     submitted: boolean
   }>({
-    email: false,
     name: false,
+    email: false,
     phone: false,
+    ambassador: false,
     submitted: false
   });
+  let ambassadorTimeout: any;
   const { id: companyId } = useParams();
   // const { companySubscriptionData } = useSelector((state: RootState) => state.companyReducer);
   const [values, setValues] = useState<CompanyModel>({
@@ -105,13 +114,49 @@ const CompanyForm: React.FC<{}> = () => {
   //   }))
   // }
 
+  useEffect(() => {
+    getAmbassadors('');
+  }, []);
+
+  useEffect(() => {
+    if (selectedAmbassador) {
+      setAmbassadorSearchValue(selectedAmbassador.firstName);
+      setValues({...values, ambassadorId: selectedAmbassador._id})
+    }
+  }, [selectedAmbassador]);
+
+
+
+  const getAmbassadors = (nameFilter: string) => {
+    dispatch(getAdminManagementsActionSG({
+      offset: 0,
+      limit: 5,
+      nameFilter,
+      roleFilter: '61dbe55ee0825a337841d4b8'
+    }, {
+      success: (res: AdminTableModel) => {
+        setFilteredAmbassadors(res.data);
+      }
+    }))
+  }
+
+  const searchAmbassadors = (event: AutoCompleteCompleteMethodParams) => {
+    if (ambassadorTimeout) {
+      clearTimeout(ambassadorTimeout)
+    }
+    ambassadorTimeout = setTimeout(() => {
+      getAmbassadors(event.query);
+    }, 300);
+  };
+
   const getSelectedCompany = (companyId: string) => {
     dispatch(getSelectedCompanyActionSG(companyId, {
       success: (res: CompanyModel) => {
-        console.log(res);
-        setValues(res);
         setPaidTillDate(new Date(res.paidTill));
         setValues({ ...values, ...res });
+        if (res.ambassador) {
+          setSelectedAmbassador(res.ambassador);
+        }
       }
     }))
   }
@@ -121,6 +166,7 @@ const CompanyForm: React.FC<{}> = () => {
       ...validation,
       name: !!values.name,
       phone: !!values.phone,
+      ambassador: !!values.ambassadorId,
       email: new RegExp('^[^@]+@[^@]{2,}\\.[^@]{2,}$').test(values.email)
     });
   };
@@ -133,8 +179,8 @@ const CompanyForm: React.FC<{}> = () => {
 
   const submitButton = (event: Event) => {
     event.preventDefault();
-    setValidation({...validation, submitted: true});
-    if (!(validation.name && validation.phone && validation.email)) {
+    setValidation({ ...validation, submitted: true });
+    if (!(validation.name && validation.phone && validation.email && validation.ambassador)) {
       return;
     }
     const sendData: CompanyModel | any = values;
@@ -143,7 +189,8 @@ const CompanyForm: React.FC<{}> = () => {
       const newData: CompanyModel = {
         email: sendData.email,
         phone: sendData.phone,
-        name: sendData.name
+        name: sendData.name,
+        ambassadorId: sendData.ambassadorId
       }
       dispatch(saveCompanyAction(newData, {
         success: () => {
@@ -161,6 +208,8 @@ const CompanyForm: React.FC<{}> = () => {
       }))
     }
   }
+
+  const ambassadorOptionTemplate = (item: AdminModel) => `${item.firstName} ${item.lastName}`;
 
   useEffect(() => {
     handleValidation();
@@ -215,6 +264,25 @@ const CompanyForm: React.FC<{}> = () => {
                   placeholder="Enter Email"
                   required
               />
+              <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
+                <label>Ambassador</label>
+                <AutoComplete
+                    className={(validation.submitted && !validation.ambassador) ? classes.inputError : ''}
+                    dropdown={true}
+                    value={ambassadorSearchValue}
+                    field={'firstName'}
+                    itemTemplate={ambassadorOptionTemplate}
+                    suggestions={filteredAmbassadors}
+                    completeMethod={searchAmbassadors}
+                    onChange={(e) => {
+                      if (e.value || e.value === '') {
+                        setAmbassadorSearchValue(e.value)
+                      }
+                    }}
+                    onSelect={(e) => setSelectedAmbassador(e.value)}
+                    forceSelection={true}
+                />
+              </div>
               {!newMode && (
                   <Fragment>
                     <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>

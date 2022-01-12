@@ -1,9 +1,13 @@
+import { AdminModel } from '../admin';
+
 export interface CompanyModel {
   _id?: string;
   adminId?: string;
   email?: string;
   phone?: string;
   name?: string;
+  ambassadorId?: string;
+  ambassador?: AdminModel;
   companySubscription?: CompanySubscriptionModel;
   paidTill?: string;
   createdAt?: string;

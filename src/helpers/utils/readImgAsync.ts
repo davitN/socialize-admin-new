@@ -1,8 +1,10 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+
 import imageCompression from 'browser-image-compression';
 
 export default async (currentFile: any) => {
-  const img = await currentFile;
-  const imgPrev = URL.createObjectURL(img);
+  const img: any = await currentFile;
+  const imgPrev: any = URL.createObjectURL(img);
   const imgDimension: any = await getImageDimensions(img);
   const thumbnail: any = await imageCompression(img, {
     maxSizeMB: 0.001,

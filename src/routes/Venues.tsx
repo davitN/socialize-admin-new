@@ -134,7 +134,7 @@ const Venues: React.FC<{}> = () => {
                   }}
               />
               {
-                userRole === 'SuperAdmin' && (
+                (userRole === 'SuperAdmin' || userRole === 'Ambassador') && (
                       <Button
                           label={'+ Add Venue'}
                           onClick={() => navigate('new')}

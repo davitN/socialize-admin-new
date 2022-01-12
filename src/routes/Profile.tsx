@@ -25,6 +25,12 @@ const useStyles = createUseStyles({
       borderRadius: '0.25rem',
     },
   },
+  passwordHint: {
+    width: 200,
+    marginLeft: 'auto',
+    marginBottom: -5,
+    listStyle: 'disc'
+  },
   inputError: {
     borderColor: '#ff4a4a',
   },
@@ -160,7 +166,7 @@ const UserProfile: React.FC<{}> = () => {
                   <Button
                     label="Change Password"
                     onClick={togglePasswordInputs}
-                  ></Button>
+                  />
                 </div>
               </div>
             )}
@@ -220,7 +226,12 @@ const UserProfile: React.FC<{}> = () => {
                     onChange={(e) =>
                       setValues({ ...values, password: e.target.value })
                     }
-                    feedback={false}
+                    content={() => (<ul className={classes.passwordHint}>
+                      <li>At least one lowercase</li>
+                      <li>At least one uppercase</li>
+                      <li>At least one numeric</li>
+                      <li>Minimum 6 characters</li>
+                    </ul>)}
                     toggleMask
                     required
                   />

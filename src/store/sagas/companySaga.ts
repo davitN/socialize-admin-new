@@ -6,6 +6,7 @@ import { notifyAction } from '../ducks/mainDuck';
 import { TableQueryParams } from '../../types/table';
 import { setCompaniesAction, setCompanySubscriptionAction } from '../ducks/companyDuck';
 import { CompanyModel, CompanySubscriptionModel, CompanyTableModel } from '../../types/company';
+import { AdminModel } from '../../types/admin';
 
 export function* getCompaniesSaga({
                                     params,
@@ -58,6 +59,26 @@ export function* getSelectedCompanySaga({ companyId, callbacks }: {
 }) {
   try {
     const res: CompanyModel = yield axiosInstance.get(`/company/get/${companyId}`);
+    callbacks?.success && callbacks.success(res);
+  } catch (error: any) {
+    callbacks?.error && callbacks.error(error.response?.data.message);
+    yield put(
+        notifyAction({
+          type: 'error',
+          message: error.response?.data.message,
+          showError: false,
+        })
+    );
+  }
+}
+
+export function* getCompanyAmbassadorSaga({ companyId, callbacks }: {
+  companyId: string
+  callbacks: CallBacks;
+  type: string;
+}) {
+  try {
+    const res: AdminModel = yield axiosInstance.get(`/company/get_company_ambassador/${companyId}`);
     callbacks?.success && callbacks.success(res);
   } catch (error: any) {
     callbacks?.error && callbacks.error(error.response?.data.message);

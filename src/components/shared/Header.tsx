@@ -57,7 +57,9 @@ const Header: React.FC<{}> = () => {
     dispatch(
       getInitialDataActionSG({
         success: (res: InitialDataModel) => {
-          setSelectedPlace(res.places[0]);
+          if (res.places[0]) {
+            setSelectedPlace(res.places[0]);
+          }
         },
         error: () => {
           //

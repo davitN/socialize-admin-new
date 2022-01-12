@@ -1,14 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
-
-import { Card, CardBody, Form } from 'reactstrap';
-
-import { createUseStyles } from 'react-jss';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Button } from 'primereact/button';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import TextInput from '../components/shared/form-elements/TextInput';
+import { useNavigate, useParams } from 'react-router';
+
+import { Button } from 'primereact/button';
 import { Tree } from 'primereact/tree';
+import { createUseStyles } from 'react-jss';
+import { Card, CardBody, Form } from 'reactstrap';
+import TextInput from '../components/shared/form-elements/TextInput';
 import {
   deleteSelectedPostActionSG,
   getSelectedPostActionSG,
@@ -68,7 +66,7 @@ const useStyles = createUseStyles({
   },
 });
 
-const LatestPostForm: React.FC<{}> = () => {
+const ReportsForm = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -137,7 +135,7 @@ const LatestPostForm: React.FC<{}> = () => {
               {
                 key: `${comment._id}-${comment.tagPersons.length}`,
                 label: `Tags: ${comment.tagPersons.map(
-                  (tagPerson: any) => `${' '} ${tagPerson.username}`
+                  (tagPerson: { username: string }) => `${' '} ${tagPerson.username}`
                 )}`,
               },
             ]
@@ -156,7 +154,7 @@ const LatestPostForm: React.FC<{}> = () => {
                       {
                         key: `${subComment._id}-${subComment.tagPersons.length}`,
                         label: `Tags: ${subComment.tagPersons.map(
-                          (tagPerson: any) => `${' '} ${tagPerson.username}`
+                          (tagPerson: { username: string }) => `${' '} ${tagPerson.username}`
                         )}`,
                       },
                     ]
@@ -175,7 +173,7 @@ const LatestPostForm: React.FC<{}> = () => {
                               {
                                 key: `${subSubComment._id}-${subSubComment.tagPersons.length}`,
                                 label: `Tags: ${comment.tagPersons.map(
-                                  (tagPerson: any) =>
+                                  (tagPerson: { username: string }) =>
                                     `${' '} ${tagPerson.username}`
                                 )}`,
                               },
@@ -191,7 +189,7 @@ const LatestPostForm: React.FC<{}> = () => {
     }));
   };
 
-  const [treeData, setTreeData] = useState<any>(setNodes());
+  const [treeData, setTreeData] = useState(setNodes());
 
   useEffect(() => {
     if (values.comments.length > 0) {
@@ -213,14 +211,10 @@ const LatestPostForm: React.FC<{}> = () => {
   };
 
   useEffect(() => {
-    if (postId === 'new') {
-      // new mode
-    } else if (postId) {
-      getSelectedPost(postId);
-    }
-  }, [postId]);
+    getSelectedPost(postId);
+  }, []);
 
-  const deletePost = (event: any) => {
+  const deletePost = (event: Event) => {
     event.preventDefault();
     dispatch(
       deleteSelectedPostActionSG(postId, {
@@ -256,25 +250,25 @@ const LatestPostForm: React.FC<{}> = () => {
               customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
               value={values._id}
               label="Post Id"
-              readonly={true}
+              disabled
             />
             <TextInput
               customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
               value={values.text}
               label="Text"
-              readonly={true}
+              disabled
             />
             <TextInput
               customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
               value={values.likesCount}
               label="Likes count"
-              readonly={true}
+              disabled
             />
             <TextInput
               customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
               value={values.commentsCount}
               label="Comments count"
-              readonly={true}
+              disabled
             />
             <TextInput
               customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
@@ -284,12 +278,12 @@ const LatestPostForm: React.FC<{}> = () => {
                 year: 'numeric',
               })}
               label="Date"
-              readonly={true}
+              disabled
             />
             <Button
               className={classes.buttonStyles}
               label={'Delete Post'}
-              onClick={(event) => deletePost(event)}
+              onClick={() => deletePost(event)}
               type={'button'}
             />
           </Form>
@@ -306,4 +300,4 @@ const LatestPostForm: React.FC<{}> = () => {
   );
 };
 
-export default LatestPostForm;
+export default ReportsForm;

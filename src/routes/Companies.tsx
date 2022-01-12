@@ -30,6 +30,14 @@ const Companies: React.FC<{}> = () => {
       field: 'name',
     },
     {
+      name: 'Ambassador',
+      field: 'ambassador',
+      haveTemplate: true,
+      template: (row: CompanyModel) => (
+          <React.Fragment>{row.ambassador?.firstName} {row.ambassador?.lastName}</React.Fragment>
+      ),
+    },
+    {
       name: 'Active Status',
       field: 'isActive',
       haveTemplate: true,
@@ -133,7 +141,7 @@ const Companies: React.FC<{}> = () => {
             <Button
               label={'+ Add Company'}
               onClick={() => navigate('new')}
-            ></Button>
+            />
           </div>
           <DataTable
             className={'fs-6'}
