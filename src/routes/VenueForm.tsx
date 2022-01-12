@@ -102,7 +102,6 @@ const useStyles = createUseStyles({
 });
 
 const VenueForm: React.FC<{}> = () => {
-  const [selectedAmbassador, setSelectedAmbassador] = useState<AdminModel | null>(null);
   const [ambassadorSearchValue, setAmbassadorSearchValue] = useState('');
   const [filteredAmbassadors, setFilteredAmbassadors] = useState([]);
   const userRole = useSelector(
@@ -115,10 +114,6 @@ const VenueForm: React.FC<{}> = () => {
   const [filteredCompanies, setFilteredCompanies] = useState([]);
   const [newMode, setNewMode] = useState(false);
   const dispatch = useDispatch();
-  const [selectedCompany, setSelectedCompany] = useState<CompanyModel>({
-    name: '',
-    _id: '',
-  });
   const navigate = useNavigate();
   const { id: venueId } = useParams();
   const [logoImg, setLogo] = useState([]);
@@ -131,7 +126,6 @@ const VenueForm: React.FC<{}> = () => {
   let ambassadorTimeout: any;
   const [values, setValues] = useState<VenueStateModel>({
     accessDaysAfter: null,
-    company: '',
     allowUsersToAccessAfterLeaving: false,
     cover: {
       width: null,
@@ -172,19 +166,7 @@ const VenueForm: React.FC<{}> = () => {
   });
 
   const getCompanies = () => {
-    dispatch(
-        getCompaniesActionSG(
-            { offset: 0, limit: 1000000 },
-            {
-              success: () => {
-                //
-              },
-              error: () => {
-                //
-              },
-            }
-        )
-    );
+    dispatch(getCompaniesActionSG({ offset: 0, limit: 1000000 }));
   };
 
   useEffect(() => {
@@ -197,32 +179,39 @@ const VenueForm: React.FC<{}> = () => {
     }
   }, [canEdit]);
 
-  const onSelectCompany = (value: CompanyModel) => {
-    if (value._id) {
-      setSelectedCompany(value);
+  const onSelectCompany = (company: CompanyModel) => {
+    if (company._id === values.companyId) {
+      return;
+    }
+    if (company._id) {
+      setCompanySearchValue(company.name);
+      if (newMode) {
+        setAmbassadorSearchValue(company.ambassador?.firstName || '');
+        setValues({
+          ...values,
+          company,
+          companyId: company._id,
+          ambassadorId: company.ambassador?._id || '',
+          ambassador: company.ambassador || null
+        });
+      } else {
+        setValues({
+          ...values,
+          company,
+          companyId: company._id,
+        });
+      }
     }
   };
 
-  const ambassadorOptionTemplate = (item: AdminModel) => `${item.firstName} ${item.lastName}`;
-
-  useEffect(() => {
-    if (selectedCompany._id) {
-      setValues({ ...values, company: selectedCompany._id });
-      setCompanySearchValue(selectedCompany.name);
-      if (selectedCompany.ambassador) {
-        setSelectedAmbassador({...selectedCompany.ambassador});
-      } else {
-        setSelectedAmbassador(null)
-        dispatch(getCompanyAmbassadorAction(selectedCompany._id, {
-          success: (res: AdminModel) => {
-            if (res) {
-              setSelectedAmbassador(res);
-            }
-          }
-        }))
-      }
+  const onSelectAmbassador = (ambassador: AdminModel) => {
+    if (ambassador._id) {
+      setValues({ ...values, ambassador, ambassadorId: ambassador._id })
+      setAmbassadorSearchValue(ambassador.firstName);
     }
-  }, [selectedCompany]);
+  }
+
+  const ambassadorOptionTemplate = (item: AdminModel) => `${item.firstName} ${item.lastName}`;
 
   const sendData: VenueSendModel = {
     data: null,
@@ -230,7 +219,6 @@ const VenueForm: React.FC<{}> = () => {
     cover: null,
     logo: null,
   };
-  const { venuesData } = useSelector((state: RootState) => state.venueReducer);
 
   const onChangeState = (changedStates: VenueStateModel) => {
     sendData.data = changedStates;
@@ -251,7 +239,7 @@ const VenueForm: React.FC<{}> = () => {
     if (!companySearchValue && canEdit) {
       return true;
     }
-    if (!values.company) {
+    if (!values.companyId) {
       return true;
     }
     if (!values.ambassadorId) {
@@ -302,7 +290,14 @@ const VenueForm: React.FC<{}> = () => {
   const getVenue = (id: string) => {
     dispatch(getVenueActionSG(id, {
       success: (res: VenueStateModel) => {
-        console.log(res.ambassador);
+        setValues({
+          ...values,
+          ...res,
+          companyId: res.company?._id || '',
+          ambassadorId: res.ambassador?._id || ''
+        });
+        setCompanySearchValue(res.company?.name || '');
+        setAmbassadorSearchValue(res.ambassador?.firstName || '');
       },
       error: () => {
         navigate(-1);
@@ -337,16 +332,6 @@ const VenueForm: React.FC<{}> = () => {
     }))
   }
 
-  useEffect(() => {
-    if (selectedAmbassador) {
-      setAmbassadorSearchValue(selectedAmbassador.firstName);
-      setValues({...values, ambassadorId: selectedAmbassador._id})
-    } else {
-      setAmbassadorSearchValue('');
-      setValues({...values, ambassadorId: ''})
-    }
-  }, [selectedAmbassador]);
-
   const searchAmbassadors = (event: AutoCompleteCompleteMethodParams) => {
     if (ambassadorTimeout) {
       clearTimeout(ambassadorTimeout)
@@ -358,14 +343,17 @@ const VenueForm: React.FC<{}> = () => {
 
   const submitButton = (event: any) => {
     event.preventDefault();
-    console.log(values);
     setIsSubmitted(true);
     if (formNotValid()) {
       return;
     }
+    const data: any = {...sendData.data};
+    data.company = data.companyId;
+    data.ambassador = data.ambassadorId;
+    const send = {...sendData, data}
     if (newMode) {
       dispatch(
-          saveVenueAction(sendData, {
+          saveVenueAction(send, {
             success: () => {
               navigate(-1);
             },
@@ -378,7 +366,7 @@ const VenueForm: React.FC<{}> = () => {
       dispatch(
           putVenueAction(
               values._id,
-              { ...sendData },
+              send,
               {
                 success: () => {
                   navigate(-1);
@@ -402,29 +390,11 @@ const VenueForm: React.FC<{}> = () => {
   });
 
   useEffect(() => {
-    if (!newMode && values.company) {
-      const company = companiesData.data.find(
-          (item) => item._id === values.company
-      );
-      if (company) {
-        setSelectedCompany(company);
-      }
-    }
-  }, [companiesData]);
-
-  useEffect(() => {
     if (venueId === 'new') {
       setNewMode(true);
     } else if (venueId) {
       setNewMode(false);
       getVenue(venueId);
-      const selectedVenue: VenueStateModel = venuesData.data.find(
-          (item) => item._id === venueId
-      );
-      if (!selectedVenue) {
-        navigate(-1);
-      }
-      setValues({ ...values, ...selectedVenue });
     }
   }, [venueId]);
 
@@ -521,7 +491,7 @@ const VenueForm: React.FC<{}> = () => {
                     <label>Company</label>
                     <AutoComplete
                         className={
-                          isSubmitted && !companySearchValue ? classes.inputError : ''
+                          isSubmitted && !values.companyId ? classes.inputError : ''
                         }
                         completeMethod={searchCompanies}
                         scrollHeight={'240px'}
@@ -547,12 +517,8 @@ const VenueForm: React.FC<{}> = () => {
                         itemTemplate={ambassadorOptionTemplate}
                         suggestions={filteredAmbassadors}
                         completeMethod={searchAmbassadors}
-                        onChange={(e) => {
-                          if (e.value || e.value === '') {
-                            setAmbassadorSearchValue(e.value)
-                          }
-                        }}
-                        onSelect={(e) => setSelectedAmbassador(e.value)}
+                        onSelect={(e) => onSelectAmbassador(e.value)}
+                        onChange={(e) => setAmbassadorSearchValue(e.value)}
                         forceSelection={true}
                     />
                   </div>
