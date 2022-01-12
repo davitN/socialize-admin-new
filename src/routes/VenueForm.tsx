@@ -26,7 +26,7 @@ import {
   getCompanyAmbassadorAction,
   getVenueActionSG,
   putVenueAction,
-  saveVenueAction
+  saveVenueAction,
 } from '../store/ducks/VenueDuck';
 import { getCompaniesActionSG } from '../store/ducks/companyDuck';
 import { CompanyModel } from '../types/company';
@@ -61,14 +61,14 @@ const useStyles = createUseStyles({
   },
   coordinateClass: {
     '& input': {
-      height: 36
+      height: 36,
     },
     '& span.title': {
-      marginRight: 10
+      marginRight: 10,
     },
     '& .divider': {
       margin: '0px 20px',
-    }
+    },
   },
   multiSelectClass: {
     height: '40px',
@@ -105,7 +105,7 @@ const VenueForm: React.FC<{}> = () => {
   const [ambassadorSearchValue, setAmbassadorSearchValue] = useState('');
   const [filteredAmbassadors, setFilteredAmbassadors] = useState([]);
   const userRole = useSelector(
-      (state: RootState) => state.authReducer?.userData?.role?.name
+    (state: RootState) => state.authReducer?.userData?.role?.name
   );
   const [canEdit, setCanEdit] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -120,7 +120,10 @@ const VenueForm: React.FC<{}> = () => {
   const [coverThumbnailImg, setCoverThumbnail] = useState([]);
   const [coverImg, setCover] = useState([]);
   const { companiesData } = useSelector(
-      (state: RootState) => state.companyReducer
+    (state: RootState) => state.companyReducer
+  );
+  const { initialData } = useSelector(
+    (state: RootState) => state.initialDataReducer
   );
 
   let ambassadorTimeout: any;
@@ -170,7 +173,7 @@ const VenueForm: React.FC<{}> = () => {
   };
 
   useEffect(() => {
-    setCanEdit((userRole === 'SuperAdmin' || userRole === 'Ambassador'));
+    setCanEdit(userRole === 'SuperAdmin' || userRole === 'Ambassador');
   }, [userRole]);
 
   useEffect(() => {
@@ -191,8 +194,8 @@ const VenueForm: React.FC<{}> = () => {
           company,
           companyId: company._id,
           ambassadorId: company.ambassador._id,
-          ambassador: company.ambassador
-        })
+          ambassador: company.ambassador,
+        });
         return;
       }
       if (newMode) {
@@ -202,7 +205,7 @@ const VenueForm: React.FC<{}> = () => {
           company,
           companyId: company._id,
           ambassadorId: company.ambassador?._id || '',
-          ambassador: company.ambassador || null
+          ambassador: company.ambassador || null,
         });
       } else {
         setValues({
@@ -216,12 +219,13 @@ const VenueForm: React.FC<{}> = () => {
 
   const onSelectAmbassador = (ambassador: AdminModel) => {
     if (ambassador._id) {
-      setValues({ ...values, ambassador, ambassadorId: ambassador._id })
+      setValues({ ...values, ambassador, ambassadorId: ambassador._id });
       setAmbassadorSearchValue(ambassador.firstName);
     }
-  }
+  };
 
-  const ambassadorOptionTemplate = (item: AdminModel) => `${item.firstName} ${item.lastName}`;
+  const ambassadorOptionTemplate = (item: AdminModel) =>
+    `${item.firstName} ${item.lastName}`;
 
   const sendData: VenueSendModel = {
     data: null,
@@ -267,7 +271,10 @@ const VenueForm: React.FC<{}> = () => {
     if (!values.location.country) {
       return true;
     }
-    if (values.location.point.coordinates[0] === '' || values.location.point.coordinates[1] === '') {
+    if (
+      values.location.point.coordinates[0] === '' ||
+      values.location.point.coordinates[1] === ''
+    ) {
       return true;
     }
     if (!values.inObjectRadiusInMeters) {
@@ -298,22 +305,24 @@ const VenueForm: React.FC<{}> = () => {
   };
 
   const getVenue = (id: string) => {
-    dispatch(getVenueActionSG(id, {
-      success: (res: VenueStateModel) => {
-        setValues({
-          ...values,
-          ...res,
-          companyId: res.company?._id || '',
-          ambassadorId: res.ambassador?._id || ''
-        });
-        setCompanySearchValue(res.company?.name || '');
-        setAmbassadorSearchValue(res.ambassador?.firstName || '');
-      },
-      error: () => {
-        navigate(-1);
-      }
-    }))
-  }
+    dispatch(
+      getVenueActionSG(id, {
+        success: (res: VenueStateModel) => {
+          setValues({
+            ...values,
+            ...res,
+            companyId: res.company?._id || '',
+            ambassadorId: res.ambassador?._id || '',
+          });
+          setCompanySearchValue(res.company?.name || '');
+          setAmbassadorSearchValue(res.ambassador?.firstName || '');
+        },
+        error: () => {
+          navigate(-1);
+        },
+      })
+    );
+  };
 
   const searchCompanies = (event: AutoCompleteCompleteMethodParams) => {
     setTimeout(() => {
@@ -322,7 +331,7 @@ const VenueForm: React.FC<{}> = () => {
         results = [...companiesData.data];
       } else {
         results = companiesData.data.filter((item) =>
-            item.name.toLowerCase().includes(event.query.toLowerCase())
+          item.name.toLowerCase().includes(event.query.toLowerCase())
         );
       }
       setFilteredCompanies(results);
@@ -330,21 +339,26 @@ const VenueForm: React.FC<{}> = () => {
   };
 
   const getAmbassadors = (nameFilter: string) => {
-    dispatch(getAdminManagementsActionSG({
-      offset: 0,
-      limit: 5,
-      nameFilter,
-      roleFilter: '61dbe55ee0825a337841d4b8'
-    }, {
-      success: (res: AdminTableModel) => {
-        setFilteredAmbassadors(res.data);
-      }
-    }))
-  }
+    dispatch(
+      getAdminManagementsActionSG(
+        {
+          offset: 0,
+          limit: 5,
+          nameFilter,
+          roleFilter: initialData.roles.find(role => role.name === 'Ambassador')._id,
+        },
+        {
+          success: (res: AdminTableModel) => {
+            setFilteredAmbassadors(res.data);
+          },
+        }
+      )
+    );
+  };
 
   const searchAmbassadors = (event: AutoCompleteCompleteMethodParams) => {
     if (ambassadorTimeout) {
-      clearTimeout(ambassadorTimeout)
+      clearTimeout(ambassadorTimeout);
     }
     ambassadorTimeout = setTimeout(() => {
       getAmbassadors(event.query);
@@ -357,35 +371,31 @@ const VenueForm: React.FC<{}> = () => {
     if (formNotValid()) {
       return;
     }
-    const data: any = {...sendData.data};
+    const data: any = { ...sendData.data };
     data.company = data.companyId;
     data.ambassador = data.ambassadorId;
-    const send = {...sendData, data}
+    const send = { ...sendData, data };
     if (newMode) {
       dispatch(
-          saveVenueAction(send, {
-            success: () => {
-              navigate(-1);
-            },
-            error: () => {
-              //
-            },
-          })
+        saveVenueAction(send, {
+          success: () => {
+            navigate(-1);
+          },
+          error: () => {
+            //
+          },
+        })
       );
     } else {
       dispatch(
-          putVenueAction(
-              values._id,
-              send,
-              {
-                success: () => {
-                  navigate(-1);
-                },
-                error: () => {
-                  //
-                },
-              }
-          )
+        putVenueAction(values._id, send, {
+          success: () => {
+            navigate(-1);
+          },
+          error: () => {
+            //
+          },
+        })
       );
     }
   };
@@ -426,10 +436,10 @@ const VenueForm: React.FC<{}> = () => {
 
   function handleAcceptedFiles(key: VenueImages, files: any) {
     files.map((file: any) =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-          formattedSize: formatBytes(file.size),
-        })
+      Object.assign(file, {
+        preview: URL.createObjectURL(file),
+        formattedSize: formatBytes(file.size),
+      })
     );
     switch (key) {
       case 'logo':
@@ -444,11 +454,9 @@ const VenueForm: React.FC<{}> = () => {
   }
 
   const setImgDimensions = async (e: any, key: VenueImages) => {
-    const {
-      imgDimension,
-      thumbnail,
-      thumbnailDimension
-    } = await readImgAsync(e);
+    const { imgDimension, thumbnail, thumbnailDimension } = await readImgAsync(
+      e
+    );
     switch (key) {
       case 'logo':
         setValues({
@@ -456,15 +464,15 @@ const VenueForm: React.FC<{}> = () => {
           logo: {
             width: imgDimension.width,
             height: imgDimension.height,
-            imgURL: ''
+            imgURL: '',
           },
           coverThumbnail: {
             width: thumbnailDimension.width,
             height: thumbnailDimension.height,
-            imgURL: ''
-          }
+            imgURL: '',
+          },
         });
-        setCoverThumbnail([thumbnail])
+        setCoverThumbnail([thumbnail]);
         break;
       case 'cover':
         setValues({
@@ -472,477 +480,595 @@ const VenueForm: React.FC<{}> = () => {
           cover: {
             width: imgDimension.width,
             height: imgDimension.height,
-            imgURL: ''
-          }
+            imgURL: '',
+          },
         });
         break;
     }
-  }
+  };
 
   return (
-      <div className="page-content">
-        <Form>
-          <Card>
-            <CardBody>
-              <CardTitle className={'text-start'}>Location Information</CardTitle>
-              <CardSubtitle className="mb-4 text-start">
-                Make sure your location information is accurate.
-              </CardSubtitle>
-              <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.profile.name) ? classes.inputError : ''}`}
-                  value={values.profile.name}
-                  handleChange={(name) => setValues({ ...values, profile: { ...values.profile, name } })}
-                  label="Business Name"
-                  placeholder="Enter your Business Name"
-                  required
-              />
-              {canEdit && (
-                  <Fragment>
-                    <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
-                      <label>Company</label>
-                      {userRole === 'SuperAdmin' ? (
-                          <AutoComplete
-                              className={
-                                isSubmitted && !values.companyId ? classes.inputError : ''
-                              }
-                              completeMethod={searchCompanies}
-                              scrollHeight={'240px'}
-                              value={companySearchValue}
-                              dropdown={true}
-                              field={'name'}
-                              suggestions={filteredCompanies}
-                              onSelect={(e) => onSelectCompany(e.value)}
-                              onChange={(e) => setCompanySearchValue(e.value)}
-                              placeholder="Select a Company"
-                              forceSelection={true}
-                          />
-                      ) : (
-                          <span>{values.company?.name}</span>
-                      )}
-                    </div>
-                    <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
-                      <label>Ambassador</label>
-                      {userRole === 'SuperAdmin' ? (
-                          <AutoComplete
-                              className={(isSubmitted && !values.ambassadorId) ? classes.inputError : ''}
-                              dropdown={true}
-                              value={ambassadorSearchValue}
-                              field={'firstName'}
-                              itemTemplate={ambassadorOptionTemplate}
-                              suggestions={filteredAmbassadors}
-                              completeMethod={searchAmbassadors}
-                              onSelect={(e) => onSelectAmbassador(e.value)}
-                              onChange={(e) => setAmbassadorSearchValue(e.value)}
-                              forceSelection={true}
-                          />
-                      ) : (
-                          <span>{`${values.ambassador?.firstName} ${values.ambassador?.lastName}`}</span>
-                      )}
-                    </div>
-                  </Fragment>
-              )}
-              <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.location.address) ? classes.inputError : ''}`}
-                  value={values.location.address}
-                  handleChange={(address) => setValues({ ...values, location: { ...values.location, address } })}
-                  label="Address"
-                  placeholder="Enter your Address"
-                  required
-                  readonly={!canEdit}
-              />
-              <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.location.city) ? classes.inputError : ''}`}
-                  value={values.location.city}
-                  handleChange={(city) => setValues({ ...values, location: { ...values.location, city } })}
-                  label="City"
-                  placeholder="City"
-                  required
-                  readonly={!canEdit}
-              />
-              <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-                  value={values.location.state}
-                  handleChange={(state) => setValues({ ...values, location: { ...values.location, state } })}
-                  label="Province"
-                  placeholder="Enter Province"
-                  required
-                  readonly={!canEdit}
-              />
-              <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-                  value={values.location.street}
-                  handleChange={(street) => setValues({ ...values, location: { ...values.location, street } })}
-                  label="Street"
-                  placeholder="Enter Street"
-                  required
-                  readonly={!canEdit}
-              />
-              <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-                  value={values.location.code}
-                  handleChange={(code) => setValues({ ...values, location: { ...values.location, code } })}
-                  label="Code"
-                  placeholder="Enter Code"
-                  required
-                  readonly={!canEdit}
-              />
-              <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.location.country) ? classes.inputError : ''}`}
-                  value={values.location.country}
-                  handleChange={(country) => setValues({ ...values, location: { ...values.location, country } })}
-                  label="Country"
-                  placeholder="Enter Country"
-                  required
-                  readonly={!canEdit}
-              />
-              <div className={`flex-horizontal mb-3 ${classes.inputBlock}`}>
-                <label>Coordinates</label>
-                <div className={`coordinate-inputs flex-horizontal ${classes.coordinateClass}`}>
-                  <span className="title">Latitude:</span>
-                  <InputText
-                      className={`${(values.location.point.coordinates[0] === '' && isSubmitted) ? classes.errorBorder : ''}`}
-                      value={values.location.point.coordinates[0]}
-                      onChange={(e) => {
-                        const value = parseFloat(e.target.value);
-                        const min = -90;
-                        const max = 90;
-                        setValues({
-                          ...values,
-                          location: {
-                            ...values.location,
-                            point: {
-                              ...values.location.point,
-                              coordinates: [
-                                isNaN(value) ? '' : (
-                                    value < min ? min : (
-                                        value > max ? max : value
-                                    )
-                                ),
-                                values.location.point.coordinates[1]
-                              ]
-                            }
-                          }
-                        })
-                      }}
-                      type={'number'}
-                      required={true}
-                  />
-                  <div className="divider">-</div>
-                  <span className="title">Longitude:</span>
-                  <InputText
-                      className={`${(values.location.point.coordinates[1] === '' && isSubmitted) ? classes.errorBorder : ''}`}
-                      value={values.location.point.coordinates[1]}
-                      onChange={(e) => {
-                        const value = parseFloat(e.target.value);
-                        const min = -180;
-                        const max = 180;
-                        setValues({
-                          ...values,
-                          location: {
-                            ...values.location,
-                            point: {
-                              ...values.location.point,
-                              coordinates: [
-                                values.location.point.coordinates[0],
-                                isNaN(value) ? '' : (
-                                    value < min ? min : (
-                                        value > max ? max : value
-                                    )
-                                ),
-                              ]
-                            }
-                          }
-                        })
-                      }}
-                      type={'number'}
-                      required={true}
-                  />
+    <div className="page-content">
+      <Form>
+        <Card>
+          <CardBody>
+            <CardTitle className={'text-start'}>Location Information</CardTitle>
+            <CardSubtitle className="mb-4 text-start">
+              Make sure your location information is accurate.
+            </CardSubtitle>
+            <TextInput
+              customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
+                isSubmitted && !values.profile.name ? classes.inputError : ''
+              }`}
+              value={values.profile.name}
+              handleChange={(name) =>
+                setValues({ ...values, profile: { ...values.profile, name } })
+              }
+              label="Business Name"
+              placeholder="Enter your Business Name"
+              required
+            />
+            {canEdit && (
+              <Fragment>
+                <div
+                  className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}
+                >
+                  <label>Company</label>
+                  {userRole === 'SuperAdmin' ? (
+                    <AutoComplete
+                      className={
+                        isSubmitted && !values.companyId
+                          ? classes.inputError
+                          : ''
+                      }
+                      completeMethod={searchCompanies}
+                      scrollHeight={'240px'}
+                      value={companySearchValue}
+                      dropdown={true}
+                      field={'name'}
+                      suggestions={filteredCompanies}
+                      onSelect={(e) => onSelectCompany(e.value)}
+                      onChange={(e) => setCompanySearchValue(e.value)}
+                      placeholder="Select a Company"
+                      forceSelection={true}
+                    />
+                  ) : (
+                    <span>{values.company?.name}</span>
+                  )}
                 </div>
+                <div
+                  className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}
+                >
+                  <label>Ambassador</label>
+                  {userRole === 'SuperAdmin' ? (
+                    <AutoComplete
+                      className={
+                        isSubmitted && !values.ambassadorId
+                          ? classes.inputError
+                          : ''
+                      }
+                      dropdown={true}
+                      value={ambassadorSearchValue}
+                      field={'firstName'}
+                      itemTemplate={ambassadorOptionTemplate}
+                      suggestions={filteredAmbassadors}
+                      completeMethod={searchAmbassadors}
+                      onSelect={(e) => onSelectAmbassador(e.value)}
+                      onChange={(e) => setAmbassadorSearchValue(e.value)}
+                      forceSelection={true}
+                    />
+                  ) : (
+                    <span>{`${values.ambassador?.firstName} ${values.ambassador?.lastName}`}</span>
+                  )}
+                </div>
+              </Fragment>
+            )}
+            <TextInput
+              customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
+                isSubmitted && !values.location.address
+                  ? classes.inputError
+                  : ''
+              }`}
+              value={values.location.address}
+              handleChange={(address) =>
+                setValues({
+                  ...values,
+                  location: { ...values.location, address },
+                })
+              }
+              label="Address"
+              placeholder="Enter your Address"
+              required
+              readonly={!canEdit}
+            />
+            <TextInput
+              customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
+                isSubmitted && !values.location.city ? classes.inputError : ''
+              }`}
+              value={values.location.city}
+              handleChange={(city) =>
+                setValues({ ...values, location: { ...values.location, city } })
+              }
+              label="City"
+              placeholder="City"
+              required
+              readonly={!canEdit}
+            />
+            <TextInput
+              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+              value={values.location.state}
+              handleChange={(state) =>
+                setValues({
+                  ...values,
+                  location: { ...values.location, state },
+                })
+              }
+              label="Province"
+              placeholder="Enter Province"
+              required
+              readonly={!canEdit}
+            />
+            <TextInput
+              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+              value={values.location.street}
+              handleChange={(street) =>
+                setValues({
+                  ...values,
+                  location: { ...values.location, street },
+                })
+              }
+              label="Street"
+              placeholder="Enter Street"
+              required
+              readonly={!canEdit}
+            />
+            <TextInput
+              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+              value={values.location.code}
+              handleChange={(code) =>
+                setValues({ ...values, location: { ...values.location, code } })
+              }
+              label="Code"
+              placeholder="Enter Code"
+              required
+              readonly={!canEdit}
+            />
+            <TextInput
+              customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
+                isSubmitted && !values.location.country
+                  ? classes.inputError
+                  : ''
+              }`}
+              value={values.location.country}
+              handleChange={(country) =>
+                setValues({
+                  ...values,
+                  location: { ...values.location, country },
+                })
+              }
+              label="Country"
+              placeholder="Enter Country"
+              required
+              readonly={!canEdit}
+            />
+            <div className={`flex-horizontal mb-3 ${classes.inputBlock}`}>
+              <label>Coordinates</label>
+              <div
+                className={`coordinate-inputs flex-horizontal ${classes.coordinateClass}`}
+              >
+                <span className="title">Latitude:</span>
+                <InputText
+                  className={`${
+                    values.location.point.coordinates[0] === '' && isSubmitted
+                      ? classes.errorBorder
+                      : ''
+                  }`}
+                  value={values.location.point.coordinates[0]}
+                  onChange={(e) => {
+                    const value = parseFloat(e.target.value);
+                    const min = -90;
+                    const max = 90;
+                    setValues({
+                      ...values,
+                      location: {
+                        ...values.location,
+                        point: {
+                          ...values.location.point,
+                          coordinates: [
+                            isNaN(value)
+                              ? ''
+                              : value < min
+                              ? min
+                              : value > max
+                              ? max
+                              : value,
+                            values.location.point.coordinates[1],
+                          ],
+                        },
+                      },
+                    });
+                  }}
+                  type={'number'}
+                  required={true}
+                />
+                <div className="divider">-</div>
+                <span className="title">Longitude:</span>
+                <InputText
+                  className={`${
+                    values.location.point.coordinates[1] === '' && isSubmitted
+                      ? classes.errorBorder
+                      : ''
+                  }`}
+                  value={values.location.point.coordinates[1]}
+                  onChange={(e) => {
+                    const value = parseFloat(e.target.value);
+                    const min = -180;
+                    const max = 180;
+                    setValues({
+                      ...values,
+                      location: {
+                        ...values.location,
+                        point: {
+                          ...values.location.point,
+                          coordinates: [
+                            values.location.point.coordinates[0],
+                            isNaN(value)
+                              ? ''
+                              : value < min
+                              ? min
+                              : value > max
+                              ? max
+                              : value,
+                          ],
+                        },
+                      },
+                    });
+                  }}
+                  type={'number'}
+                  required={true}
+                />
               </div>
-              <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.inObjectRadiusInMeters) ? classes.inputError : ''}`}
-                  value={values.inObjectRadiusInMeters}
-                  type={'number'}
-                  handleChange={(num) => setValues({ ...values, inObjectRadiusInMeters: parseInt(num) })}
-                  label="Radius in meters"
-                  required
-                  readonly={!canEdit}
-              />
-              <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.profile.webSite) ? classes.inputError : ''}`}
-                  value={values.profile.webSite}
-                  handleChange={(webSite) => setValues({ ...values, profile: { ...values.profile, webSite } })}
-                  label="Website"
-                  placeholder="Enter Website"
-                  required
-              />
-              <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.profile.phoneNumber) ? classes.inputError : ''}`}
-                  value={values.profile.phoneNumber}
-                  handleChange={(phoneNumber) => setValues({ ...values, profile: { ...values.profile, phoneNumber } })}
-                  label="Public Phone Number"
-                  placeholder="(204) 227 - 3308"
-                  required
-              />
-              <FormGroup className="mb-0" row>
-                <Label
-                    htmlFor="description"
-                    className={`col-form-label text-start ${classes.formLabel}`}
+            </div>
+            <TextInput
+              customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
+                isSubmitted && !values.inObjectRadiusInMeters
+                  ? classes.inputError
+                  : ''
+              }`}
+              value={values.inObjectRadiusInMeters}
+              type={'number'}
+              handleChange={(num) =>
+                setValues({ ...values, inObjectRadiusInMeters: parseInt(num) })
+              }
+              label="Radius in meters"
+              required
+              readonly={!canEdit}
+            />
+            <TextInput
+              customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
+                isSubmitted && !values.profile.webSite ? classes.inputError : ''
+              }`}
+              value={values.profile.webSite}
+              handleChange={(webSite) =>
+                setValues({
+                  ...values,
+                  profile: { ...values.profile, webSite },
+                })
+              }
+              label="Website"
+              placeholder="Enter Website"
+              required
+            />
+            <TextInput
+              customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
+                isSubmitted && !values.profile.phoneNumber
+                  ? classes.inputError
+                  : ''
+              }`}
+              value={values.profile.phoneNumber}
+              handleChange={(phoneNumber) =>
+                setValues({
+                  ...values,
+                  profile: { ...values.profile, phoneNumber },
+                })
+              }
+              label="Public Phone Number"
+              placeholder="(204) 227 - 3308"
+              required
+            />
+            <FormGroup className="mb-0" row>
+              <Label
+                htmlFor="description"
+                className={`col-form-label text-start ${classes.formLabel}`}
+              >
+                Description:
+              </Label>
+              <Col className={classes.formValue}>
+                <textarea
+                  value={values.profile.description}
+                  className={`form-control ${
+                    isSubmitted && !values.profile.description
+                      ? classes.errorBorder
+                      : ''
+                  }`}
+                  id="description"
+                  rows={3}
+                  placeholder="Write some note.."
+                  onChange={(event) =>
+                    setValues({
+                      ...values,
+                      profile: {
+                        ...values.profile,
+                        description: event.target.value,
+                      },
+                    })
+                  }
+                />
+              </Col>
+            </FormGroup>
+          </CardBody>
+        </Card>
+        <Card>
+          <CardBody>
+            <CardTitle className={'text-start'}>
+              Premium Business Settings
+            </CardTitle>
+            <CardSubtitle className="mb-4 text-start">
+              Please feel free to change these settings for your business
+              listing.
+            </CardSubtitle>
+            <FormGroup className="mb-3" row>
+              <Label md="3" className="col-form-label text-start">
+                Logo Image
+              </Label>
+              <Col
+                md="9"
+                className={`flex-horizontal ${classes.dropZoneWrapper}`}
+              >
+                <Dropzone
+                  onDrop={(acceptedFiles) => {
+                    handleAcceptedFiles('logo', acceptedFiles);
+                  }}
                 >
-                  Description:
-                </Label>
-                <Col className={classes.formValue}>
-                  <textarea
-                      value={values.profile.description}
-                      className={`form-control ${(isSubmitted && !values.profile.description) ? classes.errorBorder : ''}`}
-                      id="description"
-                      rows={3}
-                      placeholder="Write some note.."
-                      onChange={event => setValues({
-                        ...values,
-                        profile: { ...values.profile, description: event.target.value }
-                      })}
-                  />
-                </Col>
-              </FormGroup>
-            </CardBody>
-          </Card>
-          <Card>
-            <CardBody>
-              <CardTitle className={'text-start'}>
-                Premium Business Settings
-              </CardTitle>
-              <CardSubtitle className="mb-4 text-start">
-                Please feel free to change these settings for your business listing.
-              </CardSubtitle>
-              <FormGroup className="mb-3" row>
-                <Label md="3" className="col-form-label text-start">
-                  Logo Image
-                </Label>
-                <Col
-                    md="9"
-                    className={`flex-horizontal ${classes.dropZoneWrapper}`}
-                >
-                  <Dropzone
-                      onDrop={(acceptedFiles) => {
-                        handleAcceptedFiles('logo', acceptedFiles);
-                      }}
-                  >
-                    {({ getRootProps, getInputProps }) => (
-                        <div
-                            className={`dropzone ${(isSubmitted && !values.logo.imgURL && logoImg.length === 0) ? classes.errorBorder : ''}`}>
-                          <div className="dz-message needsclick" {...getRootProps()}>
-                            <input {...getInputProps()} />
-                            <div className="dz-message needsclick">
-                              <div className="mb-3">
-                                <i className="display-4 text-muted bx bxs-cloud-upload"/>
-                              </div>
-                              <h5>Drop Image here or click to upload.</h5>
-                            </div>
+                  {({ getRootProps, getInputProps }) => (
+                    <div
+                      className={`dropzone ${
+                        isSubmitted &&
+                        !values.logo.imgURL &&
+                        logoImg.length === 0
+                          ? classes.errorBorder
+                          : ''
+                      }`}
+                    >
+                      <div
+                        className="dz-message needsclick"
+                        {...getRootProps()}
+                      >
+                        <input {...getInputProps()} />
+                        <div className="dz-message needsclick">
+                          <div className="mb-3">
+                            <i className="display-4 text-muted bx bxs-cloud-upload" />
                           </div>
+                          <h5>Drop Image here or click to upload.</h5>
                         </div>
-                    )}
-                  </Dropzone>
-                  <div className="dropzone-previews ms-3" id="file-previews">
-                    {
-                        (logoImg.length === 0 && values.logo.imgURL) && (
-                            <Card
-                                className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
+                      </div>
+                    </div>
+                  )}
+                </Dropzone>
+                <div className="dropzone-previews ms-3" id="file-previews">
+                  {logoImg.length === 0 && values.logo.imgURL && (
+                    <Card className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
+                      <div className="p-2">
+                        <Row className="align-items-center">
+                          <Col className="col-auto">
+                            <img
+                              data-dz-thumbnail=""
+                              height="80"
+                              className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
+                              alt={'logo'}
+                              src={values.logo.imgURL}
+                            />
+                          </Col>
+                          <Col>
+                            <Link
+                              to="#"
+                              className="text-muted font-weight-bold"
                             >
-                              <div className="p-2">
-                                <Row className="align-items-center">
-                                  <Col className="col-auto">
-                                    <img
-                                        data-dz-thumbnail=""
-                                        height="80"
-                                        className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
-                                        alt={'logo'}
-                                        src={values.logo.imgURL}
-                                    />
-                                  </Col>
-                                  <Col>
-                                    <Link
-                                        to="#"
-                                        className="text-muted font-weight-bold"
-                                    >
-                                      Logo
-                                    </Link>
-                                    <p className="mb-0">
-                                      <strong>{values.logo.width} X {values.logo.height}</strong>
-                                    </p>
-                                  </Col>
-                                </Row>
-                              </div>
-                            </Card>
-                        )
-                    }
-                    {logoImg.map((f: any, i) => {
-                      return (
-                          <Card
-                              className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
-                              key={i + '-file'}
-                          >
-                            <div className="p-2">
-                              <Row className="align-items-center">
-                                <Col className="col-auto">
-                                  <img
-                                      data-dz-thumbnail=""
-                                      height="80"
-                                      className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
-                                      alt={f.name}
-                                      src={f.preview}
-                                  />
-                                </Col>
-                                <Col>
-                                  <Link
-                                      to="#"
-                                      className="text-muted font-weight-bold"
-                                  >
-                                    {f.name}
-                                  </Link>
-                                  <p className="mb-0">
-                                    <strong>{f.formattedSize}</strong>
-                                  </p>
-                                </Col>
-                              </Row>
-                            </div>
-                          </Card>
-                      );
-                    })}
-                  </div>
-                </Col>
-              </FormGroup>
-              <FormGroup className="mb-3" row>
-                <Label md="3" className="col-form-label text-start">
-                  Background Image
-                </Label>
-                <Col
-                    md="9"
-                    className={`flex-horizontal ${classes.dropZoneWrapper}`}
+                              Logo
+                            </Link>
+                            <p className="mb-0">
+                              <strong>
+                                {values.logo.width} X {values.logo.height}
+                              </strong>
+                            </p>
+                          </Col>
+                        </Row>
+                      </div>
+                    </Card>
+                  )}
+                  {logoImg.map((f: any, i) => {
+                    return (
+                      <Card
+                        className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
+                        key={i + '-file'}
+                      >
+                        <div className="p-2">
+                          <Row className="align-items-center">
+                            <Col className="col-auto">
+                              <img
+                                data-dz-thumbnail=""
+                                height="80"
+                                className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
+                                alt={f.name}
+                                src={f.preview}
+                              />
+                            </Col>
+                            <Col>
+                              <Link
+                                to="#"
+                                className="text-muted font-weight-bold"
+                              >
+                                {f.name}
+                              </Link>
+                              <p className="mb-0">
+                                <strong>{f.formattedSize}</strong>
+                              </p>
+                            </Col>
+                          </Row>
+                        </div>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </Col>
+            </FormGroup>
+            <FormGroup className="mb-3" row>
+              <Label md="3" className="col-form-label text-start">
+                Background Image
+              </Label>
+              <Col
+                md="9"
+                className={`flex-horizontal ${classes.dropZoneWrapper}`}
+              >
+                <Dropzone
+                  onDrop={(acceptedFiles) => {
+                    handleAcceptedFiles('cover', acceptedFiles);
+                  }}
                 >
-                  <Dropzone
-                      onDrop={(acceptedFiles) => {
-                        handleAcceptedFiles('cover', acceptedFiles);
-                      }}
-                  >
-                    {({ getRootProps, getInputProps }) => (
-                        <div
-                            className={`dropzone ${(isSubmitted && !values.cover.imgURL && coverImg.length === 0) ? classes.errorBorder : ''}`}>
-                          <div className="dz-message needsclick" {...getRootProps()}>
-                            <input {...getInputProps()} />
-                            <div className="dz-message needsclick">
-                              <div className="mb-3">
-                                <i className="display-4 text-muted bx bxs-cloud-upload"/>
-                              </div>
-                              <h5>Drop Image here or click to upload.</h5>
-                            </div>
+                  {({ getRootProps, getInputProps }) => (
+                    <div
+                      className={`dropzone ${
+                        isSubmitted &&
+                        !values.cover.imgURL &&
+                        coverImg.length === 0
+                          ? classes.errorBorder
+                          : ''
+                      }`}
+                    >
+                      <div
+                        className="dz-message needsclick"
+                        {...getRootProps()}
+                      >
+                        <input {...getInputProps()} />
+                        <div className="dz-message needsclick">
+                          <div className="mb-3">
+                            <i className="display-4 text-muted bx bxs-cloud-upload" />
                           </div>
+                          <h5>Drop Image here or click to upload.</h5>
                         </div>
-                    )}
-                  </Dropzone>
-                  <div className="dropzone-previews ms-3" id="file-previews">
-                    {
-                        (coverImg.length === 0 && values.cover.imgURL) && (
-                            <Card
-                                className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
+                      </div>
+                    </div>
+                  )}
+                </Dropzone>
+                <div className="dropzone-previews ms-3" id="file-previews">
+                  {coverImg.length === 0 && values.cover.imgURL && (
+                    <Card className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
+                      <div className="p-2">
+                        <Row className="align-items-center">
+                          <Col className="col-auto">
+                            <img
+                              data-dz-thumbnail=""
+                              height="80"
+                              className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
+                              alt={'cover'}
+                              src={values.cover.imgURL}
+                            />
+                          </Col>
+                          <Col>
+                            <Link
+                              to="#"
+                              className="text-muted font-weight-bold"
                             >
-                              <div className="p-2">
-                                <Row className="align-items-center">
-                                  <Col className="col-auto">
-                                    <img
-                                        data-dz-thumbnail=""
-                                        height="80"
-                                        className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
-                                        alt={'cover'}
-                                        src={values.cover.imgURL}
-                                    />
-                                  </Col>
-                                  <Col>
-                                    <Link
-                                        to="#"
-                                        className="text-muted font-weight-bold"
-                                    >
-                                      Background
-                                    </Link>
-                                    <p className="mb-0">
-                                      <strong>{values.cover.width} X {values.cover.height}</strong>
-                                    </p>
-                                  </Col>
-                                </Row>
-                              </div>
-                            </Card>
-                        )
-                    }
-                    {coverImg.map((f: any, i) => {
-                      return (
-                          <Card
-                              className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
-                              key={i + '-file'}
-                          >
-                            <div className="p-2">
-                              <Row className="align-items-center">
-                                <Col className="col-auto">
-                                  <img
-                                      data-dz-thumbnail=""
-                                      height="80"
-                                      className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
-                                      alt={f.name}
-                                      src={f.preview}
-                                  />
-                                </Col>
-                                <Col>
-                                  <Link
-                                      to="#"
-                                      className="text-muted font-weight-bold"
-                                  >
-                                    {f.name}
-                                  </Link>
-                                  <p className="mb-0">
-                                    <strong>{f.formattedSize}</strong>
-                                  </p>
-                                </Col>
-                              </Row>
-                            </div>
-                          </Card>
-                      );
-                    })}
-                  </div>
-                </Col>
-              </FormGroup>
-              <FormGroup className="mb-3" row>
-                <Label md="3" className="col-form-label text-start">
-                  Allow Users To Access Location When They Leave?
-                </Label>
-                <Col md="9" className={'flex-horizontal'}>
-                  <CvSwitcher
-                      readonly={!canEdit}
-                      defaultValue={values.allowUsersToAccessAfterLeaving}
-                      onChange={(event: boolean) => onSwitch(event)}
-                  />
-                </Col>
-              </FormGroup>
-              <TextInput
-                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.accessDaysAfter) ? classes.inputError : ''}`}
-                  value={values.accessDaysAfter}
-                  type={'number'}
-                  handleChange={(num) => setValues({ ...values, accessDaysAfter: parseInt(num) })}
-                  label="How Many Days After?"
-                  required
+                              Background
+                            </Link>
+                            <p className="mb-0">
+                              <strong>
+                                {values.cover.width} X {values.cover.height}
+                              </strong>
+                            </p>
+                          </Col>
+                        </Row>
+                      </div>
+                    </Card>
+                  )}
+                  {coverImg.map((f: any, i) => {
+                    return (
+                      <Card
+                        className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
+                        key={i + '-file'}
+                      >
+                        <div className="p-2">
+                          <Row className="align-items-center">
+                            <Col className="col-auto">
+                              <img
+                                data-dz-thumbnail=""
+                                height="80"
+                                className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
+                                alt={f.name}
+                                src={f.preview}
+                              />
+                            </Col>
+                            <Col>
+                              <Link
+                                to="#"
+                                className="text-muted font-weight-bold"
+                              >
+                                {f.name}
+                              </Link>
+                              <p className="mb-0">
+                                <strong>{f.formattedSize}</strong>
+                              </p>
+                            </Col>
+                          </Row>
+                        </div>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </Col>
+            </FormGroup>
+            <FormGroup className="mb-3" row>
+              <Label md="3" className="col-form-label text-start">
+                Allow Users To Access Location When They Leave?
+              </Label>
+              <Col md="9" className={'flex-horizontal'}>
+                <CvSwitcher
                   readonly={!canEdit}
+                  defaultValue={values.allowUsersToAccessAfterLeaving}
+                  onChange={(event: boolean) => onSwitch(event)}
+                />
+              </Col>
+            </FormGroup>
+            <TextInput
+              customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
+                isSubmitted && !values.accessDaysAfter ? classes.inputError : ''
+              }`}
+              value={values.accessDaysAfter}
+              type={'number'}
+              handleChange={(num) =>
+                setValues({ ...values, accessDaysAfter: parseInt(num) })
+              }
+              label="How Many Days After?"
+              required
+              readonly={!canEdit}
+            />
+            {!newMode && (
+              <TextInput
+                customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                value={values.allTimeVisitorsCount || ''}
+                label="All time visitors count"
+                readonly={true}
               />
-              {!newMode && (
-                  <TextInput
-                      customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-                      value={values.allTimeVisitorsCount || ''}
-                      label="All time visitors count"
-                      readonly={true}
-                  />
-              )}
-              <Button label={'Submit'} type={'submit'} onClick={(event) => submitButton(event)}/>
-            </CardBody>
-          </Card>
-        </Form>
-      </div>
+            )}
+            <Button
+              label={'Submit'}
+              type={'submit'}
+              onClick={(event) => submitButton(event)}
+            />
+          </CardBody>
+        </Card>
+      </Form>
+    </div>
   );
 };
 
