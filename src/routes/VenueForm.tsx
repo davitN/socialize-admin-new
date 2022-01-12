@@ -354,7 +354,6 @@ const VenueForm: React.FC<{}> = () => {
   const submitButton = (event: any) => {
     event.preventDefault();
     setIsSubmitted(true);
-    console.log(sendData.data);
     if (formNotValid()) {
       return;
     }
@@ -362,7 +361,6 @@ const VenueForm: React.FC<{}> = () => {
     data.company = data.companyId;
     data.ambassador = data.ambassadorId;
     const send = {...sendData, data}
-    console.log(send)
     if (newMode) {
       dispatch(
           saveVenueAction(send, {
