@@ -185,6 +185,16 @@ const VenueForm: React.FC<{}> = () => {
     }
     if (company._id) {
       setCompanySearchValue(company.name);
+      if (userRole === 'Ambassador') {
+        setValues({
+          ...values,
+          company,
+          companyId: company._id,
+          ambassadorId: company.ambassador._id,
+          ambassador: company.ambassador
+        })
+        return;
+      }
       if (newMode) {
         setAmbassadorSearchValue(company.ambassador?.firstName || '');
         setValues({
@@ -344,6 +354,7 @@ const VenueForm: React.FC<{}> = () => {
   const submitButton = (event: any) => {
     event.preventDefault();
     setIsSubmitted(true);
+    console.log(sendData.data);
     if (formNotValid()) {
       return;
     }
@@ -351,6 +362,7 @@ const VenueForm: React.FC<{}> = () => {
     data.company = data.companyId;
     data.ambassador = data.ambassadorId;
     const send = {...sendData, data}
+    console.log(send)
     if (newMode) {
       dispatch(
           saveVenueAction(send, {
@@ -547,6 +559,24 @@ const VenueForm: React.FC<{}> = () => {
                   handleChange={(state) => setValues({ ...values, location: { ...values.location, state } })}
                   label="Province"
                   placeholder="Enter Province"
+                  required
+                  readonly={!canEdit}
+              />
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  value={values.location.street}
+                  handleChange={(street) => setValues({ ...values, location: { ...values.location, street } })}
+                  label="Street"
+                  placeholder="Enter Street"
+                  required
+                  readonly={!canEdit}
+              />
+              <TextInput
+                  customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+                  value={values.location.code}
+                  handleChange={(code) => setValues({ ...values, location: { ...values.location, code } })}
+                  label="Code"
+                  placeholder="Enter Code"
                   required
                   readonly={!canEdit}
               />
