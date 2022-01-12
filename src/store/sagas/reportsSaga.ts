@@ -22,7 +22,7 @@ export function* getReportedPostsSaga({
       { params }
     );
     yield put(setReportsAction(res));
-    callbacks?.success && callbacks.success();
+    callbacks?.success && callbacks.success(res);
   } catch (err: any) {
     callbacks?.error && callbacks.error(err.response?.data.message);
     yield put(
@@ -49,7 +49,7 @@ export function* getReportedCommentsSaga({
       { params }
     );
     yield put(setReportsAction(res));
-    callbacks?.success && callbacks.success();
+    callbacks?.success && callbacks.success(res);
   } catch (err: any) {
     callbacks?.error && callbacks.error(err.response?.data.message);
     yield put(

@@ -4,7 +4,6 @@ import React from 'react';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { PostModel } from '../../types/dashboard';
-import { Link } from 'react-router-dom';
 import { Button } from 'primereact/button';
 
 import { Card, CardBody, CardTitle, Badge } from 'reactstrap';
@@ -27,89 +26,96 @@ const getCustomerTypeColors = (type: string): string => {
 };
 
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router';
 
-const tableHeader = [
-  {
-    name: 'Post',
-    field: '_id',
-    haveTemplate: true,
-    template: (rowData: PostModel) => (
-      <Link to="#" className="text-body fw-bold">
-        {
-          <img
-            data-dz-thumbnail=""
-            height="30"
-            className={'rounded'}
-            alt={rowData.username}
-            src={rowData?.profileImage?.imgURL || altImg}
-          />
-        }{' '}
-        {rowData._id}
-      </Link>
-    ),
-  },
-  {
-    name: 'Customer Posting',
-    field: 'name',
-    haveTemplate: true,
-    template: (rowData: PostModel) => (
-      <>
-        {rowData.firstName} {rowData.lastName}
-      </>
-    ),
-  },
-  {
-    name: 'Date',
-    field: 'createdAt',
-    haveTemplate: true,
-    template: (rowData: PostModel) => (
-      <>
-        {new Date(rowData.createdAt).toLocaleDateString('en-GB', {
-          day: '2-digit',
-          month: 'short',
-        })}
-        , {new Date(rowData.createdAt).getFullYear()}
-      </>
-    ),
-  },
-  {
-    name: 'Comments',
-    field: 'commentsCount',
-  },
-  {
-    name: 'Customer Type',
-    field: 'customerType',
-    haveTemplate: true,
-    template: (row: PostModel) => (
-      <Badge
-        className={
-          'font-size-12 badge-soft-' + getCustomerTypeColors(row.customerType)
-        }
-        color={getCustomerTypeColors(row.customerType)}
-        pill
-      >
-        {row.customerType}
-      </Badge>
-    ),
-  },
-  {
-    name: 'Views',
-    field: 'viewsCount',
-  },
-  {
-    name: 'View Details',
-    field: 'viewDetails',
-    haveTemplate: true,
-    template: () => {
-      return (
-        <Button type="button" color="primary" className="btn-sm btn-rounded">
-          View Details
-        </Button>
-      );
-    },
-  },
-];
 const Posts: React.FC<{ posts: PostModel[] }> = ({ posts }) => {
+  const tableHeader = [
+    {
+      name: 'Post',
+      field: '_id',
+      haveTemplate: true,
+      template: (rowData: PostModel) => (
+        <>
+          {rowData?.postImage?.imgURL && (
+            <img
+              data-dz-thumbnail=""
+              height="50"
+              className={'rounded'}
+              src={rowData?.postImage?.imgURL}
+            />
+          )}{' '}
+          {rowData.text}
+        </>
+      ),
+    },
+    {
+      name: 'Customer Posting',
+      field: 'name',
+      haveTemplate: true,
+      template: (rowData: PostModel) => (
+        <>
+          {rowData?.profileImage?.imgURL && (
+            <img
+              data-dz-thumbnail=""
+              height="30"
+              className={'rounded'}
+              src={rowData?.profileImage?.imgURL || altImg}
+            />
+          )}{' '}
+          {rowData.firstName} {rowData.lastName}
+        </>
+      ),
+    },
+    {
+      name: 'Date',
+      field: 'createdAt',
+      haveTemplate: true,
+      template: (rowData: PostModel) => (
+        <>
+          {new Date(rowData.createdAt).toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+          })}
+          , {new Date(rowData.createdAt).getFullYear()}
+        </>
+      ),
+    },
+    {
+      name: 'Comments',
+      field: 'commentsCount',
+    },
+    {
+      name: 'Customer Type',
+      field: 'customerType',
+      haveTemplate: true,
+      template: (row: PostModel) => (
+        <Badge
+          className={
+            'font-size-12 badge-soft-' + getCustomerTypeColors(row.customerType)
+          }
+          color={getCustomerTypeColors(row.customerType)}
+          pill
+        >
+          {row.customerType}
+        </Badge>
+      ),
+    },
+    {
+      name: 'Views',
+      field: 'viewsCount',
+    },
+    {
+      name: 'View',
+      field: 'view',
+      haveTemplate: true,
+      template: (row: PostModel) => (
+        <Button onClick={() => navigate(`/latest-posts/${row._id}`)}>
+          <i className="pi pi-cog" />
+        </Button>
+      ),
+    },
+  ];
+  const navigate = useNavigate();
   const LIMIT = 5;
 
   return (

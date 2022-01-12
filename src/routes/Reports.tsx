@@ -15,7 +15,7 @@ import {
   getReportedCommentsActionSG,
   getReportedPostsActionSG,
 } from '../store/ducks/reportsDuck';
-import { ReportDetailsModel } from '../types/reports';
+import { ReportDetailsModel, ReportsModel } from '../types/reports';
 import { PaginationEventModel } from '../types/pagination/pagination';
 import { TableHeaderModel, TableQueryParams } from '../types/table';
 import { useSearchParams } from 'react-router-dom';
@@ -37,12 +37,6 @@ const useStyles = createUseStyles({
     },
   },
 });
-
-const params: TableQueryParams = {
-  offset: 0,
-  limit: 10,
-  statusFilter: '',
-};
 
 const Reports = () => {
   const tableHeader: TableHeaderModel[] = [
@@ -158,15 +152,21 @@ const Reports = () => {
   const [dataLoading, setDataLoading] = useState(false);
   const [selectedReportFilter, setSelectedReportFilter] = useState('');
   const [selectedStatusFilter, setSelectedStatusFilter] = useState('');
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams({});
   const LIMIT = 10;
   const classes = useStyles();
+  const [values, setValues] = useState<ReportsModel>({
+    data: [],
+    count: null,
+  });
 
   const dropdownOptions = ['Posts', 'Comments', 'Chat Room'];
   const statusFilter = ['REPORTED', 'CONFIRMED', 'DECLINED'];
 
   const callbacks = {
-    success: () => {
+    success: (res: ReportsModel) => {
+      setValues({ ...values, ...res });
+      console.log(res);
       setDataLoading(false);
     },
     error: () => {
@@ -176,7 +176,12 @@ const Reports = () => {
 
   const getData = () => {
     setDataLoading(true);
-    switch (selectedReportFilter) {
+    const params: TableQueryParams = {
+      offset: searchParams.get('offset'),
+      limit: LIMIT,
+      statusFilter: searchParams.get('statusFilter') || '',
+    };
+    switch (searchParams.get('reportFilter')) {
       case 'Posts':
         dispatch(
           getReportedPostsActionSG(
@@ -184,6 +189,7 @@ const Reports = () => {
             callbacks
           )
         );
+        console.log(values);
         break;
       case 'Comments':
         dispatch(
@@ -198,7 +204,13 @@ const Reports = () => {
         console.log('Chat Room');
         break;
       default:
-        setSelectedReportFilter(undefined);
+        setSelectedStatusFilter(searchParams.get('statusFilter') || '');
+        setSelectedReportFilter(searchParams.get('selectedReportFilter') || '');
+        setValues({
+          ...values,
+          data: [],
+        });
+        console.log(values);
         setDataLoading(false);
         break;
     }
@@ -208,40 +220,42 @@ const Reports = () => {
     setCurrentPage(parseInt(searchParams.get('offset')) || 0);
     setSearchParams({
       offset: searchParams.get('offset') || '0',
-      // reportFilter: searchParams.get('reportFilter') || '',
-      statusFilter: searchParams.get('phoneFilter') || '',
+      reportFilter: searchParams.get('reportFilter') || '',
+      statusFilter: searchParams.get('statusFilter') || '',
     });
+    setSelectedReportFilter(searchParams.get('reportFilter') || '');
+    setSelectedStatusFilter(searchParams.get('statusFilter') || '');
   }, []);
 
   useEffect(() => {
     if (searchParams.toString().includes('offset')) {
       getData();
     }
-  }, [selectedReportFilter, selectedStatusFilter, searchParams]);
+  }, [searchParams]);
 
   const handlePageChange = (event: PaginationEventModel) => {
     setCurrentPage(event.first);
     setSearchParams({
       offset: event.first.toString(),
-      // reportFilter: searchParams.get('reportFilter') || '',
+      reportFilter: searchParams.get('reportFilter') || '',
       statusFilter: searchParams.get('statusFilter') || '',
     });
   };
 
-  // const handleReportFilter = (event: any) => {
-  //   setSelectedReportFilter(event);
-  //   setSearchParams({
-  //     offset: '0',
-  //     reportFilter: event || '',
-  //     statusFilter: searchParams.get('statustFilter'),
-  //   });
-  // };
+  const handleReportFilter = (event: string) => {
+    setSelectedReportFilter(event);
+    setSearchParams({
+      offset: '0',
+      reportFilter: event || '',
+      statusFilter: searchParams.get('statusFilter'),
+    });
+  };
 
   const handleStatusFilter = (event: string) => {
     setSelectedStatusFilter(event);
     setSearchParams({
       offset: '0',
-      // reportFilter: searchParams.get('reportFilter'),
+      reportFilter: searchParams.get('reportFilter'),
       statusFilter: event || '',
     });
   };
@@ -252,7 +266,7 @@ const Reports = () => {
       reportFilter: '',
       statusFilter: '',
     });
-    // setSelectedReportFilter('');
+    setSelectedReportFilter('');
     setSelectedStatusFilter('');
   };
 
@@ -271,14 +285,12 @@ const Reports = () => {
               }
               value={selectedReportFilter}
               className={'mb-3'}
+              showClear={!!selectedReportFilter}
               onChange={(e) => {
-                // handleReportFilter(e);
-                setSelectedReportFilter(e.value);
-                setSearchParams({
-                  ...searchParams,
-                  offset: '0',
-                  reportFilter: e.value,
-                });
+                if (handleReportFilter) {
+                  handleReportFilter(e.value);
+                  setSelectedReportFilter(e.value);
+                }
               }}
             />
             <Dropdown
@@ -286,14 +298,16 @@ const Reports = () => {
               placeholder={
                 selectedStatusFilter
                   ? selectedStatusFilter
-                  : 'Select report filter...'
+                  : 'Select report status...'
               }
               value={selectedStatusFilter}
               className={'mb-3'}
               showClear={!!selectedStatusFilter}
               onChange={(e) => {
-                setSelectedStatusFilter(e.value);
-                handleStatusFilter(e.value);
+                if (handleStatusFilter) {
+                  setSelectedStatusFilter(e.value);
+                  handleStatusFilter(e.value);
+                }
               }}
             />
             <Button
@@ -304,40 +318,80 @@ const Reports = () => {
           </div>
           <DataTable
             className={'fs-6'}
-            value={reports.data}
+            value={values?.data}
             responsiveLayout="scroll"
             rows={LIMIT}
             emptyMessage="Data not found..."
           >
             {dataLoading &&
-              tableHeader.map(({ name, field }, index) => (
-                <Column
-                  field={field}
-                  header={name}
-                  key={`${field}_${index}`}
-                  body={<Skeleton />}
-                />
-              ))}
+              (selectedReportFilter === 'Comments'
+                ? tableHeader.map(({ name, field }, index) => (
+                    <Column
+                      field={field}
+                      header={name}
+                      key={`${field}_${index}`}
+                      body={<Skeleton />}
+                    />
+                  ))
+                : tableHeader
+                    .filter(
+                      ({ field, name }) =>
+                        field !== 'comments' && name !== 'Comment Info'
+                    )
+                    .map(({ name, field }, index) => (
+                      <Column
+                        field={field}
+                        header={name}
+                        key={`${field}_${index}`}
+                        body={<Skeleton />}
+                      />
+                    )))}
             {!dataLoading &&
-              tableHeader.map((item, index) => {
-                if (item.haveTemplate) {
-                  return (
-                    <Column
-                      header={item.name}
-                      body={item.template}
-                      key={`${item.field}_${index}`}
-                    />
-                  );
-                } else {
-                  return (
-                    <Column
-                      field={item.field}
-                      header={item.name}
-                      key={`${item.field}_${index}`}
-                    />
-                  );
-                }
-              })}
+              (selectedReportFilter === 'Comments'
+                ? tableHeader.map((item, index) => {
+                    if (item.haveTemplate) {
+                      return (
+                        <Column
+                          header={item.name}
+                          body={item.template}
+                          key={`${item.field}_${index}`}
+                        />
+                      );
+                    } else {
+                      return (
+                        <Column
+                          field={item.field}
+                          header={item.name}
+                          key={`${item.field}_${index}`}
+                        />
+                      );
+                    }
+                  })
+                : tableHeader
+                    .filter(
+                      (item) =>
+                        item.field !== 'comments' &&
+                        item.name !== 'Comment Info'
+                    )
+                    .map((item, index) => {
+                      if (item.haveTemplate) {
+                        return (
+                          <Column
+                            header={item.name}
+                            body={item.template}
+                            key={`${item.field}_${index}`}
+                          />
+                        );
+                      } else {
+                        return (
+                          <Column
+                            field={item.field}
+                            header={item.name}
+                            key={`${item.field}_${index}`}
+                          />
+                        );
+                      }
+                    }))}
           </DataTable>
           <Paginator
             className="justify-content-end"
