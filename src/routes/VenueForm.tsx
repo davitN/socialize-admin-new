@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 
 import {
   Card,
@@ -497,41 +497,49 @@ const VenueForm: React.FC<{}> = () => {
                   required
               />
               {canEdit && (
-                  <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
-                    <label>Company</label>
-                    <AutoComplete
-                        className={
-                          isSubmitted && !values.companyId ? classes.inputError : ''
-                        }
-                        completeMethod={searchCompanies}
-                        scrollHeight={'240px'}
-                        value={companySearchValue}
-                        dropdown={true}
-                        field={'name'}
-                        suggestions={filteredCompanies}
-                        onSelect={(e) => onSelectCompany(e.value)}
-                        onChange={(e) => setCompanySearchValue(e.value)}
-                        placeholder="Select a Company"
-                        forceSelection={true}
-                    />
-                  </div>
-              )}
-              {userRole === 'SuperAdmin' && (
-                  <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
-                    <label>Ambassador</label>
-                    <AutoComplete
-                        className={(isSubmitted && !values.ambassadorId) ? classes.inputError : ''}
-                        dropdown={true}
-                        value={ambassadorSearchValue}
-                        field={'firstName'}
-                        itemTemplate={ambassadorOptionTemplate}
-                        suggestions={filteredAmbassadors}
-                        completeMethod={searchAmbassadors}
-                        onSelect={(e) => onSelectAmbassador(e.value)}
-                        onChange={(e) => setAmbassadorSearchValue(e.value)}
-                        forceSelection={true}
-                    />
-                  </div>
+                  <Fragment>
+                    <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
+                      <label>Company</label>
+                      {userRole === 'SuperAdmin' ? (
+                          <AutoComplete
+                              className={
+                                isSubmitted && !values.companyId ? classes.inputError : ''
+                              }
+                              completeMethod={searchCompanies}
+                              scrollHeight={'240px'}
+                              value={companySearchValue}
+                              dropdown={true}
+                              field={'name'}
+                              suggestions={filteredCompanies}
+                              onSelect={(e) => onSelectCompany(e.value)}
+                              onChange={(e) => setCompanySearchValue(e.value)}
+                              placeholder="Select a Company"
+                              forceSelection={true}
+                          />
+                      ) : (
+                          <span>{values.company?.name}</span>
+                      )}
+                    </div>
+                    <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
+                      <label>Ambassador</label>
+                      {userRole === 'SuperAdmin' ? (
+                          <AutoComplete
+                              className={(isSubmitted && !values.ambassadorId) ? classes.inputError : ''}
+                              dropdown={true}
+                              value={ambassadorSearchValue}
+                              field={'firstName'}
+                              itemTemplate={ambassadorOptionTemplate}
+                              suggestions={filteredAmbassadors}
+                              completeMethod={searchAmbassadors}
+                              onSelect={(e) => onSelectAmbassador(e.value)}
+                              onChange={(e) => setAmbassadorSearchValue(e.value)}
+                              forceSelection={true}
+                          />
+                      ) : (
+                          <span>{`${values.ambassador?.firstName} ${values.ambassador?.lastName}`}</span>
+                      )}
+                    </div>
+                  </Fragment>
               )}
               <TextInput
                   customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${(isSubmitted && !values.location.address) ? classes.inputError : ''}`}
