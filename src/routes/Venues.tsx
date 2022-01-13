@@ -54,13 +54,9 @@ const Venues: React.FC<{}> = () => {
       haveTemplate: true,
       template: (row: VenueStateModel) => 
         row.ambassador && ( 
-          <Button onClick={() => navigate(`/admin-management/${row.ambassador._id}`)} className={classes.tableButton}>
-            {row.ambassador?.firstName}
+          <Button disabled={userRole !== 'SuperAdmin'} onClick={() => navigate(`/admin-management/${row.ambassador._id}`)} className={classes.tableButton}>
+            {row.ambassador?.firstName} {row.ambassador?.lastName}
           </Button> )
-    },
-    {
-      name: 'Rating',
-      field: 'profile.rating',
     },
     {
       name: 'Business Type',

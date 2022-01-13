@@ -23,7 +23,6 @@ import { Button } from 'primereact/button';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/configureStore';
 import {
-  getCompanyAmbassadorAction,
   getVenueActionSG,
   putVenueAction,
   saveVenueAction,
@@ -515,7 +514,7 @@ const VenueForm: React.FC<{}> = () => {
                   className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}
                 >
                   <label>Company</label>
-                  {userRole === 'SuperAdmin' ? (
+                  {(userRole === 'SuperAdmin' || newMode) ? (
                     <AutoComplete
                       className={
                         isSubmitted && !values.companyId
@@ -559,7 +558,7 @@ const VenueForm: React.FC<{}> = () => {
                       forceSelection={true}
                     />
                   ) : (
-                    <span>{`${values.ambassador?.firstName} ${values.ambassador?.lastName}`}</span>
+                    <span>{`${values.ambassador?.firstName || ''} ${values.ambassador?.lastName || ''}`}</span>
                   )}
                 </div>
               </Fragment>
