@@ -103,7 +103,6 @@ const AdminManagementForm: React.FC<{}> = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [validation, setValidation] = useState<{
-    username: boolean;
     firstName: boolean;
     lastName: boolean;
     email: boolean;
@@ -112,7 +111,6 @@ const AdminManagementForm: React.FC<{}> = () => {
     password: boolean;
     submitted: boolean;
   }>({
-    username: false,
     firstName: false,
     lastName: false,
     email: false,
@@ -131,7 +129,6 @@ const AdminManagementForm: React.FC<{}> = () => {
     lastName: '',
     password: '',
     companyId: '',
-    username: '',
   });
 
   const getCompanies = () => {
@@ -219,7 +216,6 @@ const AdminManagementForm: React.FC<{}> = () => {
   const handleValidation = () => {
     setValidation({
       ...validation,
-      username: !!values.username,
       firstName: !!values.firstName,
       lastName: !!values.lastName,
       phone: !!values.phone,
@@ -234,7 +230,6 @@ const AdminManagementForm: React.FC<{}> = () => {
     setValidation({ ...validation, submitted: true });
     if (
       !(
-        validation.username &&
         validation.phone &&
         validation.email &&
         validation.firstName &&
@@ -250,7 +245,6 @@ const AdminManagementForm: React.FC<{}> = () => {
     }
     if (newMode) {
       const newData: AdminModel = {
-        username: values.username,
         firstName: values.firstName,
         lastName: values.lastName,
         phone: values.phone,
@@ -271,7 +265,6 @@ const AdminManagementForm: React.FC<{}> = () => {
       );
     } else {
       const sendData: AdminModel = {
-        username: values.username,
         firstName: values.firstName,
         lastName: values.lastName,
         phone: values.phone,
@@ -318,18 +311,6 @@ const AdminManagementForm: React.FC<{}> = () => {
           {/*  Make sure your location information is accurate.*/}
           {/*</CardSubtitle>*/}
           <Form>
-            <TextInput
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
-                validation.submitted && !validation.username
-                  ? classes.inputError
-                  : ''
-              }`}
-              value={values.username}
-              handleChange={(username) => setValues({ ...values, username })}
-              label="Username"
-              placeholder="Enter Username"
-              required
-            />
             <TextInput
               customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
                 validation.submitted && !validation.firstName
