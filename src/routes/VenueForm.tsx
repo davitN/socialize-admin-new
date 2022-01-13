@@ -367,6 +367,7 @@ const VenueForm: React.FC<{}> = () => {
 
   const submitButton = (event: any) => {
     event.preventDefault();
+    console.log(sendData);
     setIsSubmitted(true);
     if (formNotValid()) {
       return;
@@ -655,44 +656,8 @@ const VenueForm: React.FC<{}> = () => {
               <label>Coordinates</label>
               <div
                 className={`coordinate-inputs flex-horizontal ${classes.coordinateClass}`}
-              >
+              >                
                 <span className="title">Latitude:</span>
-                <InputText
-                  className={`${
-                    values.location.point.coordinates[0] === '' && isSubmitted
-                      ? classes.errorBorder
-                      : ''
-                  }`}
-                  value={values.location.point.coordinates[0]}
-                  onChange={(e) => {
-                    const value = parseFloat(e.target.value);
-                    const min = -90;
-                    const max = 90;
-                    setValues({
-                      ...values,
-                      location: {
-                        ...values.location,
-                        point: {
-                          ...values.location.point,
-                          coordinates: [
-                            isNaN(value)
-                              ? ''
-                              : value < min
-                              ? min
-                              : value > max
-                              ? max
-                              : value,
-                            values.location.point.coordinates[1],
-                          ],
-                        },
-                      },
-                    });
-                  }}
-                  type={'number'}
-                  required={true}
-                />
-                <div className="divider">-</div>
-                <span className="title">Longitude:</span>
                 <InputText
                   className={`${
                     values.location.point.coordinates[1] === '' && isSubmitted
@@ -702,8 +667,8 @@ const VenueForm: React.FC<{}> = () => {
                   value={values.location.point.coordinates[1]}
                   onChange={(e) => {
                     const value = parseFloat(e.target.value);
-                    const min = -180;
-                    const max = 180;
+                    const min = -90;
+                    const max = 90;
                     setValues({
                       ...values,
                       location: {
@@ -719,6 +684,42 @@ const VenueForm: React.FC<{}> = () => {
                               : value > max
                               ? max
                               : value,
+                          ],
+                        },
+                      },
+                    });
+                  }}
+                  type={'number'}
+                  required={true}
+                />
+                <div className="divider">-</div>
+                <span className="title">Longitude:</span>
+                <InputText
+                  className={`${
+                    values.location.point.coordinates[0] === '' && isSubmitted
+                      ? classes.errorBorder
+                      : ''
+                  }`}
+                  value={values.location.point.coordinates[0]}
+                  onChange={(e) => {
+                    const value = parseFloat(e.target.value);
+                    const min = -180;
+                    const max = 180;
+                    setValues({
+                      ...values,
+                      location: {
+                        ...values.location,
+                        point: {
+                          ...values.location.point,
+                          coordinates: [
+                            isNaN(value)
+                            ? ''
+                            : value < min
+                            ? min
+                            : value > max
+                            ? max
+                            : value,
+                            values.location.point.coordinates[1],
                           ],
                         },
                       },
