@@ -8,7 +8,7 @@ import { createUseStyles } from 'react-jss';
 import { useNavigate, useParams } from 'react-router-dom';
 import CvSwitcher from '../components/shared/switcher';
 import { Button } from 'primereact/button';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { CompanyModel } from '../types/company';
 import {
   getSelectedCompanyActionSG,
@@ -20,6 +20,7 @@ import { Calendar, CalendarChangeParams } from 'primereact/calendar';
 import { AutoComplete, AutoCompleteCompleteMethodParams } from 'primereact/autocomplete';
 import { getAdminManagementsActionSG } from '../store/ducks/adminManagementDuck';
 import { AdminModel, AdminTableModel } from '../types/admin';
+import { RootState } from '../store/configureStore';
 
 const useStyles = createUseStyles({
   inputError: {
@@ -65,6 +66,7 @@ const CompanyForm: React.FC<{}> = () => {
   const [filteredAmbassadors, setFilteredAmbassadors] = useState([]);
   const [paidTillDate, setPaidTillDate] = useState<Date>(new Date());
   const [newMode, setNewMode] = useState(false);
+  const {initialData} = useSelector((state: RootState) => state.initialDataReducer);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [validation, setValidation] = useState<{
@@ -132,7 +134,7 @@ const CompanyForm: React.FC<{}> = () => {
       offset: 0,
       limit: 5,
       nameFilter,
-      roleFilter: '61dbe55ee0825a337841d4b8'
+      roleFilter: initialData.roles.find(role => role.name === 'Ambassador')._id,
     }, {
       success: (res: AdminTableModel) => {
         setFilteredAmbassadors(res.data);

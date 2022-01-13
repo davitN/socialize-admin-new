@@ -21,6 +21,10 @@ const useStyles = createUseStyles({
   searchInput: {
     marginRight: '20px',
     width: '200px'
+  },
+  tableButton: {
+    width: '100px',
+    justifyContent: 'center',
   }
 })
 
@@ -34,8 +38,25 @@ const Venues: React.FC<{}> = () => {
       field: 'profile.name',
     },
     {
-      name: 'Rating',
-      field: 'profile.rating',
+      name: 'Company',
+      field: 'company.name',
+      haveTemplate: true,
+      template: (row: VenueStateModel) => (
+        <Button onClick={() => navigate(`/company/${row.company._id}`)} 
+        disabled={userRole !== 'SuperAdmin'} className={classes.tableButton}>
+          {row.company?.name}
+        </Button>
+      )
+    },
+    {
+      name: 'Ambassador',
+      field: 'ambassador',
+      haveTemplate: true,
+      template: (row: VenueStateModel) => 
+        row.ambassador && ( 
+          <Button disabled={userRole !== 'SuperAdmin'} onClick={() => navigate(`/admin-management/${row.ambassador._id}`)} className={classes.tableButton}>
+            {row.ambassador?.firstName} {row.ambassador?.lastName}
+          </Button> )
     },
     {
       name: 'Business Type',
