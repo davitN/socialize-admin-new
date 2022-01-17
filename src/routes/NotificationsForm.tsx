@@ -10,7 +10,7 @@ import { RootState } from '../store/configureStore';
 import { Customer } from '../types/dashboard';
 import {
   NotificationsDetailModel,
-  NotificationsSendModel,
+  NotificationsSendModel, NotificationUserModel,
 } from '../types/notifications';
 import { MultiSelect } from 'primereact/multiselect';
 import {
@@ -80,6 +80,7 @@ const NotificationsForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const LIMIT = 10;
+  const [filteredUsers, setFilteredUsers] = useState<NotificationUserModel[]>([]);
   const { selectedPlaceId } = useSelector(
     (state: RootState) => state.initialDataReducer
   );
@@ -146,6 +147,11 @@ const NotificationsForm = () => {
   };
 
   useEffect(() => {
+    handlePageChange(0);
+  }, [valuesRecieved]);
+
+
+  useEffect(() => {
     getUsers();
   }, [selectedPlaceId]);
 
@@ -154,6 +160,11 @@ const NotificationsForm = () => {
     dispatch(
       getSelectedNotificationsActionSG(notificationId, {
         success: (res: NotificationsSendModel) => {
+          // if (res.users.length > 0) {
+          //   for (let i = 0; i < 20; i++) {
+          //     res.users.push({...res.users[0], username: `${res.users[0].username}${i + 1}`})
+          //   }
+          // }
           setValuesRecieved({ ...valuesRecieved, ...res });
           setDataLoading(false);
         },
@@ -171,7 +182,6 @@ const NotificationsForm = () => {
     } else if (notificationId) {
       setNewMode(false);
       getNotifications(notificationId);
-      console.log(valuesRecieved);
     }
   }, [notificationId]);
 
@@ -220,8 +230,9 @@ const NotificationsForm = () => {
     );
   };
 
-  const handlePageChange = (event: PaginationEventModel) => {
-    setCurrentPage(event.first);
+  const handlePageChange = (first: number) => {
+    setFilteredUsers(valuesRecieved.users.slice(first, (first + LIMIT)))
+    setCurrentPage(first);
   };
 
   return (
@@ -336,9 +347,9 @@ const NotificationsForm = () => {
                 </CardTitle>
                 <DataTable
                   className={'fs-6'}
-                  value={valuesRecieved.users}
+                  value={filteredUsers}
                   responsiveLayout="scroll"
-                  rows={1}
+                  rows={LIMIT}
                   emptyMessage="Data not found..."
                 >
                   {dataLoading &&
@@ -377,7 +388,7 @@ const NotificationsForm = () => {
                   first={currentPage}
                   rows={LIMIT}
                   totalRecords={valuesRecieved.users.length}
-                  onPageChange={handlePageChange}
+                  onPageChange={(e) => handlePageChange(e.first)}
                 />
               </CardBody>
             </Card>
