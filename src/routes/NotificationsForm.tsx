@@ -117,7 +117,11 @@ const NotificationsForm = () => {
         type: '',
       },
       place: {},
-      sender: '',
+      sender: {
+        _id: '',
+        firstName: '',
+        lastName: '',
+      },
       updatedAt: '',
       _id: '',
       __v: null,
@@ -242,7 +246,7 @@ const NotificationsForm = () => {
           {!newMode && (
             <TextInput
               label={'Sent By'}
-              value={valuesRecieved.sender}
+              value={`${valuesRecieved.sender.firstName} ${valuesRecieved.sender.lastName}`}
               customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
               disabled
             />
