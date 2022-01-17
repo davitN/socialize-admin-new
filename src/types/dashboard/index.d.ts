@@ -13,14 +13,14 @@ export interface CustomerTrend {
 
 export interface Customer {
   _id: string;
-  isRealInfoHidden: boolean;
-  visitsCount: number;
-  lastVisitingTime: string;
+  isRealInfoHidden?: boolean;
+  visitsCount?: number;
+  lastVisitingTime?: string;
   username: string;
-  firstName: string;
-  lastName: string;
-  postsCount: number;
-  viewsOnPosts: number;
+  firstName?: string;
+  lastName?: string;
+  postsCount?: number;
+  viewsOnPosts?: number;
   profileImage?: {
     height?: number;
     width?: number;

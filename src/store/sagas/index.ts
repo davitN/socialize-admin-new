@@ -29,10 +29,22 @@ import {
 } from '../ducks/authDuck';
 import { GET_TOP_CUSTOMERS_SG } from '../ducks/topCustomersDuck';
 import { getTopCustomersSaga } from './topCustomersSaga';
-import { getVenueSaga, getVenuesSaga, putVenueSaga, saveVenueSaga } from './VenuesSaga';
-import { GET_COMPANY_AMBASSADOR_SG, GET_VENUE_SG, GET_VENUES_SG, PUT_VENUE, SAVE_VENUE } from '../ducks/VenueDuck';
 import {
-  getCompaniesSaga, getCompanyAmbassadorSaga,
+  getVenueSaga,
+  getVenuesSaga,
+  putVenueSaga,
+  saveVenueSaga,
+} from './VenuesSaga';
+import {
+  GET_COMPANY_AMBASSADOR_SG,
+  GET_VENUE_SG,
+  GET_VENUES_SG,
+  PUT_VENUE,
+  SAVE_VENUE,
+} from '../ducks/VenueDuck';
+import {
+  getCompaniesSaga,
+  getCompanyAmbassadorSaga,
   getCompanySubscriptionsSaga,
   getSelectedCompanySaga,
   putCompanySaga,
@@ -74,6 +86,16 @@ import {
   GET_REPORTED_POSTS_SG,
 } from '../ducks/reportsDuck';
 import { getReportedCommentsSaga, getReportedPostsSaga } from './reportsSaga';
+import {
+  GET_NOTIFICATIONS_SG,
+  GET_SELECTED_NOTIFICATIONS_SG,
+  POST_NOTIFICATIONS_SG,
+} from '../ducks/notificationsDuck';
+import {
+  getNotificationsSaga,
+  getSelectedNotificationsSaga,
+  postNotificationsSaga,
+} from './notificationsSaga';
 
 function* actionWatcher() {
   yield takeLatest(CHECK_SIGNED_IN, checkSignedInSaga);
@@ -102,14 +124,17 @@ function* actionWatcher() {
   yield takeLatest(PUT_ADMIN_MANAGEMENT, putAdminManagementSaga);
   yield takeLatest(GET_ADMIN_MANAGEMENTS_SG, getAdminManagementSaga);
   yield takeLatest(
-      GET_SELECTED_ADMIN_MANAGEMENT_SG,
-      getSelectedAdminManagementSaga
+    GET_SELECTED_ADMIN_MANAGEMENT_SG,
+    getSelectedAdminManagementSaga
   );
   yield takeLatest(GET_APP_USERS_SG, getAppUsersSaga);
   yield takeLatest(APP_USERS_VERIFY_SG, appUsersVerifySaga);
   yield takeLatest(GET_SELECTED_APP_USER_SG, getSelectedAppUserSaga);
   yield takeLatest(GET_REPORTED_POSTS_SG, getReportedPostsSaga);
   yield takeLatest(GET_REPORTED_COMMENTS_SG, getReportedCommentsSaga);
+  yield takeLatest(GET_NOTIFICATIONS_SG, getNotificationsSaga);
+  yield takeLatest(POST_NOTIFICATIONS_SG, postNotificationsSaga);
+  yield takeLatest(GET_SELECTED_NOTIFICATIONS_SG, getSelectedNotificationsSaga);
 }
 
 export default function* rootSaga() {
