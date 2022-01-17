@@ -16,7 +16,11 @@ interface NotificationsDetailModel {
     type: string;
   };
   place: Object<VenueStateModel>;
-  sender: string;
+  sender: {
+    firstName: string;
+    lastName: string;
+    _id: string;
+  };
   updatedAt: string;
   users: NotificationUserModel[];
   __v: number;
