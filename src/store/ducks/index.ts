@@ -9,6 +9,7 @@ import { companyReducer } from './companyDuck';
 import { adminManagementReducer } from './adminManagementDuck';
 import { appUsersReducer } from './appUsersDuck';
 import { reportsReducer } from './reportsDuck';
+import { notificationsReducer } from './notificationsDuck';
 
 export {
   mainReducer,
@@ -22,4 +23,5 @@ export {
   adminManagementReducer,
   appUsersReducer,
   reportsReducer,
+  notificationsReducer,
 };
