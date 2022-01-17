@@ -61,6 +61,14 @@ export function* summitSignInOTP_Saga(payload: {
     callbacks?.success && callbacks.success();
   } catch (error: any) {
     callbacks?.error && callbacks.error(error.response?.data.message);
+    yield put(
+      notifyAction({
+        type: 'error',
+        message: error.response?.data?.message,
+        showError: true,
+      })
+    );
+    yield put(defaultAction());
   }
 }
 
