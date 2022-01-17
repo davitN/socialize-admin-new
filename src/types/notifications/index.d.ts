@@ -18,7 +18,7 @@ interface NotificationsDetailModel {
   place: Object<VenueStateModel>;
   sender: string;
   updatedAt: string;
-  users: [];
+  users: NotificationUserModel[];
   __v: number;
   _id: string;
 }
@@ -26,6 +26,13 @@ interface NotificationsDetailModel {
 interface NotificationsSendModel {
   text: string;
   title: string;
-  users: [];
+  users: NotificationUserModel[];
   placeId: string;
+}
+
+export interface NotificationUserModel {
+  firstName: string;
+  lastName: string;
+  username: string;
+  _id: string;
 }
