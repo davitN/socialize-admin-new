@@ -93,7 +93,7 @@ const Reports = () => {
               src={row.post?.image?.imgURL}
             />
           )}{' '}
-          {row.post.text}
+          {row.post?.text}
         </>
       ),
     },
