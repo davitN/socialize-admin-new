@@ -55,7 +55,7 @@ const Reports = () => {
               src={row?.reporter?.profileImage?.imgURL}
             />
           )}{' '}
-          {row.reporter.firstName} {row.reporter.lastName}
+          {row.reporter?.firstName} {row.reporter?.lastName}
         </>
       ),
     },
@@ -65,7 +65,7 @@ const Reports = () => {
       haveTemplate: true,
       template: (row: ReportDetailsModel) => (
         <>
-          {row?.postOwner?.profileImage?.imgURL && (
+          {row?.postOwner?.profileImage?.imgURL ? (
             <img
               alt={'post'}
               data-dz-thumbnail=""
@@ -73,8 +73,22 @@ const Reports = () => {
               className={'rounded'}
               src={row?.postOwner?.profileImage?.imgURL}
             />
+          ) : (
+            <img
+              alt={'post'}
+              data-dz-thumbnail=""
+              height="30"
+              className={'rounded'}
+              src={row?.commentOwner?.profileImage?.imgURL}
+            />
           )}{' '}
-          {row.reporter.firstName} {row.reporter.lastName}
+          {row.postOwner ? (
+            <>
+              {row.postOwner?.firstName} {row.postOwner?.lastName}
+            </>
+          ) : (
+            <>{row.commentOwner?.firstName} {row.commentOwner?.lastName}</>
+          )}
         </>
       ),
     },
