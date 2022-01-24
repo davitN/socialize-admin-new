@@ -240,7 +240,7 @@ const AdminManagementForm: React.FC<{}> = () => {
     ) {
       return;
     }
-    if (selectedRole.name === 'CompanyOwner' || selectedRole.name === 'CompanyAdministrator' && !values.companyId) {
+    if ((selectedRole.name === 'CompanyOwner' || selectedRole.name === 'CompanyAdministrator') && !values.companyId) {
       return;
     }
     if (newMode) {
