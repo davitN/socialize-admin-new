@@ -180,7 +180,6 @@ const Reports = () => {
   const callbacks = {
     success: (res: ReportsModel) => {
       setValues({ ...values, ...res });
-      console.log(res);
       setDataLoading(false);
     },
     error: () => {
@@ -203,7 +202,6 @@ const Reports = () => {
             callbacks
           )
         );
-        console.log(values);
         break;
       case 'Comments':
         dispatch(
@@ -215,7 +213,7 @@ const Reports = () => {
         break;
       case 'Chat Room':
         // dispatch(getReportedPostsActionSG(params, callbacks));
-        console.log('Chat Room');
+        // console.log('Chat Room');
         break;
       default:
         setSelectedStatusFilter(searchParams.get('statusFilter') || '');
@@ -224,7 +222,6 @@ const Reports = () => {
           ...values,
           data: [],
         });
-        console.log(values);
         setDataLoading(false);
         break;
     }
