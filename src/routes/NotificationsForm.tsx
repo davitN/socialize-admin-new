@@ -25,7 +25,6 @@ import { TableHeaderModel } from '../types/table';
 import { Column } from 'primereact/column';
 import { Skeleton } from 'primereact/skeleton';
 import { Paginator } from 'primereact/paginator';
-import { PaginationEventModel } from '../types/pagination/pagination';
 
 const useStyles = createUseStyles({
   inputBlock: {
@@ -213,7 +212,6 @@ const NotificationsForm = () => {
   const submitFormHandler = (event: Event) => {
     event.preventDefault();
     setValidation({ ...validation, submitted: true });
-    console.log(values);
     if (
       !(validation.text && validation.title && validation.selectedUsersList)
     ) {
@@ -246,14 +244,14 @@ const NotificationsForm = () => {
           {!newMode && (
             <TextInput
               label={'Sent By'}
-              value={`${valuesRecieved.sender.firstName} ${valuesRecieved.sender.lastName}`}
+              value={`${valuesRecieved?.sender?.firstName} ${valuesRecieved?.sender?.lastName}`}
               customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
               disabled
             />
           )}
           <TextInput
             label={'Title'}
-            value={newMode ? values.title : valuesRecieved.title}
+            value={newMode ? values.title : valuesRecieved?.title}
             customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
               validation.submitted && !validation.title
                 ? classes.inputError
@@ -265,7 +263,7 @@ const NotificationsForm = () => {
           />
           <TextInput
             label={'Text'}
-            value={newMode ? values.text : valuesRecieved.text}
+            value={newMode ? values.text : valuesRecieved?.text}
             customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
               validation.submitted && !validation.text ? classes.inputError : ''
             }`}
@@ -276,7 +274,7 @@ const NotificationsForm = () => {
           {!newMode && (
             <TextInput
               label={'Company'}
-              value={valuesRecieved.company.name}
+              value={valuesRecieved?.company?.name}
               customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
               disabled
             />
