@@ -76,6 +76,9 @@ const SideNav: React.FC<{}> = () => {
 
   useEffect(() => {
     const activeRoutes: RouteModel[] = mainRoutes.filter((route) => {
+      if (!userRole) {
+        return false;
+      }
       if (userRole === 'SuperAdmin') {
         return true;
       }
