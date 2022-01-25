@@ -88,7 +88,9 @@ const Dashboard = () => {
         description: dashboardData.totalCustomersInThisMonth
       },
       {
-        title: "Busiest Day", iconClass: "bx-purchase-tag-alt", description: weekDays[new Date().getDay()],
+        title: "Busiest Day",
+        iconClass: "bx-purchase-tag-alt",
+        description: dashboardData.busiestDay ? `${weekDays[dashboardData.busiestDay._id - 1] || ''} (${dashboardData.busiestDay.count})` : '',
       },
     ]);
     const years = correctTrends(dashboardData.customerTrendsThrowYear);
