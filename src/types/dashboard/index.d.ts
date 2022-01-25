@@ -59,6 +59,7 @@ export interface DashboardData {
   topCustomers: Customer[];
   latestPosts: PostModel[];
   customerTrendsThrowYear: CustomerTrend[];
+  busiestDay: { _id: number, count: number };
 }
 
 export interface InitialState {
