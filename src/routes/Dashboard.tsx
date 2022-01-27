@@ -10,7 +10,6 @@ import {
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
-import StackedColumnChart from '../components/dashboard/StackedColumnChart';
 
 //import action
 
@@ -27,50 +26,50 @@ import { RootState } from "../store/configureStore";
 import TopCustomers from '../components/dashboard/TopCustomers';
 import Posts from '../components/dashboard/Posts';
 import { getDashboardDataActionSG } from '../store/ducks/dashboardDuck';
-
-const correctTrends = (incomeArr: Array<{
-  firstTimeVisitor: number,
-  secondTimeVisitor: number,
-  regular: number,
-  visitYearMonthDate: string
-}>) => {
-  const yearData = [
-    {
-      name: 'First Visit',
-      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    },
-    {
-      name: 'Second Visit',
-      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    },
-    {
-      name: 'Regular Customer',
-      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    }
-  ];
-  incomeArr.map(item => {
-    yearData[0].data[parseInt(item.visitYearMonthDate.split('-')[1]) - 1] = item.firstTimeVisitor;
-    yearData[1].data[parseInt(item.visitYearMonthDate.split('-')[1]) - 1] = item.secondTimeVisitor;
-    yearData[2].data[parseInt(item.visitYearMonthDate.split('-')[1]) - 1] = item.regular;
-  });
-  return yearData;
-}
+import StackedColumnChartYear from '../components/dashboard/StackedColumnChartYear';
+import StackedColumnChartMonth from '../components/dashboard/StackedColumnChartMonth';
+import StackedColumnChartWeek from '../components/dashboard/StackedColumnChartWeek';
 
 const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const Dashboard = () => {
   const dispatch = useDispatch();
+  const [chartPeriod, setChartPeriod] = useState('YEARLY');
   const { dashboardData } = useSelector((state: RootState) => state.dashboardReducer);
   const { selectedPlaceId } = useSelector((state: RootState) => state.initialDataReducer);
   const { userData } = useSelector((state: RootState) => state.authReducer);
   const [reports, setReports] = useState([]);
-  const [periodData, setPeriodData] = useState([]);
+  const [renderedChart, setRenderedChart] = useState(<div />);
 
   useEffect(() => {
     if (selectedPlaceId) {
       dispatch(getDashboardDataActionSG(selectedPlaceId))
     }
   }, [selectedPlaceId]);
+
+  useEffect(() => {
+    renderChart()
+  }, [chartPeriod]);
+
+  const renderChart = () => {
+    switch (chartPeriod) {
+      case 'YEARLY':
+        setRenderedChart((
+            <StackedColumnChartYear incomeData={dashboardData?.customerTrendsThrowYear || null}/>
+        ));
+        break;
+      // case 'MONTHLY':
+      //   setRenderedChart((
+      //       <StackedColumnChartMonth periodData={periodData}/>
+      //   ));
+      //   break;
+      // case 'WEEKLY':
+      //   setRenderedChart((
+      //       <StackedColumnChartWeek periodData={periodData}/>
+      //   ));
+      //   break;
+    }
+  }
 
   useEffect(() => {
     if (!dashboardData) {
@@ -93,8 +92,6 @@ const Dashboard = () => {
         description: dashboardData.busiestDay ? `${weekDays[dashboardData.busiestDay._id - 1] || ''} (${dashboardData.busiestDay.count})` : '',
       },
     ]);
-    const years = correctTrends(dashboardData.customerTrendsThrowYear);
-    setPeriodData(years);
   }, [dashboardData]);
 
   return (
@@ -148,44 +145,47 @@ const Dashboard = () => {
                           <h4 className="card-title mb-4">Customer Trends</h4>
                           <div className="ms-auto">
                             <ul className="nav nav-pills">
-                              {/*<li className="nav-item">*/}
-                              {/*  <Link*/}
-                              {/*      to="#"*/}
-                              {/*      className={classNames(*/}
-                              {/*          { active: periodType === 'weekly' },*/}
-                              {/*          'nav-link'*/}
-                              {/*      )}*/}
-                              {/*      onClick={() => {*/}
-                              {/*        onChangeChartPeriod('weekly');*/}
-                              {/*      }}*/}
-                              {/*      id="one_month"*/}
-                              {/*  >*/}
-                              {/*    Week*/}
-                              {/*  </Link>{' '}*/}
-                              {/*</li>*/}
-                              {/*<li className="nav-item">*/}
-                              {/*  <Link*/}
-                              {/*      to="#"*/}
-                              {/*      className={classNames(*/}
-                              {/*          { active: periodType === 'monthly' },*/}
-                              {/*          'nav-link'*/}
-                              {/*      )}*/}
-                              {/*      onClick={() => {*/}
-                              {/*        onChangeChartPeriod('monthly');*/}
-                              {/*      }}*/}
-                              {/*      id="one_month"*/}
-                              {/*  >*/}
-                              {/*    Month*/}
-                              {/*  </Link>*/}
-                              {/*</li>*/}
                               <li className="nav-item">
                                 <Link
                                     to="#"
                                     className={classNames(
-                                        { active: true },
+                                        { active: chartPeriod === 'WEEKLY' },
                                         'nav-link'
                                     )}
+                                    onClick={() => {
+                                      setChartPeriod('WEEKLY');
+                                    }}
                                     id="one_month"
+                                >
+                                  Week
+                                </Link>{' '}
+                              </li>
+                              <li className="nav-item">
+                                <Link
+                                    to="#"
+                                    className={classNames(
+                                        { active: chartPeriod === 'MONTHLY' },
+                                        'nav-link'
+                                    )}
+                                    onClick={() => {
+                                      setChartPeriod('MONTHLY');
+                                    }}
+                                    id="one_month"
+                                >
+                                  Month
+                                </Link>
+                              </li>
+                              <li className="nav-item">
+                                <Link
+                                    to="#"
+                                    className={classNames(
+                                        { active: chartPeriod === 'YEARLY' },
+                                        'nav-link'
+                                    )}
+                                    onClick={() => {
+                                      setChartPeriod('YEARLY');
+                                    }}
+                                    id="one_year"
                                 >
                                   Year
                                 </Link>
@@ -194,7 +194,7 @@ const Dashboard = () => {
                           </div>
                         </div>
                         {/* <div className="clearfix"></div> */}
-                        <StackedColumnChart periodData={periodData}/>
+                        {renderedChart}
                       </CardBody>
                     </Card>
                   </Col>
