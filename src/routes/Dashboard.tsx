@@ -39,7 +39,7 @@ const Dashboard = () => {
   const { selectedPlaceId } = useSelector((state: RootState) => state.initialDataReducer);
   const { userData } = useSelector((state: RootState) => state.authReducer);
   const [reports, setReports] = useState([]);
-  const [renderedChart, setRenderedChart] = useState(<div />);
+  const [renderedChart, setRenderedChart] = useState(<div/>);
   const [busiestDay, setBusiestDay] = useState('');
 
   useEffect(() => {
@@ -53,21 +53,26 @@ const Dashboard = () => {
       return;
     }
     renderChart();
-  }, [chartPeriod, dashboardData]);
+  }, [chartPeriod]);
 
   useEffect(() => {
     if (dashboardData) {
-      setChartPeriod('YEARLY')
+      if (chartPeriod === 'YEARLY') {
+        renderChart();
+      } else {
+        setChartPeriod('YEARLY')
+      }
     }
   }, [dashboardData])
 
   const renderChart = () => {
-    console.log(chartPeriod)
     switch (chartPeriod) {
       case 'YEARLY':
         if (dashboardData.busiestDayLastYear) {
           setBusiestDay(`${weekDays[dashboardData?.busiestDayLastYear?._id - 1]} (${dashboardData?.busiestDayLastYear?.count})`);
-        } else { setBusiestDay('') }
+        } else {
+          setBusiestDay(' ')
+        }
         setRenderedChart((
             <StackedColumnChartYear incomeData={dashboardData?.customerTrendsThrowYear || null}/>
         ));
@@ -75,7 +80,9 @@ const Dashboard = () => {
       case 'MONTHLY':
         if (dashboardData.busiestDayLastMonth) {
           setBusiestDay(`${weekDays[dashboardData?.busiestDayLastMonth?._id - 1]} (${dashboardData?.busiestDayLastMonth?.count})`);
-        } else { setBusiestDay('') }
+        } else {
+          setBusiestDay(' ')
+        }
         setRenderedChart((
             <StackedColumnChartMonth incomeData={dashboardData?.customerTrendsThrowMonth || null}/>
         ));
@@ -83,7 +90,9 @@ const Dashboard = () => {
       case 'WEEKLY':
         if (dashboardData.busiestDayLastWeek) {
           setBusiestDay(`${weekDays[dashboardData?.busiestDayLastWeek?._id - 1]} (${dashboardData?.busiestDayLastWeek?.count})`);
-        } else { setBusiestDay('') }
+        } else {
+          setBusiestDay(' ')
+        }
         setRenderedChart((
             <StackedColumnChartWeek incomeData={dashboardData?.customerTrendsThrowWeek || null}/>
         ));
@@ -92,19 +101,16 @@ const Dashboard = () => {
   }
 
   useEffect(() => {
-    if (!dashboardData) {
-      return;
-    }
     setReports([
       {
         title: "New Customers This Month",
         iconClass: "bx-copy-alt",
-        description: dashboardData.newCustomersInThisMonth
+        description: dashboardData?.newCustomersInThisMonth
       },
       {
         title: "Total Customers This Month",
         iconClass: "bx-archive-in",
-        description: dashboardData.totalCustomersInThisMonth
+        description: dashboardData?.totalCustomersInThisMonth
       },
       {
         title: "Busiest Day",
