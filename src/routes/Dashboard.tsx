@@ -27,19 +27,20 @@ import TopCustomers from '../components/dashboard/TopCustomers';
 import Posts from '../components/dashboard/Posts';
 import { getDashboardDataActionSG } from '../store/ducks/dashboardDuck';
 import StackedColumnChartYear from '../components/dashboard/StackedColumnChartYear';
-import StackedColumnChartMonth from '../components/dashboard/StackedColumnChartMonth';
+import StackedColumnChartMonth from "../components/dashboard/StackedColumnChartMonth";
 import StackedColumnChartWeek from '../components/dashboard/StackedColumnChartWeek';
 
 const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const Dashboard = () => {
   const dispatch = useDispatch();
-  const [chartPeriod, setChartPeriod] = useState('YEARLY');
+  const [chartPeriod, setChartPeriod] = useState('');
   const { dashboardData } = useSelector((state: RootState) => state.dashboardReducer);
   const { selectedPlaceId } = useSelector((state: RootState) => state.initialDataReducer);
   const { userData } = useSelector((state: RootState) => state.authReducer);
   const [reports, setReports] = useState([]);
   const [renderedChart, setRenderedChart] = useState(<div />);
+  const [busiestDay, setBusiestDay] = useState('');
 
   useEffect(() => {
     if (selectedPlaceId) {
@@ -48,26 +49,45 @@ const Dashboard = () => {
   }, [selectedPlaceId]);
 
   useEffect(() => {
-    renderChart()
-  }, [chartPeriod]);
+    if (!chartPeriod) {
+      return;
+    }
+    renderChart();
+  }, [chartPeriod, dashboardData]);
+
+  useEffect(() => {
+    if (dashboardData) {
+      setChartPeriod('YEARLY')
+    }
+  }, [dashboardData])
 
   const renderChart = () => {
+    console.log(chartPeriod)
     switch (chartPeriod) {
       case 'YEARLY':
+        if (dashboardData.busiestDayLastYear) {
+          setBusiestDay(`${weekDays[dashboardData?.busiestDayLastYear?._id - 1]} (${dashboardData?.busiestDayLastYear?.count})`);
+        } else { setBusiestDay('') }
         setRenderedChart((
             <StackedColumnChartYear incomeData={dashboardData?.customerTrendsThrowYear || null}/>
         ));
         break;
-      // case 'MONTHLY':
-      //   setRenderedChart((
-      //       <StackedColumnChartMonth periodData={periodData}/>
-      //   ));
-      //   break;
-      // case 'WEEKLY':
-      //   setRenderedChart((
-      //       <StackedColumnChartWeek periodData={periodData}/>
-      //   ));
-      //   break;
+      case 'MONTHLY':
+        if (dashboardData.busiestDayLastMonth) {
+          setBusiestDay(`${weekDays[dashboardData?.busiestDayLastMonth?._id - 1]} (${dashboardData?.busiestDayLastMonth?.count})`);
+        } else { setBusiestDay('') }
+        setRenderedChart((
+            <StackedColumnChartMonth incomeData={dashboardData?.customerTrendsThrowMonth || null}/>
+        ));
+        break;
+      case 'WEEKLY':
+        if (dashboardData.busiestDayLastWeek) {
+          setBusiestDay(`${weekDays[dashboardData?.busiestDayLastWeek?._id - 1]} (${dashboardData?.busiestDayLastWeek?.count})`);
+        } else { setBusiestDay('') }
+        setRenderedChart((
+            <StackedColumnChartWeek incomeData={dashboardData?.customerTrendsThrowWeek || null}/>
+        ));
+        break;
     }
   }
 
@@ -89,10 +109,10 @@ const Dashboard = () => {
       {
         title: "Busiest Day",
         iconClass: "bx-purchase-tag-alt",
-        description: dashboardData.busiestDay ? `${weekDays[dashboardData.busiestDay._id - 1] || ''} (${dashboardData.busiestDay.count})` : '',
+        description: busiestDay || '',
       },
     ]);
-  }, [dashboardData]);
+  }, [busiestDay]);
 
   return (
       <>
