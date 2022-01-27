@@ -8,7 +8,9 @@ export interface CustomerTrend {
   firstTimeVisitor: number;
   secondTimeVisitor: number;
   regular: number;
-  visitYearMonthDate: string;
+  visitYearMonthDate?: string;
+  visitDayOfMonth?: number;
+  visitDayOfWeek?: number;
 }
 
 export interface Customer {
@@ -59,7 +61,16 @@ export interface DashboardData {
   topCustomers: Customer[];
   latestPosts: PostModel[];
   customerTrendsThrowYear: CustomerTrend[];
-  busiestDay: { _id: number, count: number };
+  customerTrendsThrowMonth: CustomerTrend[];
+  customerTrendsThrowWeek: CustomerTrend[];
+  busiestDayLastYear: BusiestDay;
+  busiestDayLastMonth: BusiestDay;
+  busiestDayLastWeek: BusiestDay;
+}
+
+interface BusiestDay {
+  _id: number;
+  count: number;
 }
 
 export interface InitialState {
