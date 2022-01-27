@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReactApexChart from 'react-apexcharts';
 
-const StackedColumnChart = ({ periodData }) => {
+const StackedColumnChartWeek = ({ periodData }) => {
   const options = {
     chart: {
       stacked: !0,
@@ -65,7 +65,7 @@ const StackedColumnChart = ({ periodData }) => {
   );
 };
 
-StackedColumnChart.propTypes = {
+StackedColumnChartWeek.propTypes = {
   periodData: PropTypes.any,
 };
-export default StackedColumnChart;
+export default StackedColumnChartWeek;
