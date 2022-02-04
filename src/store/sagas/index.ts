@@ -15,6 +15,8 @@ import {
 import {
   changePasswordSaga,
   logoutSaga,
+  recoverPasswordSaga,
+  resetPasswordSaga,
   signInSaga,
   signUpSaga,
   summitSignInOTP_Saga,
@@ -23,6 +25,8 @@ import {
   CHECK_SIGNED_IN,
   LOGOUT,
   REQUEST_PASSWORD_CHANGE_SG,
+  REQUEST_RECOVER_PASSWORD_SG,
+  REQUEST_RESET_PASSWORD_SG,
   REQUEST_SIGN_IN_SG,
   REQUEST_SIGN_UP_SG,
   SUBMIT_SIGN_IN_OTP_SG,
@@ -135,6 +139,8 @@ function* actionWatcher() {
   yield takeLatest(GET_NOTIFICATIONS_SG, getNotificationsSaga);
   yield takeLatest(POST_NOTIFICATIONS_SG, postNotificationsSaga);
   yield takeLatest(GET_SELECTED_NOTIFICATIONS_SG, getSelectedNotificationsSaga);
+  yield takeLatest(REQUEST_RESET_PASSWORD_SG, resetPasswordSaga);
+  yield takeLatest(REQUEST_RECOVER_PASSWORD_SG, recoverPasswordSaga);
 }
 
 export default function* rootSaga() {

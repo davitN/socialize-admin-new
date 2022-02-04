@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import { ApexOptions } from 'apexcharts';
 import React, { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { CustomerTrend } from '../../types/dashboard';
@@ -43,11 +44,11 @@ const StackedColumnChartWeek = ({ incomeData }: {incomeData : CustomerTrend[]}) 
     weekList.push(weekDays[i % 7]);
   }
 
-  const options: any = {
+  const options: ApexOptions = {
     chart: {
       stacked: !0,
       toolbar: {
-        show: 1,
+        show: true,
       },
       zoom: {
         enabled: !0,
@@ -64,7 +65,6 @@ const StackedColumnChartWeek = ({ incomeData }: {incomeData : CustomerTrend[]}) 
       enabled: !1,
     },
     xaxis: {
-      show: true,
       categories: weekList,
       labels: {
         show: true,

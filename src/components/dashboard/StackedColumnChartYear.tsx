@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import { ApexOptions } from 'apexcharts';
 import React, { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { CustomerTrend } from '../../types/dashboard';
@@ -55,11 +56,11 @@ const StackedColumnChartYear = ({ incomeData }: {incomeData: CustomerTrend[]}) =
   for (let i = new Date().getMonth() + 1; i < 12 + new Date().getMonth() + 1; i++) {
     monthList.push(months[i % 12]);
   }
-  const options: any = {
+  const options: ApexOptions = {
     chart: {
       stacked: !0,
       toolbar: {
-        show: 1,
+        show: true,
       },
       zoom: {
         enabled: !0,
@@ -76,7 +77,6 @@ const StackedColumnChartYear = ({ incomeData }: {incomeData: CustomerTrend[]}) =
       enabled: !1,
     },
     xaxis: {
-      show: true,
       categories: monthList,
       labels: {
         show: true,
