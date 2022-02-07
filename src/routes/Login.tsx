@@ -189,7 +189,7 @@ const Login: React.FC<{}> = () => {
     if (successfullySent) {
       setContent(
         <div className={'flex-horizontal'}>
-          <span>Confirmation link successfylly sent to your email!</span>
+          <span>Confirmation link has been sent to your email!</span>
         </div>
       );
     } else if (smsIsSent) {
