@@ -176,6 +176,7 @@ const Login: React.FC<{}> = () => {
     dispatch(
       requestRecoverPasswordActionSG(newPassword, searchParams.get('token'), {
         success: () => {
+          notificationService.success('Password successfully changed!');
           navigate({ search: '' }, { replace: true });
         },
         error: (message: string) => {
@@ -183,6 +184,7 @@ const Login: React.FC<{}> = () => {
         },
       })
     );
+    console.log(searchParams.get('token'));
   };
 
   useEffect(() => {

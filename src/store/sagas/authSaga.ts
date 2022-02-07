@@ -181,6 +181,7 @@ export function* recoverPasswordSaga({
   type: string;
 }) {
   try {
+    localStorage.removeItem('token');
     yield axiosInstance.put(
       '/account/password_recover',
       { password },
@@ -188,6 +189,7 @@ export function* recoverPasswordSaga({
     );
     callback?.success && callback.success();
   } catch (err: any) {
+    console.log(token);
     callback?.error && callback.error(err.response?.data.message);
     yield put(
       notifyAction({
