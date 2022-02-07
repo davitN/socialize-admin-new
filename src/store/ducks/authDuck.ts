@@ -13,6 +13,10 @@ export const REQUEST_PASSWORD_CHANGE_SG =
   'socialize/auth/requestPasswordChange_sg';
 export const LOGOUT = 'socialize/auth/logout';
 export const LOGOUT_SG = 'socialize/auth/logout_sg';
+export const REQUEST_RESET_PASSWORD_SG =
+  'socialize/auth/requestResetPassword_sg';
+export const REQUEST_RECOVER_PASSWORD_SG =
+  'socialize/auth/requestRecoverPassword_sg';
 
 const initialState: AuthState = {
   userData: {},
@@ -82,5 +86,25 @@ export const logoutAction = () => ({
 });
 
 export const logoutActionSG = () => ({
-  type: LOGOUT_SG
-})
+  type: LOGOUT_SG,
+});
+
+export const requestResetPasswordActionSG = (
+  email: string,
+  callback: CallBacks
+) => ({
+  type: REQUEST_RESET_PASSWORD_SG,
+  email,
+  callback,
+});
+
+export const requestRecoverPasswordActionSG = (
+  password: string,
+  token: string,
+  callback: CallBacks
+) => ({
+  type: REQUEST_RECOVER_PASSWORD_SG,
+  password,
+  token,
+  callback,
+});
