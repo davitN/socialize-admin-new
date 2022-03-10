@@ -29,6 +29,13 @@ import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router';
 
 const Posts: React.FC<{ posts: PostModel[] }> = ({ posts }) => {
+  const getImgUrl = (url: string) => {
+    if (url.includes('res.cloudinary.com')) {
+      url = url.substr(0, url.lastIndexOf('.'));
+      url += '.jpg'
+    }
+    return url;
+  }
   const tableHeader = [
     {
       name: 'Post',
@@ -41,7 +48,7 @@ const Posts: React.FC<{ posts: PostModel[] }> = ({ posts }) => {
               data-dz-thumbnail=""
               height="50"
               className={'rounded'}
-              src={rowData?.postImage?.imgURL}
+              src={getImgUrl(rowData?.postImage.imgURL)}
             />
           )}{' '}
           {rowData.text}

@@ -31,6 +31,13 @@ const getCustomerTypeColors = (type: string): string => {
 
 const LatestPosts = () => {
   const navigate = useNavigate();
+  const getImgUrl = (url: string) => {
+    if (url.includes('res.cloudinary.com')) {
+      url = url.substr(0, url.lastIndexOf('.'));
+      url += '.jpg'
+    }
+    return url;
+  }
   const tableHeader = [
     {
       name: 'Post',
@@ -43,7 +50,7 @@ const LatestPosts = () => {
               data-dz-thumbnail=""
               height="50"
               className={'rounded'}
-              src={rowData?.postImage?.imgURL}
+              src={rowData?.postImage ? (getImgUrl(rowData?.postImage.imgURL)) : altImg}
             />
           )}{' '}
           {rowData.text}
