@@ -20,7 +20,7 @@ const correctTrends = (incomeArr: CustomerTrend[]) => {
     }
   ];
   incomeArr.map(item => {
-    const idx = (2 + item.visitDayOfWeek + new Date().getDay()) % 7;
+    const idx = (item.visitDayOfWeek - new Date().getDay() + 5) % 7;
     yearData[0].data[idx] = item.firstTimeVisitor;
     yearData[1].data[idx] = item.secondTimeVisitor;
     yearData[2].data[idx] = item.regular;
@@ -41,7 +41,7 @@ const StackedColumnChartWeek = ({ incomeData }: {incomeData : CustomerTrend[]}) 
 
   const weekList = [];
   for (let i = new Date().getDay() + 1; i < 7 + new Date().getDay() + 1; i++) {
-    weekList.push(weekDays[i % 7]);
+    weekList.push(weekDays[(i % 7)]);
   }
 
   const options: ApexOptions = {
