@@ -10,7 +10,6 @@ import {
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
-import StackedColumnChart from '../components/dashboard/StackedColumnChart';
 
 //import action
 
@@ -27,44 +26,21 @@ import { RootState } from "../store/configureStore";
 import TopCustomers from '../components/dashboard/TopCustomers';
 import Posts from '../components/dashboard/Posts';
 import { getDashboardDataActionSG } from '../store/ducks/dashboardDuck';
-
-const correctTrends = (incomeArr: Array<{
-  firstTimeVisitor: number,
-  secondTimeVisitor: number,
-  regular: number,
-  visitYearMonthDate: string
-}>) => {
-  const yearData = [
-    {
-      name: 'First Visit',
-      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    },
-    {
-      name: 'Second Visit',
-      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    },
-    {
-      name: 'Regular Customer',
-      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    }
-  ];
-  incomeArr.map(item => {
-    yearData[0].data[parseInt(item.visitYearMonthDate.split('-')[1]) - 1] = item.firstTimeVisitor;
-    yearData[1].data[parseInt(item.visitYearMonthDate.split('-')[1]) - 1] = item.secondTimeVisitor;
-    yearData[2].data[parseInt(item.visitYearMonthDate.split('-')[1]) - 1] = item.regular;
-  });
-  return yearData;
-}
+import StackedColumnChartYear from '../components/dashboard/StackedColumnChartYear';
+import StackedColumnChartMonth from "../components/dashboard/StackedColumnChartMonth";
+import StackedColumnChartWeek from '../components/dashboard/StackedColumnChartWeek';
 
 const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const Dashboard = () => {
   const dispatch = useDispatch();
+  const [chartPeriod, setChartPeriod] = useState('');
   const { dashboardData } = useSelector((state: RootState) => state.dashboardReducer);
   const { selectedPlaceId } = useSelector((state: RootState) => state.initialDataReducer);
   const { userData } = useSelector((state: RootState) => state.authReducer);
   const [reports, setReports] = useState([]);
-  const [periodData, setPeriodData] = useState([]);
+  const [renderedChart, setRenderedChart] = useState(<div/>);
+  const [busiestDay, setBusiestDay] = useState('');
 
   useEffect(() => {
     if (selectedPlaceId) {
@@ -73,27 +49,76 @@ const Dashboard = () => {
   }, [selectedPlaceId]);
 
   useEffect(() => {
-    if (!dashboardData) {
+    if (!chartPeriod) {
       return;
     }
+    renderChart();
+  }, [chartPeriod]);
+
+  useEffect(() => {
+    if (dashboardData) {
+      if (chartPeriod === 'YEARLY') {
+        renderChart();
+      } else {
+        setChartPeriod('YEARLY')
+      }
+    }
+  }, [dashboardData])
+
+  const renderChart = () => {
+    switch (chartPeriod) {
+      case 'YEARLY':
+        if (dashboardData.busiestDayLastYear) {
+          setBusiestDay(`${weekDays[dashboardData?.busiestDayLastYear?._id - 1]} (${dashboardData?.busiestDayLastYear?.count})`);
+        } else {
+          setBusiestDay(' ')
+        }
+        setRenderedChart((
+            <StackedColumnChartYear incomeData={dashboardData?.customerTrendsThrowYear || null}/>
+        ));
+        break;
+      case 'MONTHLY':
+        if (dashboardData.busiestDayLastMonth) {
+          setBusiestDay(`${weekDays[dashboardData?.busiestDayLastMonth?._id - 1]} (${dashboardData?.busiestDayLastMonth?.count})`);
+        } else {
+          setBusiestDay(' ')
+        }
+        setRenderedChart((
+            <StackedColumnChartMonth incomeData={dashboardData?.customerTrendsThrowMonth || null}/>
+        ));
+        break;
+      case 'WEEKLY':
+        if (dashboardData.busiestDayLastWeek) {
+          setBusiestDay(`${weekDays[dashboardData?.busiestDayLastWeek?._id - 1]} (${dashboardData?.busiestDayLastWeek?.count})`);
+        } else {
+          setBusiestDay(' ')
+        }
+        setRenderedChart((
+            <StackedColumnChartWeek incomeData={dashboardData?.customerTrendsThrowWeek || null}/>
+        ));
+        break;
+    }
+  }
+
+  useEffect(() => {
     setReports([
       {
         title: "New Customers This Month",
         iconClass: "bx-copy-alt",
-        description: dashboardData.newCustomersInThisMonth
+        description: dashboardData?.newCustomersInThisMonth
       },
       {
         title: "Total Customers This Month",
         iconClass: "bx-archive-in",
-        description: dashboardData.totalCustomersInThisMonth
+        description: dashboardData?.totalCustomersInThisMonth
       },
       {
-        title: "Busiest Day", iconClass: "bx-purchase-tag-alt", description: weekDays[new Date().getDay()],
+        title: "Busiest Day",
+        iconClass: "bx-purchase-tag-alt",
+        description: busiestDay || '',
       },
     ]);
-    const years = correctTrends(dashboardData.customerTrendsThrowYear);
-    setPeriodData(years);
-  }, [dashboardData]);
+  }, [busiestDay]);
 
   return (
       <>
@@ -146,44 +171,47 @@ const Dashboard = () => {
                           <h4 className="card-title mb-4">Customer Trends</h4>
                           <div className="ms-auto">
                             <ul className="nav nav-pills">
-                              {/*<li className="nav-item">*/}
-                              {/*  <Link*/}
-                              {/*      to="#"*/}
-                              {/*      className={classNames(*/}
-                              {/*          { active: periodType === 'weekly' },*/}
-                              {/*          'nav-link'*/}
-                              {/*      )}*/}
-                              {/*      onClick={() => {*/}
-                              {/*        onChangeChartPeriod('weekly');*/}
-                              {/*      }}*/}
-                              {/*      id="one_month"*/}
-                              {/*  >*/}
-                              {/*    Week*/}
-                              {/*  </Link>{' '}*/}
-                              {/*</li>*/}
-                              {/*<li className="nav-item">*/}
-                              {/*  <Link*/}
-                              {/*      to="#"*/}
-                              {/*      className={classNames(*/}
-                              {/*          { active: periodType === 'monthly' },*/}
-                              {/*          'nav-link'*/}
-                              {/*      )}*/}
-                              {/*      onClick={() => {*/}
-                              {/*        onChangeChartPeriod('monthly');*/}
-                              {/*      }}*/}
-                              {/*      id="one_month"*/}
-                              {/*  >*/}
-                              {/*    Month*/}
-                              {/*  </Link>*/}
-                              {/*</li>*/}
                               <li className="nav-item">
                                 <Link
                                     to="#"
                                     className={classNames(
-                                        { active: true },
+                                        { active: chartPeriod === 'WEEKLY' },
                                         'nav-link'
                                     )}
+                                    onClick={() => {
+                                      setChartPeriod('WEEKLY');
+                                    }}
                                     id="one_month"
+                                >
+                                  Week
+                                </Link>{' '}
+                              </li>
+                              <li className="nav-item">
+                                <Link
+                                    to="#"
+                                    className={classNames(
+                                        { active: chartPeriod === 'MONTHLY' },
+                                        'nav-link'
+                                    )}
+                                    onClick={() => {
+                                      setChartPeriod('MONTHLY');
+                                    }}
+                                    id="one_month"
+                                >
+                                  Month
+                                </Link>
+                              </li>
+                              <li className="nav-item">
+                                <Link
+                                    to="#"
+                                    className={classNames(
+                                        { active: chartPeriod === 'YEARLY' },
+                                        'nav-link'
+                                    )}
+                                    onClick={() => {
+                                      setChartPeriod('YEARLY');
+                                    }}
+                                    id="one_year"
                                 >
                                   Year
                                 </Link>
@@ -192,7 +220,7 @@ const Dashboard = () => {
                           </div>
                         </div>
                         {/* <div className="clearfix"></div> */}
-                        <StackedColumnChart periodData={periodData}/>
+                        {renderedChart}
                       </CardBody>
                     </Card>
                   </Col>

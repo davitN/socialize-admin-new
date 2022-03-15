@@ -536,31 +536,33 @@ const VenueForm: React.FC<{}> = () => {
                     <span>{values.company?.name}</span>
                   )}
                 </div>
-                <div
-                  className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}
-                >
-                  <label>Ambassador</label>
-                  {userRole === 'SuperAdmin' ? (
-                    <AutoComplete
-                      className={
-                        isSubmitted && !values.ambassadorId
-                          ? classes.inputError
-                          : ''
-                      }
-                      dropdown={true}
-                      value={ambassadorSearchValue}
-                      field={'firstName'}
-                      itemTemplate={ambassadorOptionTemplate}
-                      suggestions={filteredAmbassadors}
-                      completeMethod={searchAmbassadors}
-                      onSelect={(e) => onSelectAmbassador(e.value)}
-                      onChange={(e) => setAmbassadorSearchValue(e.value)}
-                      forceSelection={true}
-                    />
-                  ) : (
-                    <span>{`${values.ambassador?.firstName || ''} ${values.ambassador?.lastName || ''}`}</span>
-                  )}
-                </div>
+                {userRole !== 'CompanyOwner' && 
+                  <div
+                    className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}
+                  >
+                    <label>Ambassador</label>
+                    {userRole === 'SuperAdmin' ? (
+                      <AutoComplete
+                        className={
+                          isSubmitted && !values.ambassadorId
+                            ? classes.inputError
+                            : ''
+                        }
+                        dropdown={true}
+                        value={ambassadorSearchValue}
+                        field={'firstName'}
+                        itemTemplate={ambassadorOptionTemplate}
+                        suggestions={filteredAmbassadors}
+                        completeMethod={searchAmbassadors}
+                        onSelect={(e) => onSelectAmbassador(e.value)}
+                        onChange={(e) => setAmbassadorSearchValue(e.value)}
+                        forceSelection={true}
+                      />
+                    ) : (
+                      <span>{`${values.ambassador?.firstName || ''} ${values.ambassador?.lastName || ''}`}</span>
+                    )}
+                  </div>
+                }
               </Fragment>
             )}
             <TextInput

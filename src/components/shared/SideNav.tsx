@@ -48,6 +48,11 @@ const mainRoutes: RouteModel[] = [
     route: '/app-users',
     iconName: 'bx bx-home-circle',
   },
+  {
+    name: 'Notifications',
+    route: '/notifications',
+    iconName: 'bx bx-home-circle',
+  },
 ];
 const useStyles = createUseStyles({
   container: { width: '250px', backgroundColor: '#2A3042' },
@@ -71,6 +76,9 @@ const SideNav: React.FC<{}> = () => {
 
   useEffect(() => {
     const activeRoutes: RouteModel[] = mainRoutes.filter((route) => {
+      if (!userRole) {
+        return false;
+      }
       if (userRole === 'SuperAdmin') {
         return true;
       }
@@ -84,6 +92,11 @@ const SideNav: React.FC<{}> = () => {
       }
       if (userRole === 'CompanyAdministrator') {
         if (route.route === '/venues') {
+          return false;
+        }
+      }
+      if (userRole === 'Ambassador') {
+        if (route.route === '/notifications') {
           return false;
         }
       }

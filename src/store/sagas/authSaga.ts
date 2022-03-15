@@ -61,6 +61,14 @@ export function* summitSignInOTP_Saga(payload: {
     callbacks?.success && callbacks.success();
   } catch (error: any) {
     callbacks?.error && callbacks.error(error.response?.data.message);
+    yield put(
+      notifyAction({
+        type: 'error',
+        message: error.response?.data?.message,
+        showError: true,
+      })
+    );
+    yield put(defaultAction());
   }
 }
 
@@ -136,5 +144,59 @@ export function* logoutSaga() {
     yield put(resetStoreAction());
   } catch (error) {
     // yield notifyAction("error", "Error", "Something went wrong", true);
+  }
+}
+
+export function* resetPasswordSaga({
+  email,
+  callback,
+}: {
+  email: string;
+  callback: CallBacks;
+  type: string;
+}) {
+  try {
+    yield axiosInstance.post('/account/reset_password/', { email });
+    callback?.success && callback.success();
+  } catch (err: any) {
+    callback?.error && callback.error(err.response?.data.message);
+    yield put(
+      notifyAction({
+        type: 'error',
+        message: err.response?.data?.message,
+        showError: true,
+      })
+    );
+  }
+}
+
+export function* recoverPasswordSaga({
+  password,
+  token,
+  callback,
+}: {
+  password: string;
+  token: string;
+  callback: CallBacks;
+  type: string;
+}) {
+  try {
+    localStorage.removeItem('token');
+    yield axiosInstance.put(
+      '/account/password_recover',
+      { password },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    callback?.success && callback.success();
+  } catch (err: any) {
+    console.log(token);
+    callback?.error && callback.error(err.response?.data.message);
+    yield put(
+      notifyAction({
+        type: 'error',
+        message: err.response?.data?.message,
+        showError: true,
+      })
+    );
   }
 }

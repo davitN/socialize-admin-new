@@ -21,6 +21,8 @@ import LatestPostForm from './LatestPostForm';
 import AppUserForm from './AppUsersForm';
 import Reports from './Reports';
 import ReportsForm from './ReportsForm';
+import Notifications from './Notifications';
+import NotificationsForm from './NotificationsForm';
 
 const AppRoutes = () => {
   const userRole = useSelector(
@@ -134,6 +136,26 @@ const AppRoutes = () => {
                 }
               />
             </Fragment>
+          )}
+          {userRole !== 'Ambassador' && (
+            <>
+              <Route
+                path="/notifications"
+                element={
+                  <WithAuth>
+                    <Notifications />
+                  </WithAuth>
+                }
+              />
+              <Route
+                path="/notifications/:id"
+                element={
+                  <WithAuth>
+                    <NotificationsForm />
+                  </WithAuth>
+                }
+              />
+            </>
           )}
           <Route
             path="/latest-posts"

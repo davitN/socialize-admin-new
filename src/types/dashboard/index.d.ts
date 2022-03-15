@@ -8,19 +8,21 @@ export interface CustomerTrend {
   firstTimeVisitor: number;
   secondTimeVisitor: number;
   regular: number;
-  visitYearMonthDate: string;
+  visitYearMonthDate?: string;
+  visitDayOfMonth?: number;
+  visitDayOfWeek?: number;
 }
 
 export interface Customer {
   _id: string;
-  isRealInfoHidden: boolean;
-  visitsCount: number;
-  lastVisitingTime: string;
+  isRealInfoHidden?: boolean;
+  visitsCount?: number;
+  lastVisitingTime?: string;
   username: string;
-  firstName: string;
-  lastName: string;
-  postsCount: number;
-  viewsOnPosts: number;
+  firstName?: string;
+  lastName?: string;
+  postsCount?: number;
+  viewsOnPosts?: number;
   profileImage?: {
     height?: number;
     width?: number;
@@ -59,6 +61,16 @@ export interface DashboardData {
   topCustomers: Customer[];
   latestPosts: PostModel[];
   customerTrendsThrowYear: CustomerTrend[];
+  customerTrendsThrowMonth: CustomerTrend[];
+  customerTrendsThrowWeek: CustomerTrend[];
+  busiestDayLastYear: BusiestDay;
+  busiestDayLastMonth: BusiestDay;
+  busiestDayLastWeek: BusiestDay;
+}
+
+interface BusiestDay {
+  _id: number;
+  count: number;
 }
 
 export interface InitialState {
