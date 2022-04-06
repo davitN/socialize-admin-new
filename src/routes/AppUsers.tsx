@@ -141,7 +141,7 @@ const AppUsers = () => {
 
   const arrayOfGender = ['Male', 'Female'];
   const arrayOfIsVerified = ['Yes', 'No'];
-  const arrayOfSortFilter = ['Name ↑', 'Name ↓', 'Username ↑', 'Username ↓', 'Date Created ↑', 'Date Created ↓', 'Verify ↑', 'Verify ↓'];
+  const arrayOfSortFilter = ['Name ↓', 'Name ↑', 'Username ↓', 'Username ↑', 'Date Created ↓', 'Date Created ↑', 'Verify ↓', 'Verify ↑'];
 
   const getData = () => {
     setDataLoading(true);
@@ -192,8 +192,6 @@ const AppUsers = () => {
     if (searchParams.toString().includes('offset')) {
       getData();
     }
-    console.log(sortFilter);
-    console.log(sortOrder);
   }, [searchParams, sortFilter, sortOrder]);
 
   const handlePageChange = (event: PaginationEventModel) => {
