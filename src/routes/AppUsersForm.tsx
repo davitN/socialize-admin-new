@@ -53,13 +53,13 @@ const AppUserForm: React.FC<{}> = () => {
       imgURL: '',
       width: null,
     },
+    createdAt: '',
   });
 
   const getSelectedCompany = (userId: string) => {
     dispatch(
       getSelectedAppUserActionSG(userId, {
         success: (res: AppUsersDataModel) => {
-          console.log(res);
           setValues(res);
         },
       })
@@ -106,6 +106,15 @@ const AppUserForm: React.FC<{}> = () => {
             customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
             value={values.gender}
             label="Gender"
+            readonly={true}
+          />
+          <TextInput
+            customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
+            value={`${new Date(values.createdAt).toLocaleDateString('en-GB', {
+              day: '2-digit',
+              month: 'short',
+            })} ${new Date(values.createdAt).getFullYear()}`}
+            label="Date Created"
             readonly={true}
           />
           <TextInput
