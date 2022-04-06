@@ -37,6 +37,13 @@ const useStyles = createUseStyles({
   button: {
     minWidth: '117.11px',
   },
+  sortInput: {
+    width: '150px',
+    marginRight: '10px',
+    '& input': {
+      fontSize: '0.7rem',
+    },
+  },
 });
 
 const AppUsers = () => {
@@ -70,6 +77,20 @@ const AppUsers = () => {
     {
       name: 'Phone',
       field: 'phone',
+    }, 
+    {
+      name: 'Date Created',
+      field: 'createdAt',
+      haveTemplate: true,
+      template: (rowData: AppUsersDataModel) => (
+        <React.Fragment>
+          {new Date(rowData?.createdAt).toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+          })}
+          , {new Date(rowData?.createdAt).getFullYear()}
+        </React.Fragment>
+    ),
     },
     {
       name: 'Verify',
@@ -103,12 +124,16 @@ const AppUsers = () => {
 
   const [searchParams, setSearchParams] = useSearchParams({});
   const [currentPage, setCurrentPage] = useState<number>(0);
+  const [showFilter, setShowFilter] = useState<boolean>(false);
   const [phoneFilter, setPhoneFilter] = useState('');
   const [usernameFilter, setUsernameFilter] = useState('');
   const [nameFilter, setNameFilter] = useState('');
   const [genderFilter, setGenderFilter] = useState('');
   const [isVerifiedFilter, setIsVerifiedFilter] = useState('');
   const [dataLoading, setDataLoading] = useState<boolean>(true);
+  const [sortFilter, setSortFilter] = useState('');
+  const [sortFilterPlaceholder, setSortFilterPlaceholder] = useState('');
+  const [sortOrder, setSortOrder] = useState<number>(1);
   const dispatch = useDispatch();
   const { appUsers } = useSelector((state: RootState) => state.appUsersReducer);
   const LIMIT = 10;
@@ -116,6 +141,7 @@ const AppUsers = () => {
 
   const arrayOfGender = ['Male', 'Female'];
   const arrayOfIsVerified = ['Yes', 'No'];
+  const arrayOfSortFilter = ['Name ↓', 'Name ↑', 'Username ↓', 'Username ↑', 'Date Created ↓', 'Date Created ↑', 'Verify ↓', 'Verify ↑'];
 
   const getData = () => {
     setDataLoading(true);
@@ -127,6 +153,8 @@ const AppUsers = () => {
       usernameFilter: searchParams.get('usernameFilter'),
       genderFilter: searchParams.get('genderFilter'),
       isVerifiedFilter: searchParams.get('isVerifiedFilter') || '',
+      sortType: sortFilter,
+      ordering: sortOrder,
     };
     dispatch(
       getAppUsersActionSG(params, {
@@ -164,7 +192,7 @@ const AppUsers = () => {
     if (searchParams.toString().includes('offset')) {
       getData();
     }
-  }, [searchParams]);
+  }, [searchParams, sortFilter, sortOrder]);
 
   const handlePageChange = (event: PaginationEventModel) => {
     setCurrentPage(event.first);
@@ -290,12 +318,39 @@ const AppUsers = () => {
     setIsVerifiedFilter('');
   };
 
+  const handleSortFilter = (value: string) => {
+    const i = arrayOfSortFilter.indexOf(value);
+    setSortOrder( i % 2 === 0 ? 1 : -1);
+    switch (i) {
+      case 0:
+      case 1:
+        setSortFilter('name');
+        break;
+      case 2:
+      case 3:
+        setSortFilter('username');
+        break;
+      case 4:
+      case 5:
+        setSortFilter('createdAt');
+        break;
+      case 6:
+      case 7:
+        setSortFilter('isVerified');
+        break;
+      default:
+        setSortFilter('');
+    }
+  }
+
   return (
     <div className="page-content">
       <Card>
         <CardBody>
-          <div className={`mb-2 flex-horizontal justify-content-end`}>
-            <TextInput
+          <div className={`mb-3 flex-horizontal justify-content-end`}>
+            {showFilter ? (
+              <>
+                <TextInput
               value={usernameFilter}
               customClasses={classes.searchInput}
               icon={<i className="pi pi-search" />}
@@ -353,7 +408,26 @@ const AppUsers = () => {
                 setIsVerifiedFilter(event.value);
               }}
             />
+              </>
+            ) : 
+            <Dropdown
+                options={arrayOfSortFilter}
+                className={classes.sortInput}
+                placeholder={sortFilterPlaceholder ? sortFilterPlaceholder : 'Sort'}
+                value={sortFilterPlaceholder}
+                showClear={!!sortFilter}
+                onChange={(event) => {
+                  setSortFilterPlaceholder(event.value);
+                  handleSortFilter(event.value);
+                }}
+              />}
+            
             <Button
+                label={showFilter ? 'Hide Filter' : 'Show Filter'}
+                onClick={() => setShowFilter(!showFilter)}
+                className={classes.clearButton}
+              />
+              <Button
               label={'Clear Filter'}
               onClick={clearFilterHandler}
               className={classes.clearButton}

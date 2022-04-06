@@ -16,5 +16,6 @@ export interface AppUsersDataModel {
   birthday?: string;
   isVerified?: boolean;
   phone?: string;
+  createdAt?: string;
   _id?: string;
 }

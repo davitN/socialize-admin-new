@@ -11,6 +11,8 @@ export interface TableQueryParams {
   genderFilter?: string;
   isVerifiedFilter?: string;
   statusFilter?: string;
+  sortType?: string;
+  ordering?: number;
 }
 
 export interface TableHeaderModel {
