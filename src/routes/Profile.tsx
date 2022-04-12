@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { Card, CardBody, CardTitle, Form } from 'reactstrap';
@@ -9,9 +9,14 @@ import { Password } from 'primereact/password';
 import { createUseStyles } from 'react-jss';
 import { Button } from 'primereact/button';
 import TextInput from '../components/shared/form-elements/TextInput';
-import { RootState } from '../store/configureStore';
 import { UserProfileModel, UserProfileSendModel } from '../types/profile';
-import { changePasswordActionSG } from '../store/ducks/authDuck';
+import {
+  attachUserActionSG,
+  changePasswordActionSG,
+  getAccountDetailsActionSG,
+} from '../store/ducks/authDuck';
+import { AuthState } from '../types/auth';
+import notificationService from '../services/notification.service';
 
 const useStyles = createUseStyles({
   inputBlock: {
@@ -29,7 +34,7 @@ const useStyles = createUseStyles({
     width: 200,
     marginLeft: 'auto',
     marginBottom: -5,
-    listStyle: 'disc'
+    listStyle: 'disc',
   },
   inputError: {
     borderColor: '#ff4a4a',
@@ -51,6 +56,10 @@ const useStyles = createUseStyles({
   formValue: {
     width: 'calc(100% - 200px)',
   },
+  attachedContainer: {
+    width: 'calc(100% - 200px)',
+    justifyContent: 'space-between',
+  },
 });
 
 let errorText = '';
@@ -61,6 +70,7 @@ const UserProfile: React.FC<{}> = () => {
   const [confirmPassIsValid, setConfirmPassIsValid] = useState(true);
   const classes = useStyles();
   const [showPasswordsForm, setShowPasswordsForm] = useState(false);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [values, setValues] = useState<UserProfileModel>({
@@ -68,7 +78,16 @@ const UserProfile: React.FC<{}> = () => {
     password: '',
     confirmPassword: '',
   });
-  const { userData } = useSelector((state: RootState) => state.authReducer);
+  const [userData, setUserData] = useState({
+    adminUser: {
+      phone: "",
+      username: '',
+    },
+    firstName: '',
+    lastName: '',
+    phone: '',
+    email: '',
+  });
 
   let sendData: UserProfileSendModel = {
     oldPassword: '',
@@ -78,6 +97,23 @@ const UserProfile: React.FC<{}> = () => {
   const onChangeState = (changedStates: UserProfileSendModel) => {
     sendData = changedStates;
   };
+
+  const getUserData = () => {
+    dispatch(getAccountDetailsActionSG(
+      {
+        success: (res: AuthState) => {
+          setUserData({...userData, ...res});
+        },
+        error: () => {
+          //
+        },
+      }
+    ));
+  }
+
+  useEffect(() => {
+    getUserData();
+  }, [])
 
   useEffect(() => {
     onChangeState(values);
@@ -129,6 +165,21 @@ const UserProfile: React.FC<{}> = () => {
     );
   };
 
+  const attachUserHandler = () => {
+    event.preventDefault();
+    dispatch(
+      attachUserActionSG(userData.adminUser.phone, {
+        success: () => {
+          navigate('/dashboard');
+          notificationService.success("User successfully attached!");
+        },
+        error: () => {
+          notificationService.error("Invalid phone number!");
+        },
+      })
+    );
+  };
+
   return (
     <div className="page-content">
       <Breadcrumbs
@@ -170,6 +221,42 @@ const UserProfile: React.FC<{}> = () => {
                 </div>
               </div>
             )}
+          </CardBody>
+        </Card>
+        <Card>
+          <CardBody>
+            <CardTitle className={'text-start'}>Attach User</CardTitle>
+            <div className="flex-horizontal">
+              <label
+                className={`text-start ${classes.formLabel}`}
+                htmlFor={'user'}
+              >
+                User
+              </label>
+              <div className={`flex-horizontal ${classes.attachedContainer}`}>
+                <TextInput
+                  value={userData?.adminUser?.phone}
+                  id={'user'}
+                  customClasses={`flex-horizontal ${classes.formLabel}`}
+                  handleChange={(e) => {
+                    // setPhone(e);
+                    setUserData({...userData, adminUser: {...userData.adminUser, phone: e }})
+                    setButtonDisabled(false);
+                  }}
+                />
+                <TextInput
+                  value={userData?.adminUser?.username}
+                  id={'username'}
+                  customClasses={`flex-horizontal ${classes.formLabel}`}
+                  disabled
+                />
+                <Button
+                  label="Attach User"
+                  onClick={attachUserHandler}
+                  disabled={buttonDisabled}
+                />
+              </div>
+            </div>
           </CardBody>
         </Card>
         {showPasswordsForm && (
@@ -226,12 +313,14 @@ const UserProfile: React.FC<{}> = () => {
                     onChange={(e) =>
                       setValues({ ...values, password: e.target.value })
                     }
-                    content={() => (<ul className={classes.passwordHint}>
-                      <li>At least one lowercase</li>
-                      <li>At least one uppercase</li>
-                      <li>At least one numeric</li>
-                      <li>Minimum 6 characters</li>
-                    </ul>)}
+                    content={() => (
+                      <ul className={classes.passwordHint}>
+                        <li>At least one lowercase</li>
+                        <li>At least one uppercase</li>
+                        <li>At least one numeric</li>
+                        <li>Minimum 6 characters</li>
+                      </ul>
+                    )}
                     toggleMask
                     required
                   />

@@ -13,7 +13,9 @@ import {
   getLatestPostsSaga,
 } from './latestPostsSaga';
 import {
+  attachUserSaga,
   changePasswordSaga,
+  getAccountDetailsSaga,
   logoutSaga,
   recoverPasswordSaga,
   resetPasswordSaga,
@@ -23,7 +25,9 @@ import {
 } from './authSaga';
 import {
   CHECK_SIGNED_IN,
+  GET_ACCOUNT_DETAILS_SG,
   LOGOUT,
+  REQUEST_ATTACH_USER_SG,
   REQUEST_PASSWORD_CHANGE_SG,
   REQUEST_RECOVER_PASSWORD_SG,
   REQUEST_RESET_PASSWORD_SG,
@@ -141,6 +145,8 @@ function* actionWatcher() {
   yield takeLatest(GET_SELECTED_NOTIFICATIONS_SG, getSelectedNotificationsSaga);
   yield takeLatest(REQUEST_RESET_PASSWORD_SG, resetPasswordSaga);
   yield takeLatest(REQUEST_RECOVER_PASSWORD_SG, recoverPasswordSaga);
+  yield takeLatest(REQUEST_ATTACH_USER_SG, attachUserSaga);
+  yield takeLatest(GET_ACCOUNT_DETAILS_SG, getAccountDetailsSaga);
 }
 
 export default function* rootSaga() {
