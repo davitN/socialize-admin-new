@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { put } from 'redux-saga/effects';
 import axiosInstance from '../../services/interceptor.service';
-import { ISignInData, ISignUpData } from '../../types/auth';
+import { AuthState, ISignInData, ISignUpData } from '../../types/auth';
 import { CallBacks, IUserData } from '../../types/main';
 import { UserProfileSendModel } from '../../types/profile';
 import { logoutActionSG, setUserDataAction } from '../ducks/authDuck';
@@ -198,5 +198,23 @@ export function* recoverPasswordSaga({
         showError: true,
       })
     );
+  }
+}
+
+export function* attachUserSaga({phone, callback}: {phone: string, callback: CallBacks, type: string}) {
+  try {
+    yield axiosInstance.put('/account/attach_user_to_admin', {phone});
+    callback?.success && callback.success();
+  } catch (err: any) {
+    callback?.error && callback.error(err.response?.data.message);
+  }
+} 
+
+export function* getAccountDetailsSaga({callback}: {callback: CallBacks, type: string}) {
+  try {
+    const res: AuthState = yield axiosInstance.get('/account/get');
+    callback?.success && callback.success(res);
+  } catch (err: any) {
+    callback?.error && callback.error(err.response?.data.message);
   }
 }

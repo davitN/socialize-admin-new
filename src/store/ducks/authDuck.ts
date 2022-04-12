@@ -17,6 +17,8 @@ export const REQUEST_RESET_PASSWORD_SG =
   'socialize/auth/requestResetPassword_sg';
 export const REQUEST_RECOVER_PASSWORD_SG =
   'socialize/auth/requestRecoverPassword_sg';
+export const REQUEST_ATTACH_USER_SG = 'socialize/auth/requestAttachUser_sg';
+export const GET_ACCOUNT_DETAILS_SG = 'socialize/auth/getAcctountDetails_sg';
 
 const initialState: AuthState = {
   userData: {},
@@ -108,3 +110,14 @@ export const requestRecoverPasswordActionSG = (
   token,
   callback,
 });
+
+export const attachUserActionSG = (phone: string, callback: CallBacks) => ({
+  type: REQUEST_ATTACH_USER_SG,
+  phone,
+  callback,
+})
+
+export const getAccountDetailsActionSG = (callback: CallBacks) => ({
+  type: GET_ACCOUNT_DETAILS_SG,
+  callback,
+})
