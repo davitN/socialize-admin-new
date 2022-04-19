@@ -95,13 +95,17 @@ import {
 } from '../ducks/reportsDuck';
 import { getReportedCommentsSaga, getReportedPostsSaga } from './reportsSaga';
 import {
+  GET_DRAFT_OR_SCHEDULED_NOTIFICATIONS_SG,
   GET_NOTIFICATIONS_SG,
   GET_SELECTED_NOTIFICATIONS_SG,
+  POST_DRAFT_OR_SCHEDULED_NOTIFICATIONS_SG,
   POST_NOTIFICATIONS_SG,
 } from '../ducks/notificationsDuck';
 import {
+  getDraftOrScheduledNotificationsSaga,
   getNotificationsSaga,
   getSelectedNotificationsSaga,
+  postDraftedOrScheduledNotificationsSaga,
   postNotificationsSaga,
 } from './notificationsSaga';
 
@@ -143,6 +147,14 @@ function* actionWatcher() {
   yield takeLatest(GET_NOTIFICATIONS_SG, getNotificationsSaga);
   yield takeLatest(POST_NOTIFICATIONS_SG, postNotificationsSaga);
   yield takeLatest(GET_SELECTED_NOTIFICATIONS_SG, getSelectedNotificationsSaga);
+  yield takeLatest(
+    GET_DRAFT_OR_SCHEDULED_NOTIFICATIONS_SG,
+    getDraftOrScheduledNotificationsSaga
+  );
+  yield takeLatest(
+    POST_DRAFT_OR_SCHEDULED_NOTIFICATIONS_SG,
+    postDraftedOrScheduledNotificationsSaga
+  );
   yield takeLatest(REQUEST_RESET_PASSWORD_SG, resetPasswordSaga);
   yield takeLatest(REQUEST_RECOVER_PASSWORD_SG, recoverPasswordSaga);
   yield takeLatest(REQUEST_ATTACH_USER_SG, attachUserSaga);

@@ -11,6 +11,10 @@ export const SET_NOTIFICATIONS = 'socialize/main/setNotifications';
 export const POST_NOTIFICATIONS_SG = 'socialize/main/postNotifications_SG';
 export const GET_SELECTED_NOTIFICATIONS_SG =
   'socialize/main/getSelectedNotifications_SG';
+export const POST_DRAFT_OR_SCHEDULED_NOTIFICATIONS_SG =
+  'socialize/main/postDraftOrScheduledNotifications_SG';
+export const GET_DRAFT_OR_SCHEDULED_NOTIFICATIONS_SG =
+  'socialize/main/getDraftOrScheduledNotifications_SG';
 
 const initialState: { notifications: NotificationsModel } = {
   notifications: {
@@ -55,6 +59,24 @@ export const postNotificaiotnsAciotnSG = (
 ) => ({
   type: POST_NOTIFICATIONS_SG,
   data,
+  callbacks,
+});
+
+export const postDraftOrScheduledActionSG = (
+  data: NotificationsSendModel,
+  callbacks: CallBacks
+) => ({
+  type: POST_DRAFT_OR_SCHEDULED_NOTIFICATIONS_SG,
+  data,
+  callbacks,
+});
+
+export const getDraftOrScheduledNotificationsActionSG = (
+  params: TableQueryParams,
+  callbacks: CallBacks
+) => ({
+  type: GET_DRAFT_OR_SCHEDULED_NOTIFICATIONS_SG,
+  params,
   callbacks,
 });
 

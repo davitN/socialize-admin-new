@@ -1,30 +1,24 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Button } from 'primereact/button';
-import { Dropdown } from 'primereact/dropdown';
 import { createUseStyles } from 'react-jss';
 import { Card, CardBody, CardTitle } from 'reactstrap';
 import TextInput from '../components/shared/form-elements/TextInput';
-import { RootState } from '../store/configureStore';
-import { Customer } from '../types/dashboard';
 import {
-  NotificationsDetailModel,
-  NotificationsSendModel, NotificationUserModel,
+  NotificationsSendModel,
+  NotificationsStateModel,
 } from '../types/notifications';
-import { MultiSelect } from 'primereact/multiselect';
 import {
-  getSelectedNotificationsActionSG,
+  postDraftOrScheduledActionSG,
   postNotificaiotnsAciotnSG,
 } from '../store/ducks/notificationsDuck';
 import { useNavigate } from 'react-router';
-import { getTopCustomersActionSG } from '../store/ducks/topCustomersDuck';
-import { useParams } from 'react-router';
-import { DataTable } from 'primereact/datatable';
-import { TableHeaderModel } from '../types/table';
-import { Column } from 'primereact/column';
-import { Skeleton } from 'primereact/skeleton';
-import { Paginator } from 'primereact/paginator';
+import Dropzone from 'react-dropzone';
+import readImgAsync from '../helpers/utils/readImgAsync';
+import { RootState } from '../store/configureStore';
+import { Calendar } from 'primereact/calendar';
 
 const useStyles = createUseStyles({
   inputBlock: {
@@ -55,346 +49,388 @@ const useStyles = createUseStyles({
       borderColor: '#ff4a4a',
     },
   },
-  borderError: {
-    borderColor: '#ff4a4a',
+  formLabel: {
+    width: '200px',
+  },
+  formValue: {
+    width: 'calc(100% - 200px)',
+  },
+  dropZonePreviewImg: {
+    width: '140px',
+    height: 'calc(140px - 1rem)',
+    objectFit: 'cover',
+  },
+  submitButton: {
+    marginLeft: '20px',
   },
 });
 
 const NotificationsForm = () => {
-  const tableHeader: TableHeaderModel[] = [
-    {
-      name: 'Username',
-      field: 'username',
-    },
-    {
-      name: 'First Name',
-      field: 'firstName',
-    },
-    {
-      name: 'Last Name',
-      field: 'lastName',
-    },
-  ];
   const classes = useStyles();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const LIMIT = 10;
-  const [filteredUsers, setFilteredUsers] = useState<NotificationUserModel[]>([]);
+  const [date, setDate] = useState<Date>();
+  const [scheduled, setScheduled] = useState<boolean>(false);
   const { selectedPlaceId } = useSelector(
     (state: RootState) => state.initialDataReducer
   );
-  const { topCustomers } = useSelector(
-    (state: RootState) => state.topCustomersReducer
-  );
+  const [logoImg, setLogoImg] = useState([]);
   const [validation, setValidation] = useState<{
-    text: boolean;
-    title: boolean;
-    selectedUsersList: boolean;
-    users: boolean;
+    notificationText: boolean;
+    notificationTitle: boolean;
+    postText: boolean;
+    daysSinceVisited: boolean;
     submitted: boolean;
+    dateToSend?: boolean;
   }>({
-    text: false,
-    title: false,
-    selectedUsersList: false,
-    users: false,
+    notificationText: false,
+    notificationTitle: false,
+    postText: false,
+    daysSinceVisited: false,
     submitted: false,
+    dateToSend: false,
   });
-  const [values, setValues] = useState<NotificationsSendModel>({
-    text: '',
-    title: '',
-    users: [],
+  const [values, setValues] = useState<NotificationsStateModel>({
+    notificationText: '',
+    notificationTitle: '',
+    postText: '',
+    postContentType: 'STANDARD',
+    width: null,
+    height: null,
+    img: {
+      width: null,
+      height: null,
+      imgURL: '',
+    },
+    daysSinceVisited: null,
     placeId: '',
+    dateToSend: '',
   });
-  const [valuesRecieved, setValuesRecieved] =
-    useState<NotificationsDetailModel>({
-      text: '',
-      title: '',
-      company: {},
-      createdAt: '',
-      data: {
-        isInAppNotificationEnabled: null,
-        type: '',
-      },
-      place: {},
-      sender: {
-        _id: '',
-        firstName: '',
-        lastName: '',
-      },
-      updatedAt: '',
-      _id: '',
-      __v: null,
-      users: [],
-    });
-  const [selectedUsersListDropdown, setSelectedUsersListDropdown] =
-    useState('');
-  const [usersSearchValue, setUsersSearchValue] = useState<Customer[]>([]);
-  const [newMode, setNewMode] = useState(false);
-  const [dataLoading, setDataLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState<number>(0);
-  const { id: notificationId } = useParams();
-
-  const usersListDropDownSelector = ['Top Customers'];
-
-  const getUsers = () => {
-    if (selectedPlaceId) {
-      dispatch(
-        getTopCustomersActionSG({
-          offset: 0,
-          limit: 10000,
-          placeId: selectedPlaceId,
-        })
-      );
-      setValues({ ...values, placeId: selectedPlaceId });
-    }
-  };
 
   useEffect(() => {
-    handlePageChange(0);
-  }, [valuesRecieved]);
-
-
-  useEffect(() => {
-    getUsers();
+    setValues({ ...values, placeId: selectedPlaceId });
   }, [selectedPlaceId]);
 
-  const getNotifications = (notificationId: string) => {
-    setDataLoading(true);
-    dispatch(
-      getSelectedNotificationsActionSG(notificationId, {
-        success: (res: NotificationsSendModel) => {
-          // if (res.users.length > 0) {
-          //   for (let i = 0; i < 20; i++) {
-          //     res.users.push({...res.users[0], username: `${res.users[0].username}${i + 1}`})
-          //   }
-          // }
-          setValuesRecieved({ ...valuesRecieved, ...res });
-          setDataLoading(false);
-        },
-        error: () => {
-          navigate(-1);
-        },
-      })
-    );
-    setDataLoading(false);
+  const handleDate = (e: any) => {
+    const year = e.getFullYear();
+    const month = (e.getMonth() + 1).toString().padStart(2, '0');
+    const day = e.getDate();
+    const hour = e.getHours().toString().padStart(2, '0');
+    const minutes = e.getMinutes().toString().padStart(2, '0');
+    const seconds = e.getSeconds().toString().padStart(2, '0');
+    const milliseconds = e.getMilliseconds();
+
+    const dateToSend = `${year}-${month}-${day}T${hour}:${minutes}:${seconds}.${milliseconds}Z`;
+    setValues({ ...values, dateToSend: dateToSend });
   };
 
-  useEffect(() => {
-    if (notificationId === 'new') {
-      setNewMode(true);
-    } else if (notificationId) {
-      setNewMode(false);
-      getNotifications(notificationId);
-    }
-  }, [notificationId]);
-
   const handleValidation = () => {
-    let usersArrayLength;
-    if (values.users.length === 0) {
-      usersArrayLength = false;
-    } else {
-      usersArrayLength = true;
+    {
+      !scheduled
+        ? setValidation({
+            ...validation,
+            notificationText: !!values.notificationTitle,
+            notificationTitle: !!values.notificationTitle,
+            postText: !!values.postText,
+            daysSinceVisited: !!values.daysSinceVisited,
+            dateToSend: true,
+          })
+        : setValidation({
+            ...validation,
+            notificationText: !!values.notificationTitle,
+            notificationTitle: !!values.notificationTitle,
+            postText: !!values.postText,
+            daysSinceVisited: !!values.daysSinceVisited,
+            dateToSend: !!values.dateToSend,
+          });
     }
+  };
 
-    setValidation({
-      ...validation,
-      text: !!values.text,
-      selectedUsersList: !!selectedUsersListDropdown,
-      title: !!values.title,
-      users: usersArrayLength,
-    });
+  const sendData: NotificationsSendModel = {
+    data: null,
+    image: null,
   };
 
   useEffect(() => {
     handleValidation();
-  }, [values, selectedUsersListDropdown]);
+  }, [values, scheduled]);
 
-  const submitFormHandler = (event: Event) => {
-    event.preventDefault();
+  const submitFormHandler = (buttonType: 'DRAFT' | 'SCHEDULED' | 'SENDNOW') => {
     setValidation({ ...validation, submitted: true });
     if (
-      !(validation.text && validation.title && validation.selectedUsersList)
+      !(
+        validation.notificationText &&
+        validation.notificationTitle &&
+        validation.postText &&
+        validation.daysSinceVisited &&
+        validation.dateToSend
+      )
     ) {
       return;
     }
-    if (selectedUsersListDropdown && !values.users.length) {
-      return;
+    sendData.data = {
+      placeId: values.placeId,
+      daysSinceVisited: +values.daysSinceVisited,
+      width: +values.width,
+      postContentType: 'STANDARD',
+      notificationText: values.notificationText,
+      notificationTitle: values.notificationTitle,
+      postText: values.postText,
+      height: +values.height,
+      dateToSend: values.dateToSend,
+    };
+    sendData.image = logoImg[0];
+    switch (buttonType) {
+      case 'DRAFT':
+      case 'SCHEDULED':
+        sendData.data.type = buttonType;
+        dispatch(
+          postDraftOrScheduledActionSG(sendData, {
+            success: () => {
+              navigate(-1);
+            },
+            error: () => {
+              //
+            },
+          })
+        );
+        break;
+      case 'SENDNOW':
+        dispatch(
+          postNotificaiotnsAciotnSG(sendData, {
+            success: () => {
+              navigate(-1);
+            },
+            error: () => {
+              //
+            },
+          })
+        );
+        break;
     }
-    dispatch(
-      postNotificaiotnsAciotnSG(values, {
-        success: () => {
-          navigate(-1);
-        },
-        error: () => {
-          //   console.log(message);
-        },
-      })
-    );
   };
 
-  const handlePageChange = (first: number) => {
-    setFilteredUsers(valuesRecieved.users.slice(first, (first + LIMIT)))
-    setCurrentPage(first);
+  function formatBytes(bytes: any, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  }
+
+  function handleAcceptedFiles(files: any) {
+    files.map((file: any) =>
+      Object.assign(file, {
+        preview: URL.createObjectURL(file),
+        formattedSize: formatBytes(file.size),
+      })
+    );
+    setLogoImg(files);
+    setImgDimensions(files[0]);
+  }
+
+  const setImgDimensions = async (e: any) => {
+    const { imgDimension } = await readImgAsync(e);
+    setValues({
+      ...values,
+      width: imgDimension.width,
+      height: imgDimension.height,
+    });
+    console.log(imgDimension);
   };
 
   return (
     <div className="page-content">
       <Card>
         <CardBody>
-          {!newMode && (
-            <TextInput
-              label={'Sent By'}
-              value={`${valuesRecieved?.sender?.firstName} ${valuesRecieved?.sender?.lastName}`}
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-              disabled
-            />
-          )}
+          <div className={'mb-3'}>
+            <CardTitle className={'flex-horizontal justify-content-start'}>
+              Create Notification
+            </CardTitle>
+            <span className={'flex-horizontal justify-content-start'}>
+              Create a notification to send to your customers
+            </span>
+          </div>
           <TextInput
-            label={'Title'}
-            value={newMode ? values.title : valuesRecieved?.title}
+            label={'Notification Title'}
+            value={values.notificationTitle}
             customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
-              validation.submitted && !validation.title
+              validation.submitted && !validation.notificationTitle
                 ? classes.inputError
                 : ''
             }`}
-            handleChange={(event) => setValues({ ...values, title: event })}
+            handleChange={(event) =>
+              setValues({ ...values, notificationTitle: event })
+            }
             required
-            disabled={!newMode}
           />
           <TextInput
-            label={'Text'}
-            value={newMode ? values.text : valuesRecieved?.text}
+            label={'Notification Message'}
+            value={values.notificationText}
             customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
-              validation.submitted && !validation.text ? classes.inputError : ''
+              validation.submitted && !validation.notificationText
+                ? classes.inputError
+                : ''
             }`}
-            handleChange={(event) => setValues({ ...values, text: event })}
+            handleChange={(event) =>
+              setValues({ ...values, notificationText: event })
+            }
             required
-            disabled={!newMode}
           />
-          {!newMode && (
-            <TextInput
-              label={'Company'}
-              value={valuesRecieved?.company?.name}
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-              disabled
-            />
-          )}
-          {!newMode && (
-            <TextInput
-              label={'Venue'}
-              value={valuesRecieved?.place?.profile?.name}
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock}`}
-              disabled
-            />
-          )}
-          {newMode && (
-            <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
-              <label>Users List</label>
-              <Dropdown
-                className={`${
-                  validation.submitted && !validation.selectedUsersList
-                    ? classes.borderError
-                    : ''
-                }`}
-                options={usersListDropDownSelector}
-                placeholder={
-                  selectedUsersListDropdown
-                    ? selectedUsersListDropdown
-                    : 'Select Users List'
-                }
-                value={selectedUsersListDropdown}
-                onChange={(e) => setSelectedUsersListDropdown(e.value)}
-                required
-              />
+          <TextInput
+            label={'Post Text'}
+            value={values.postText}
+            customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
+              validation.submitted && !validation.postText
+                ? classes.inputError
+                : ''
+            }`}
+            handleChange={(event) => setValues({ ...values, postText: event })}
+            required
+          />
+          <div className={'flex-horizontal mb-3'}>
+            <label className={`flex-horizontal ${classes.formLabel}`}>
+              Post Image
+            </label>
+            <div className={`flex-horizontal ${classes.formValue}`}>
+              <Dropzone
+                onDrop={(acceptedFiles) => {
+                  handleAcceptedFiles(acceptedFiles);
+                }}
+              >
+                {({ getRootProps, getInputProps }) => (
+                  <div className={`dropzone`}>
+                    <div className="dz-message needsclick" {...getRootProps()}>
+                      <input {...getInputProps()} />
+                      <div className="dz-message needsclick">
+                        <div className="mb-3">
+                          <i className="display-4 text-muted bx bxs-cloud-upload" />
+                        </div>
+                        <h5>Drop Image here or click to upload.</h5>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </Dropzone>
+              <div className="dropzone-previews ms-3" id="file-previews">
+                {logoImg.length === 0 && values.img.imgURL && (
+                  <Card className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
+                    <div className="p-2">
+                      <div className="align-items-center">
+                        <div>
+                          <img
+                            data-dz-thumbnail=""
+                            height="80"
+                            className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
+                            alt={'logo'}
+                            src={values.img.imgURL}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                )}
+                {logoImg.map((f: any, i) => {
+                  return (
+                    <Card
+                      className="mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
+                      key={i + '-file'}
+                    >
+                      <div className="p-2">
+                        <div className="align-items-center">
+                          <div className="col-auto">
+                            <img
+                              data-dz-thumbnail=""
+                              height="80"
+                              className={`avatar-sm rounded bg-light ${classes.dropZonePreviewImg}`}
+                              alt={f.name}
+                              src={f.preview}
+                            />
+                          </div>
+                          <div>
+                            <div className="text-muted font-weight-bold">
+                              {f.name}
+                            </div>
+                            <p className="mb-0">
+                              <strong>{f.formattedSize}</strong>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  );
+                })}
+              </div>
             </div>
-          )}
-          {newMode && selectedUsersListDropdown === 'Top Customers' && (
-            <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
-              <label>Select Users</label>
-              <MultiSelect
-                className={
-                  validation.submitted && !values.users.length
-                    ? classes.borderError
-                    : ''
-                }
-                optionLabel={'username'}
-                optionValue={'_id'}
-                value={usersSearchValue}
-                options={topCustomers.data}
-                onChange={
-                  (e) => {
-                    setValues({ ...values, users: e.value });
-                    setUsersSearchValue(e.value);
-                  }
-                  // setSelectedUsers(e.value)
-                }
-                placeholder={'Select Users'}
-              />
-            </div>
-          )}
-          {newMode && (
+          </div>
+          <TextInput
+            label={'Days Since Visited'}
+            value={values.daysSinceVisited}
+            customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
+              validation.submitted && !validation.daysSinceVisited
+                ? classes.inputError
+                : ''
+            }`}
+            handleChange={(event) =>
+              setValues({ ...values, daysSinceVisited: +event })
+            }
+            required
+          />
+          <div
+            className={`flex-horizontal mb-3 ${
+              validation.submitted && !validation.dateToSend
+                ? classes.inputError
+                : ''
+            }`}
+          >
+            <label
+              htmlFor="datePicker"
+              className={`flex-horizontal ${classes.formLabel}`}
+            >
+              Date To Send Notification
+            </label>
+            <Calendar
+              id="datePicker"
+              dateFormat="yy-mm-dd"
+              value={date}
+              showTime
+              showSeconds
+              className={`flex-horizontal ${classes.formValue}`}
+              showIcon
+              onChange={(e: any) => {
+                setDate(e.value);
+                handleDate(e.value);
+              }}
+              showButtonBar
+            />
+          </div>
+          <div className={'flex-horizontal'}>
             <Button
-              label={'Send Notification'}
-              type={'submit'}
-              onClick={() => submitFormHandler(event)}
+              label={'Save Draft'}
+              onClick={() => {
+                setScheduled(false);
+                submitFormHandler('DRAFT');
+              }}
             />
-          )}
-          {!newMode && (
-            <Card>
-              <CardBody>
-                <CardTitle
-                  className={'mb-2 flex-horizontal justify-content-start'}
-                >
-                  Users Sent To
-                </CardTitle>
-                <DataTable
-                  className={'fs-6'}
-                  value={filteredUsers}
-                  responsiveLayout="scroll"
-                  rows={LIMIT}
-                  emptyMessage="Data not found..."
-                >
-                  {dataLoading &&
-                    tableHeader.map(({ name, field }, index) => (
-                      <Column
-                        field={field}
-                        header={name}
-                        key={`${field}_${index}`}
-                        body={<Skeleton />}
-                      />
-                    ))}
-                  {!dataLoading &&
-                    tableHeader.map((item, index) => {
-                      if (item.haveTemplate) {
-                        return (
-                          <Column
-                            header={item.name}
-                            body={item.template}
-                            key={`${item.field}_${index}`}
-                          />
-                        );
-                      } else {
-                        return (
-                          <Column
-                            field={item.field}
-                            header={item.name}
-                            key={`${item.field}_${index}`}
-                          />
-                        );
-                      }
-                    })}
-                </DataTable>
-                <Paginator
-                  className="justify-content-end"
-                  template="PrevPageLink PageLinks NextPageLink"
-                  first={currentPage}
-                  rows={LIMIT}
-                  totalRecords={valuesRecieved.users.length}
-                  onPageChange={(e) => handlePageChange(e.first)}
-                />
-              </CardBody>
-            </Card>
-          )}
+            <Button
+              label={'Schedule'}
+              className={`${classes.submitButton}`}
+              onClick={() => {
+                setScheduled(true);
+                submitFormHandler('SCHEDULED');
+              }}
+            />
+            <Button
+              label={'Send Now'}
+              className={`${classes.submitButton}`}
+              onClick={() => {
+                setScheduled(false);
+                submitFormHandler('SENDNOW');
+              }}
+            />
+          </div>
         </CardBody>
       </Card>
     </div>

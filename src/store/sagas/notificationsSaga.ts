@@ -39,6 +39,33 @@ export function* getNotificationsSaga({
   }
 }
 
+export function* getDraftOrScheduledNotificationsSaga({
+  params,
+  callbacks,
+}: {
+  params: TableQueryParams;
+  callbacks: CallBacks;
+  type: string;
+}) {
+  try {
+    const res: NotificationsModel = yield axiosInstance.get(
+      '/notification/get_draft_or_scheduled_notifications',
+      { params }
+    );
+    yield put(setNotificationsAciton(res));
+    callbacks?.success && callbacks.success();
+  } catch (err: any) {
+    callbacks?.error && callbacks.error(err.response?.data.message);
+    yield put(
+      notifyAction({
+        type: 'error',
+        message: err.response?.data.message,
+        showError: false,
+      })
+    );
+  }
+}
+
 export function* postNotificationsSaga({
   data,
   callbacks,
@@ -48,9 +75,42 @@ export function* postNotificationsSaga({
   type: string;
 }) {
   try {
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(data.data));
+    formData.append('files', data.image);
     const res: NotificationsModel = yield axiosInstance.post(
       '/notification/send_notifications',
-      data
+      formData
+    );
+    yield put(setNotificationsAciton(res));
+    callbacks?.success && callbacks.success();
+  } catch (err: any) {
+    callbacks?.error && callbacks.error(err.response?.data.message);
+    yield put(
+      notifyAction({
+        type: 'error',
+        message: err.response?.data.message,
+        showError: true,
+      })
+    );
+  }
+}
+
+export function* postDraftedOrScheduledNotificationsSaga({
+  data,
+  callbacks,
+}: {
+  data: NotificationsSendModel;
+  callbacks: CallBacks;
+  type: string;
+}) {
+  try {
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(data.data));
+    formData.append('files', data.image);
+    const res: NotificationsModel = yield axiosInstance.post(
+      '/notification/save_draft_or_scheduled_notification',
+      formData
     );
     yield put(setNotificationsAciton(res));
     callbacks?.success && callbacks.success();
