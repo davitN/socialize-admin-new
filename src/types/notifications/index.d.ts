@@ -7,36 +7,48 @@ export interface NotificationsModel {
 }
 
 interface NotificationsDetailModel {
-  text: string;
-  title: string;
-  company: CompanyModel;
-  createdAt: string;
-  data: {
-    isInAppNotificationEnabled: boolean;
-    type: string;
-  };
-  place: Object<VenueStateModel>;
-  sender: {
-    firstName: string;
-    lastName: string;
+  notificationText: string;
+  notificationTitle: string;
+  postText?: string;
+  post?: {
+    image?: {
+      height: number;
+      width: number;
+      imgURL: string;
+    };
     _id: string;
   };
-  updatedAt: string;
-  users: NotificationUserModel[];
-  __v: number;
+  dateToSend?: string;
+  createdAt?: string;
+  image?: NotificationImageModel;
+  type?: string;
+  sentUsersSize?: string;
+  deliveredUsersSize?: string;
+  clickedUsersSize?: string;
   _id: string;
 }
 
 interface NotificationsSendModel {
-  text: string;
-  title: string;
-  users: NotificationUserModel[];
-  placeId: string;
+  data: NotificationsStateModel;
+  image: File;
 }
 
-export interface NotificationUserModel {
-  firstName: string;
-  lastName: string;
-  username: string;
-  _id: string;
+interface NotificationImageModel {
+  height: number;
+  width: number;
+  imgURL: string;
+}
+
+interface NotificationsStateModel {
+  notificationText: string;
+  notificationTitle: string;
+  postText: string;
+  placeId: string;
+  postContentType: string;
+  type?: string;
+  width?: number;
+  height?: number;
+  img?: NotificationImageModel;
+  daysSinceVisited: number;
+  dateToSend?: string;
 }
