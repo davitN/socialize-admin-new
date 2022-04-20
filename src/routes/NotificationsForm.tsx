@@ -115,9 +115,9 @@ const NotificationsForm = () => {
     const year = e.getFullYear();
     const month = (e.getMonth() + 1).toString().padStart(2, '0');
     const day = e.getDate();
-    const hour = e.getHours().toString().padStart(2, '0');
-    const minutes = e.getMinutes().toString().padStart(2, '0');
-    const seconds = e.getSeconds().toString().padStart(2, '0');
+    const hour = e.getUTCHours().toString().padStart(2, '0');
+    const minutes = e.getUTCMinutes().toString().padStart(2, '0');
+    const seconds = e.getUTCSeconds().toString().padStart(2, '0');
     const milliseconds = e.getMilliseconds();
 
     const dateToSend = `${year}-${month}-${day}T${hour}:${minutes}:${seconds}.${milliseconds}Z`;
@@ -238,7 +238,6 @@ const NotificationsForm = () => {
       width: imgDimension.width,
       height: imgDimension.height,
     });
-    console.log(imgDimension);
   };
 
   return (
