@@ -112,15 +112,8 @@ const NotificationsForm = () => {
   }, [selectedPlaceId]);
 
   const handleDate = (e: any) => {
-    const year = e.getFullYear();
-    const month = (e.getMonth() + 1).toString().padStart(2, '0');
-    const day = e.getDate();
-    const hour = e.getUTCHours().toString().padStart(2, '0');
-    const minutes = e.getUTCMinutes().toString().padStart(2, '0');
-    const seconds = e.getUTCSeconds().toString().padStart(2, '0');
-    const milliseconds = e.getMilliseconds();
+    const dateToSend = e.toISOString();
 
-    const dateToSend = `${year}-${month}-${day}T${hour}:${minutes}:${seconds}.${milliseconds}Z`;
     setValues({ ...values, dateToSend: dateToSend });
   };
 
