@@ -65,7 +65,7 @@ const Reports = () => {
       haveTemplate: true,
       template: (row: ReportDetailsModel) => (
         <>
-          {row?.postOwner?.profileImage?.imgURL ? (
+          {row?.postOwner?.profileImage?.imgURL && (
             <img
               alt={'post'}
               data-dz-thumbnail=""
@@ -73,21 +73,34 @@ const Reports = () => {
               className={'rounded'}
               src={row?.postOwner?.profileImage?.imgURL}
             />
-          ) : (
+          )}{' '}
+          {row.postOwner && (
+            <>
+              {row?.postOwner?.firstName} {row?.postOwner?.lastName}
+            </>
+          )}
+        </>
+      ),
+    },
+    {
+      name: 'Comment Owner',
+      field: 'commentOwner',
+      haveTemplate: true,
+      template: (row: ReportDetailsModel) => (
+        <>
+          {row?.commentOwner?.profileImage?.imgURL && (
             <img
-              alt={'post'}
+              alt={'comment'}
               data-dz-thumbnail=""
               height="30"
               className={'rounded'}
               src={row?.commentOwner?.profileImage?.imgURL}
             />
           )}{' '}
-          {row.postOwner ? (
+          {row?.commentOwner && (
             <>
-              {row.postOwner?.firstName} {row.postOwner?.lastName}
+              {row?.commentOwner?.firstName} {row?.commentOwner?.lastName}
             </>
-          ) : (
-            <>{row.commentOwner?.firstName} {row.commentOwner?.lastName}</>
           )}
         </>
       ),
@@ -160,6 +173,9 @@ const Reports = () => {
     },
   ];
   const { reports } = useSelector((state: RootState) => state.reportsReducer);
+  const { selectedPlaceId } = useSelector(
+    (state: RootState) => state.initialDataReducer
+  );
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState<number>(0);
@@ -174,7 +190,7 @@ const Reports = () => {
     count: null,
   });
 
-  const dropdownOptions = ['Posts', 'Comments', 'Chat Room'];
+  const dropdownOptions = ['Posts', 'Comments'];
   const statusFilter = ['REPORTED', 'CONFIRMED', 'DECLINED'];
 
   const callbacks = {
@@ -193,6 +209,7 @@ const Reports = () => {
       offset: searchParams.get('offset'),
       limit: LIMIT,
       statusFilter: searchParams.get('statusFilter') || '',
+      placeId: selectedPlaceId,
     };
     switch (searchParams.get('reportFilter')) {
       case 'Posts':
@@ -242,7 +259,7 @@ const Reports = () => {
     if (searchParams.toString().includes('offset')) {
       getData();
     }
-  }, [searchParams]);
+  }, [searchParams, selectedPlaceId]);
 
   const handlePageChange = (event: PaginationEventModel) => {
     setCurrentPage(event.first);
@@ -347,7 +364,8 @@ const Reports = () => {
                 : tableHeader
                     .filter(
                       ({ field, name }) =>
-                        field !== 'comments' && name !== 'Comment Info'
+                        field !== ('comments' && 'commentOwner') &&
+                        name !== ('Comment Owner' && 'Comment Info')
                     )
                     .map(({ name, field }, index) => (
                       <Column
@@ -381,8 +399,8 @@ const Reports = () => {
                 : tableHeader
                     .filter(
                       (item) =>
-                        item.field !== 'comments' &&
-                        item.name !== 'Comment Info'
+                        item.field !== ('comments' && 'commentOwner') &&
+                        item.name !== ('Comment Owner' && 'Comment Info')
                     )
                     .map((item, index) => {
                       if (item.haveTemplate) {

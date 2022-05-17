@@ -20,7 +20,7 @@ const correctTrends = (incomeArr: CustomerTrend[]) => {
     }
   ];
   incomeArr.map(item => {
-    const idx = ((new Date().getDate() + 2 + item.visitDayOfMonth) % 30);
+    const idx = ((item.visitDayOfMonth - new Date().getDate() + 29) % 30);
     yearData[0].data[idx] = item.firstTimeVisitor;
     yearData[1].data[idx] = item.secondTimeVisitor;
     yearData[2].data[idx] = item.regular;
@@ -38,7 +38,7 @@ const StackedColumnChartMonth = ({ incomeData } : {incomeData: CustomerTrend[]})
       const months = correctTrends(incomeData);
       setPeriodData(months);
     }
-  }, incomeData)
+  }, incomeData);
 
   for (let i = 0; i < 30; i++) {
     monthDays.unshift(date.getDate());
