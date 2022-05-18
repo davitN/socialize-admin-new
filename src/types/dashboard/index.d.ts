@@ -66,6 +66,20 @@ export interface DashboardData {
   busiestDayLastYear: BusiestDay;
   busiestDayLastMonth: BusiestDay;
   busiestDayLastWeek: BusiestDay;
+  notificationCountLastMonth: number;
+  notificationCountThisMonth: number;
+  sentAndDeliveredNotificationsCount: {
+    deliveredUsersCount: number;
+    sentUsersCount: number;
+    _id: {
+      visitYearMonthDate: string;
+    };
+  };
+  postsViewsCount: {
+    postsCount: number;
+    viewsCount: number;
+    _id: string;
+  }
 }
 
 interface BusiestDay {
