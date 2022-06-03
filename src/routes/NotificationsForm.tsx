@@ -72,7 +72,6 @@ const NotificationsForm = () => {
   const navigate = useNavigate();
   const [date, setDate] = useState<Date>();
   const [scheduled, setScheduled] = useState<boolean>(false);
-  const [draft, setDraft] = useState<boolean>(false);
   const [checked, setChecked] = useState<boolean>(false);
   const { selectedPlaceId } = useSelector(
     (state: RootState) => state.initialDataReducer
@@ -122,13 +121,6 @@ const NotificationsForm = () => {
   };
 
   const handleValidation = () => {
-    if (scheduled && draft && checked) {
-      setValidation({
-        ...validation,
-        dateToSend: true,
-        daysSinceVisited: true,
-      });
-    }
     {
       !scheduled
         ? setValidation({
@@ -156,27 +148,21 @@ const NotificationsForm = () => {
   };
 
   useEffect(() => {
-    if (draft) {
-      submitFormHandler('DRAFT');
-    }
-  }, [draft, checked]);
-
-  useEffect(() => {
     handleValidation();
-  }, [values, scheduled, checked, draft]);
+  }, [values]);
 
   const submitFormHandler = (buttonType: 'DRAFT' | 'SCHEDULED' | 'SENDNOW') => {
     setValidation({ ...validation, submitted: true });
     if (buttonType === ('DRAFT' || 'SCHEDULED') && checked) {
-      setValidation({
-        ...validation,
-        daysSinceVisited: true,
-        dateToSend: true,
-      });
+      () =>
+        setValidation({
+          ...validation,
+          daysSinceVisited: true,
+          dateToSend: true,
+        });
     }
-    // console.log(handleValidation());
-    console.log(validation);
     if (
+      !checked &&
       !(
         validation.notificationText &&
         validation.notificationTitle &&
@@ -200,6 +186,7 @@ const NotificationsForm = () => {
       dateToSend: values.dateToSend,
     };
     sendData.image = logoImg[0];
+    console.log(sendData.data);
     switch (buttonType) {
       case 'DRAFT':
       case 'SCHEDULED':
@@ -389,7 +376,7 @@ const NotificationsForm = () => {
             label={'Days Since Visited'}
             value={values.daysSinceVisited}
             customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
-              validation.submitted && !validation.daysSinceVisited
+              validation.submitted && !validation.daysSinceVisited && !checked
                 ? classes.inputError
                 : ''
             }`}
@@ -447,9 +434,7 @@ const NotificationsForm = () => {
               label={'Save Draft'}
               onClick={() => {
                 setScheduled(false);
-                setDraft(true);
-                // submitFormHandler('DRAFT');
-                // submitForm('DRAFT');
+                submitFormHandler('DRAFT');
               }}
             />
             <Button
@@ -457,9 +442,7 @@ const NotificationsForm = () => {
               className={`${classes.submitButton}`}
               onClick={() => {
                 setScheduled(true);
-                setDraft(false);
-                // submitFormHandler('SCHEDULED');
-                // submitForm('SCHEDULED');
+                submitFormHandler('SCHEDULED');
               }}
             />
             <Button
@@ -467,10 +450,9 @@ const NotificationsForm = () => {
               className={`${classes.submitButton}`}
               onClick={() => {
                 setScheduled(false);
-                setDraft(false);
-                // submitFormHandler('SENDNOW');
-                // submitForm('SENDNOW');
+                submitFormHandler('SENDNOW');
               }}
+              disabled={checked}
             />
           </div>
         </CardBody>
