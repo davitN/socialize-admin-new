@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Button } from 'primereact/button';
+import { Checkbox } from 'primereact/checkbox';
 import { createUseStyles } from 'react-jss';
 import { Card, CardBody, CardTitle } from 'reactstrap';
 import TextInput from '../components/shared/form-elements/TextInput';
@@ -71,6 +72,7 @@ const NotificationsForm = () => {
   const navigate = useNavigate();
   const [date, setDate] = useState<Date>();
   const [scheduled, setScheduled] = useState<boolean>(false);
+  const [checked, setChecked] = useState<boolean>(false);
   const { selectedPlaceId } = useSelector(
     (state: RootState) => state.initialDataReducer
   );
@@ -105,6 +107,7 @@ const NotificationsForm = () => {
     daysSinceVisited: null,
     placeId: '',
     dateToSend: '',
+    sendNotificationAfterPosting: false,
   });
 
   useEffect(() => {
@@ -146,11 +149,20 @@ const NotificationsForm = () => {
 
   useEffect(() => {
     handleValidation();
-  }, [values, scheduled]);
+  }, [values]);
 
   const submitFormHandler = (buttonType: 'DRAFT' | 'SCHEDULED' | 'SENDNOW') => {
     setValidation({ ...validation, submitted: true });
+    if (buttonType === ('DRAFT' || 'SCHEDULED') && checked) {
+      () =>
+        setValidation({
+          ...validation,
+          daysSinceVisited: true,
+          dateToSend: true,
+        });
+    }
     if (
+      !checked &&
       !(
         validation.notificationText &&
         validation.notificationTitle &&
@@ -161,6 +173,7 @@ const NotificationsForm = () => {
     ) {
       return;
     }
+    console.log('we are good');
     sendData.data = {
       placeId: values.placeId,
       daysSinceVisited: +values.daysSinceVisited,
@@ -173,10 +186,12 @@ const NotificationsForm = () => {
       dateToSend: values.dateToSend,
     };
     sendData.image = logoImg[0];
+    console.log(sendData.data);
     switch (buttonType) {
       case 'DRAFT':
       case 'SCHEDULED':
         sendData.data.type = buttonType;
+        sendData.data.sendNotificationAfterPosting = checked;
         dispatch(
           postDraftOrScheduledActionSG(sendData, {
             success: () => {
@@ -361,14 +376,14 @@ const NotificationsForm = () => {
             label={'Days Since Visited'}
             value={values.daysSinceVisited}
             customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
-              validation.submitted && !validation.daysSinceVisited
+              validation.submitted && !validation.daysSinceVisited && !checked
                 ? classes.inputError
                 : ''
             }`}
             handleChange={(event) =>
               setValues({ ...values, daysSinceVisited: +event })
             }
-            required
+            required={!checked}
           />
           <div
             className={`flex-horizontal mb-3 ${
@@ -398,6 +413,22 @@ const NotificationsForm = () => {
               showButtonBar
             />
           </div>
+          <div className={`flex-horizontal mb-3 ${classes.inputBlock}`}>
+            <label htmlFor="schedule-without-not">
+              Schedule Post Without Notification
+            </label>
+            <Checkbox
+              inputId="schedule-without-not"
+              checked={checked}
+              onChange={(e) => {
+                setChecked(e.checked);
+                setValues({
+                  ...values,
+                  sendNotificationAfterPosting: e.checked,
+                });
+              }}
+            />
+          </div>
           <div className={'flex-horizontal'}>
             <Button
               label={'Save Draft'}
@@ -421,6 +452,7 @@ const NotificationsForm = () => {
                 setScheduled(false);
                 submitFormHandler('SENDNOW');
               }}
+              disabled={checked}
             />
           </div>
         </CardBody>

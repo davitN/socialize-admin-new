@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 
-import { Card, CardBody, Form } from 'reactstrap';
+import { Card, CardBody, CardTitle, Form } from 'reactstrap';
 
 import { createUseStyles } from 'react-jss';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -23,6 +23,8 @@ import { RootState } from '../store/configureStore';
 import { getCompaniesActionSG } from '../store/ducks/companyDuck';
 import { CompanyModel } from '../types/company';
 import { Password } from 'primereact/password';
+import { attachUserActionSG } from '../store/ducks/authDuck';
+import notificationService from '../services/notification.service';
 
 const useStyles = createUseStyles({
   inputError: {
@@ -37,7 +39,7 @@ const useStyles = createUseStyles({
     width: 200,
     marginLeft: 'auto',
     marginBottom: -5,
-    listStyle: 'disc'
+    listStyle: 'disc',
   },
   inputBlock: {
     '& label': {
@@ -75,6 +77,10 @@ const useStyles = createUseStyles({
   formValue: {
     width: 'calc(100% - 200px)',
   },
+  attachedContainer: {
+    width: 'calc(100% - 200px)',
+    justifyContent: 'space-between',
+  },
 });
 
 const AdminManagementForm: React.FC<{}> = () => {
@@ -82,6 +88,7 @@ const AdminManagementForm: React.FC<{}> = () => {
   const [newMode, setNewMode] = useState(false);
   const [companySearchValue, setCompanySearchValue] = useState('');
   const [filteredCompanies, setFilteredCompanies] = useState([]);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
   const [selectedCompany, setSelectedCompany] = useState<CompanyModel>({
     name: '',
     _id: '',
@@ -129,6 +136,10 @@ const AdminManagementForm: React.FC<{}> = () => {
     lastName: '',
     password: '',
     companyId: '',
+    adminUser: {
+      phone: '',
+      username: '',
+    },
   });
 
   const getCompanies = () => {
@@ -164,7 +175,10 @@ const AdminManagementForm: React.FC<{}> = () => {
         success: (res: AdminModel) => {
           setValues({ ...values, ...res, roleId: res.role._id });
           setSelectedRole(res.role);
-          if (res.role.name === 'CompanyOwner' || selectedRole.name === 'CompanyAdministrator') {
+          if (
+            res.role.name === 'CompanyOwner' ||
+            selectedRole.name === 'CompanyAdministrator'
+          ) {
             setSelectedCompany(res.company);
           }
         },
@@ -240,7 +254,11 @@ const AdminManagementForm: React.FC<{}> = () => {
     ) {
       return;
     }
-    if ((selectedRole.name === 'CompanyOwner' || selectedRole.name === 'CompanyAdministrator') && !values.companyId) {
+    if (
+      (selectedRole.name === 'CompanyOwner' ||
+        selectedRole.name === 'CompanyAdministrator') &&
+      !values.companyId
+    ) {
       return;
     }
     if (newMode) {
@@ -252,7 +270,10 @@ const AdminManagementForm: React.FC<{}> = () => {
         roleId: values.roleId,
         password: values.password,
       };
-      if (selectedRole.name === 'CompanyOwner' || selectedRole.name === 'CompanyAdministrator') {
+      if (
+        selectedRole.name === 'CompanyOwner' ||
+        selectedRole.name === 'CompanyAdministrator'
+      ) {
         newData.companyId = values.companyId;
       }
       dispatch(
@@ -272,7 +293,10 @@ const AdminManagementForm: React.FC<{}> = () => {
         roleId: values.roleId,
         password: values.password,
       };
-      if (selectedRole.name === 'CompanyOwner' || selectedRole.name === 'CompanyAdministrator') {
+      if (
+        selectedRole.name === 'CompanyOwner' ||
+        selectedRole.name === 'CompanyAdministrator'
+      ) {
         sendData.companyId = values.companyId;
       }
       dispatch(
@@ -302,14 +326,29 @@ const AdminManagementForm: React.FC<{}> = () => {
     }
   }, [adminId]);
 
+  const attachUserHandler = () => {
+    event.preventDefault();
+    const sendData = {
+      adminId: adminId,
+      phone: values.adminUser.phone,
+    };
+    dispatch(
+      attachUserActionSG(sendData, {
+        success: () => {
+          navigate(-1);
+          notificationService.success('User successfully attached!');
+        },
+        error: () => {
+          notificationService.error('Invalid phone number!');
+        },
+      })
+    );
+  };
+
   return (
     <div className="page-content">
       <Card>
         <CardBody>
-          {/*<CardTitle className={'text-start'}>Location Information</CardTitle>*/}
-          {/*<CardSubtitle className="mb-4 text-start">*/}
-          {/*  Make sure your location information is accurate.*/}
-          {/*</CardSubtitle>*/}
           <Form>
             <TextInput
               customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
@@ -352,7 +391,8 @@ const AdminManagementForm: React.FC<{}> = () => {
                 }
               />
             </div>
-            {(selectedRole.name === 'CompanyOwner' || selectedRole.name === 'CompanyAdministrator') && (
+            {(selectedRole.name === 'CompanyOwner' ||
+              selectedRole.name === 'CompanyAdministrator') && (
               <div
                 className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}
               >
@@ -402,31 +442,35 @@ const AdminManagementForm: React.FC<{}> = () => {
               required
             />
             {newMode && (
-                <div className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}>
-                  <label>Password</label>
-                  <Password
-                      className={`${
-                          validation.submitted && !validation.password
-                              ? classes.inputError
-                              : ''
-                      }`}
-                      value={values.password}
-                      onChange={(e) =>
-                          setValues({ ...values, password: e.target.value })
-                      }
-                      type={'password'}
-                      placeholder="Enter Password"
-                      toggleMask={true}
-                      content={() => (<ul className={classes.passwordHint}>
-                        <li>At least one lowercase</li>
-                        <li>At least one uppercase</li>
-                        <li>At least one numeric</li>
-                        <li>Minimum 6 characters</li>
-                      </ul>)}
-                      required
-                      autoComplete={'off'}
-                  />
-                </div>
+              <div
+                className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}
+              >
+                <label>Password</label>
+                <Password
+                  className={`${
+                    validation.submitted && !validation.password
+                      ? classes.inputError
+                      : ''
+                  }`}
+                  value={values.password}
+                  onChange={(e) =>
+                    setValues({ ...values, password: e.target.value })
+                  }
+                  type={'password'}
+                  placeholder="Enter Password"
+                  toggleMask={true}
+                  content={() => (
+                    <ul className={classes.passwordHint}>
+                      <li>At least one lowercase</li>
+                      <li>At least one uppercase</li>
+                      <li>At least one numeric</li>
+                      <li>Minimum 6 characters</li>
+                    </ul>
+                  )}
+                  required
+                  autoComplete={'off'}
+                />
+              </div>
             )}
             <Button
               label={'Submit'}
@@ -436,6 +480,46 @@ const AdminManagementForm: React.FC<{}> = () => {
           </Form>
         </CardBody>
       </Card>
+      {!newMode && (
+        <Card>
+          <CardBody>
+            <CardTitle className={'text-start'}>Attach User</CardTitle>
+            <div className="flex-horizontal">
+              <label
+                className={`text-start ${classes.formLabel}`}
+                htmlFor={'user'}
+              >
+                User
+              </label>
+              <div className={`flex-horizontal ${classes.attachedContainer}`}>
+                <TextInput
+                  value={values.adminUser?.phone}
+                  id={'user'}
+                  customClasses={`flex-horizontal ${classes.formLabel}`}
+                  handleChange={(e) => {
+                    setValues({
+                      ...values,
+                      adminUser: { ...values.adminUser, phone: e },
+                    });
+                    setButtonDisabled(false);
+                  }}
+                />
+                <TextInput
+                  value={values.adminUser?.username}
+                  id={'username'}
+                  customClasses={`flex-horizontal ${classes.formLabel}`}
+                  disabled
+                />
+                <Button
+                  label="Attach User"
+                  onClick={attachUserHandler}
+                  disabled={buttonDisabled}
+                />
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+      )}
     </div>
   );
 };

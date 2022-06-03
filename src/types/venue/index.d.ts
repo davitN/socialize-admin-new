@@ -6,6 +6,7 @@ export interface VenueStateModel {
   company?: CompanyModel,
   companyId?: string,
   allowUsersToAccessAfterLeaving: boolean,
+  sendNotificationsWhileUsersAround: boolean,
   accessDaysAfter: number,
   ambassadorId?: string,
   ambassador?: AdminModel,
@@ -15,7 +16,6 @@ export interface VenueStateModel {
   cover: VenueImageModel,
   coverThumbnail: VenueImageModel,
   location: {
-    address: string,
     city: string,
     code: string,
     country: string,

@@ -129,6 +129,7 @@ const VenueForm: React.FC<{}> = () => {
   const [values, setValues] = useState<VenueStateModel>({
     accessDaysAfter: null,
     allowUsersToAccessAfterLeaving: false,
+    sendNotificationsWhileUsersAround: false,
     cover: {
       width: null,
       height: null,
@@ -142,7 +143,6 @@ const VenueForm: React.FC<{}> = () => {
     location: {
       state: '',
       city: '',
-      address: '',
       code: '',
       country: '',
       point: {
@@ -261,9 +261,6 @@ const VenueForm: React.FC<{}> = () => {
     if (!values.profile.name) {
       return true;
     }
-    if (!values.location.address) {
-      return true;
-    }
     if (!values.location.city) {
       return true;
     }
@@ -297,7 +294,7 @@ const VenueForm: React.FC<{}> = () => {
     if (newMode && coverThumbnailImg.length === 0) {
       return true;
     }
-    if (!values.accessDaysAfter) {
+    if (values.allowUsersToAccessAfterLeaving && !values.accessDaysAfter) {
       return true;
     }
     return false;
@@ -344,7 +341,9 @@ const VenueForm: React.FC<{}> = () => {
           offset: 0,
           limit: 5,
           nameFilter,
-          roleFilter: initialData.roles.find(role => role.name === 'Ambassador')._id,
+          roleFilter: initialData.roles.find(
+            (role) => role.name === 'Ambassador'
+          )._id,
         },
         {
           success: (res: AdminTableModel) => {
@@ -366,10 +365,15 @@ const VenueForm: React.FC<{}> = () => {
 
   const submitButton = (event: any) => {
     event.preventDefault();
-    console.log(sendData);
     setIsSubmitted(true);
     if (formNotValid()) {
       return;
+    }
+    if (!sendData.data.allowUsersToAccessAfterLeaving) {
+      sendData.data = {
+        ...sendData.data,
+        accessDaysAfter: sendData.data.accessDaysAfter || 0,
+      };
     }
     const data: any = { ...sendData.data };
     data.company = data.companyId;
@@ -421,6 +425,12 @@ const VenueForm: React.FC<{}> = () => {
   function onSwitch(active: boolean) {
     if (canEdit) {
       setValues({ ...values, allowUsersToAccessAfterLeaving: active });
+    }
+  }
+
+  function onSwitchNotifications(active: boolean) {
+    if (canEdit) {
+      setValues({ ...values, sendNotificationsWhileUsersAround: active });
     }
   }
 
@@ -514,7 +524,7 @@ const VenueForm: React.FC<{}> = () => {
                   className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}
                 >
                   <label>Company</label>
-                  {(userRole === 'SuperAdmin' || newMode) ? (
+                  {userRole === 'SuperAdmin' || newMode ? (
                     <AutoComplete
                       className={
                         isSubmitted && !values.companyId
@@ -536,7 +546,7 @@ const VenueForm: React.FC<{}> = () => {
                     <span>{values.company?.name}</span>
                   )}
                 </div>
-                {userRole !== 'CompanyOwner' && 
+                {userRole !== 'CompanyOwner' && (
                   <div
                     className={`flex-horizontal mb-3 ${classes.multiSelectClass}`}
                   >
@@ -559,30 +569,14 @@ const VenueForm: React.FC<{}> = () => {
                         forceSelection={true}
                       />
                     ) : (
-                      <span>{`${values.ambassador?.firstName || ''} ${values.ambassador?.lastName || ''}`}</span>
+                      <span>{`${values.ambassador?.firstName || ''} ${
+                        values.ambassador?.lastName || ''
+                      }`}</span>
                     )}
                   </div>
-                }
+                )}
               </Fragment>
             )}
-            <TextInput
-              customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
-                isSubmitted && !values.location.address
-                  ? classes.inputError
-                  : ''
-              }`}
-              value={values.location.address}
-              handleChange={(address) =>
-                setValues({
-                  ...values,
-                  location: { ...values.location, address },
-                })
-              }
-              label="Address"
-              placeholder="Enter your Address"
-              required
-              readonly={!canEdit}
-            />
             <TextInput
               customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
                 isSubmitted && !values.location.city ? classes.inputError : ''
@@ -630,7 +624,7 @@ const VenueForm: React.FC<{}> = () => {
               handleChange={(code) =>
                 setValues({ ...values, location: { ...values.location, code } })
               }
-              label="Code"
+              label="Zip / Postal Code"
               placeholder="Enter Code"
               required
               readonly={!canEdit}
@@ -657,7 +651,7 @@ const VenueForm: React.FC<{}> = () => {
               <label>Coordinates</label>
               <div
                 className={`coordinate-inputs flex-horizontal ${classes.coordinateClass}`}
-              >                
+              >
                 <span className="title">Latitude:</span>
                 <InputText
                   className={`${
@@ -714,12 +708,12 @@ const VenueForm: React.FC<{}> = () => {
                           ...values.location.point,
                           coordinates: [
                             isNaN(value)
-                            ? ''
-                            : value < min
-                            ? min
-                            : value > max
-                            ? max
-                            : value,
+                              ? ''
+                              : value < min
+                              ? min
+                              : value > max
+                              ? max
+                              : value,
                             values.location.point.coordinates[1],
                           ],
                         },
@@ -1041,9 +1035,25 @@ const VenueForm: React.FC<{}> = () => {
                 />
               </Col>
             </FormGroup>
+            <FormGroup className="mb-3" row>
+              <Label md="3" className="col-form-label text-start">
+                Enable Location Notifiacations
+              </Label>
+              <Col md="9" className={'flex-horizontal'}>
+                <CvSwitcher
+                  readonly={!canEdit}
+                  defaultValue={values.sendNotificationsWhileUsersAround}
+                  onChange={(event: boolean) => onSwitchNotifications(event)}
+                />
+              </Col>
+            </FormGroup>
             <TextInput
               customClasses={`flex-horizontal mb-3 ${classes.inputBlock} ${
-                isSubmitted && !values.accessDaysAfter ? classes.inputError : ''
+                isSubmitted &&
+                !values.accessDaysAfter &&
+                values.allowUsersToAccessAfterLeaving
+                  ? classes.inputError
+                  : ''
               }`}
               value={values.accessDaysAfter}
               type={'number'}
@@ -1051,7 +1061,7 @@ const VenueForm: React.FC<{}> = () => {
                 setValues({ ...values, accessDaysAfter: parseInt(num) })
               }
               label="How Many Days After?"
-              required
+              required={false || values.allowUsersToAccessAfterLeaving}
               readonly={!canEdit}
             />
             {!newMode && (

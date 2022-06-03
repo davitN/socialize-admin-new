@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { put } from 'redux-saga/effects';
 import axiosInstance from '../../services/interceptor.service';
+import { AdminAttachUserModel } from '../../types/admin';
 import { AuthState, ISignInData, ISignUpData } from '../../types/auth';
 import { CallBacks, IUserData } from '../../types/main';
 import { UserProfileSendModel } from '../../types/profile';
@@ -201,16 +202,28 @@ export function* recoverPasswordSaga({
   }
 }
 
-export function* attachUserSaga({phone, callback}: {phone: string, callback: CallBacks, type: string}) {
+export function* attachUserSaga({
+  data,
+  callback,
+}: {
+  data: AdminAttachUserModel;
+  callback: CallBacks;
+  type: string;
+}) {
   try {
-    yield axiosInstance.put('/account/attach_user_to_admin', {phone});
+    yield axiosInstance.put('/account/attach_user_to_admin', data);
     callback?.success && callback.success();
   } catch (err: any) {
     callback?.error && callback.error(err.response?.data.message);
   }
-} 
+}
 
-export function* getAccountDetailsSaga({callback}: {callback: CallBacks, type: string}) {
+export function* getAccountDetailsSaga({
+  callback,
+}: {
+  callback: CallBacks;
+  type: string;
+}) {
   try {
     const res: AuthState = yield axiosInstance.get('/account/get');
     callback?.success && callback.success(res);

@@ -51,4 +51,5 @@ interface NotificationsStateModel {
   img?: NotificationImageModel;
   daysSinceVisited: number;
   dateToSend?: string;
+  sendNotificationAfterPosting?: boolean;
 }
