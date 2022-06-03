@@ -80,7 +80,7 @@ const UserProfile: React.FC<{}> = () => {
   });
   const [userData, setUserData] = useState({
     adminUser: {
-      phone: "",
+      phone: '',
       username: '',
     },
     firstName: '',
@@ -99,21 +99,21 @@ const UserProfile: React.FC<{}> = () => {
   };
 
   const getUserData = () => {
-    dispatch(getAccountDetailsActionSG(
-      {
+    dispatch(
+      getAccountDetailsActionSG({
         success: (res: AuthState) => {
-          setUserData({...userData, ...res});
+          setUserData({ ...userData, ...res });
         },
         error: () => {
           //
         },
-      }
-    ));
-  }
+      })
+    );
+  };
 
   useEffect(() => {
     getUserData();
-  }, [])
+  }, []);
 
   useEffect(() => {
     onChangeState(values);
@@ -167,14 +167,17 @@ const UserProfile: React.FC<{}> = () => {
 
   const attachUserHandler = () => {
     event.preventDefault();
+    const sendData = {
+      phone: userData.adminUser.phone,
+    };
     dispatch(
-      attachUserActionSG(userData.adminUser.phone, {
+      attachUserActionSG(sendData, {
         success: () => {
           navigate('/dashboard');
-          notificationService.success("User successfully attached!");
+          notificationService.success('User successfully attached!');
         },
         error: () => {
-          notificationService.error("Invalid phone number!");
+          notificationService.error('Invalid phone number!');
         },
       })
     );
@@ -240,7 +243,10 @@ const UserProfile: React.FC<{}> = () => {
                   customClasses={`flex-horizontal ${classes.formLabel}`}
                   handleChange={(e) => {
                     // setPhone(e);
-                    setUserData({...userData, adminUser: {...userData.adminUser, phone: e }})
+                    setUserData({
+                      ...userData,
+                      adminUser: { ...userData.adminUser, phone: e },
+                    });
                     setButtonDisabled(false);
                   }}
                 />

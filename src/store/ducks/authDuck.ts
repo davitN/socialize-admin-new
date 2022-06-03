@@ -1,4 +1,5 @@
 import { AnyAction } from 'redux';
+import { AdminAttachUserModel } from '../../types/admin';
 import { AuthState, ISignInData, ISignUpData } from '../../types/auth';
 import { CallBacks, IUserData } from '../../types/main';
 import { UserProfileSendModel } from '../../types/profile';
@@ -111,13 +112,16 @@ export const requestRecoverPasswordActionSG = (
   callback,
 });
 
-export const attachUserActionSG = (phone: string, callback: CallBacks) => ({
+export const attachUserActionSG = (
+  data: AdminAttachUserModel,
+  callback: CallBacks,
+) => ({
   type: REQUEST_ATTACH_USER_SG,
-  phone,
+  data,
   callback,
-})
+});
 
 export const getAccountDetailsActionSG = (callback: CallBacks) => ({
   type: GET_ACCOUNT_DETAILS_SG,
   callback,
-})
+});
