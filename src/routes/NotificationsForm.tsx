@@ -71,7 +71,6 @@ const NotificationsForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [date, setDate] = useState<Date>();
-  const [scheduled, setScheduled] = useState<boolean>(false);
   const [checked, setChecked] = useState<boolean>(false);
   const { selectedPlaceId } = useSelector(
     (state: RootState) => state.initialDataReducer
@@ -120,26 +119,89 @@ const NotificationsForm = () => {
     setValues({ ...values, dateToSend: dateToSend });
   };
 
-  const handleValidation = () => {
-    {
-      !scheduled
-        ? setValidation({
+  const handleValidation = (buttonType: 'DRAFT' | 'SCHEDULED' | 'SENDNOW') => {
+    if (!checked) {
+      switch (buttonType) {
+        case 'DRAFT': {
+          setValidation({
             ...validation,
-            notificationText: !!values.notificationTitle,
+            notificationText: !!values.notificationText,
             notificationTitle: !!values.notificationTitle,
             postText: !!values.postText,
             daysSinceVisited: !!values.daysSinceVisited,
             dateToSend: true,
-          })
-        : setValidation({
+          });
+          break;
+        }
+        case 'SCHEDULED':
+          {
+            setValidation({
+              ...validation,
+              notificationText: !!values.notificationText,
+              notificationTitle: !!values.notificationTitle,
+              postText: !!values.postText,
+              daysSinceVisited: !!values.daysSinceVisited,
+              dateToSend: !!values.dateToSend,
+            });
+          }
+          break;
+        case 'SENDNOW':
+          {
+            setValidation({
+              ...validation,
+              notificationText: !!values.notificationText,
+              notificationTitle: !!values.notificationTitle,
+              postText: !!values.postText,
+              daysSinceVisited: !!values.daysSinceVisited,
+              dateToSend: !!values.dateToSend,
+            });
+          }
+          break;
+      }
+    } else {
+      switch (buttonType) {
+        case 'DRAFT': {
+          setValidation({ ...validation, daysSinceVisited: true });
+          break;
+        }
+        case 'SCHEDULED': {
+          setValidation({
             ...validation,
-            notificationText: !!values.notificationTitle,
-            notificationTitle: !!values.notificationTitle,
-            postText: !!values.postText,
-            daysSinceVisited: !!values.daysSinceVisited,
+            daysSinceVisited: true,
             dateToSend: !!values.dateToSend,
           });
+          break;
+        }
+      }
     }
+    // {
+    //   buttonType !== 'SCHEDULED'
+    //     ? setValidation({
+    //         ...validation,
+    //         notificationText: !!values.notificationTitle,
+    //         notificationTitle: !!values.notificationTitle,
+    //         postText: !!values.postText,
+    //         daysSinceVisited: !!values.daysSinceVisited,
+    //         dateToSend: true,
+    //       })
+    //     : setValidation({
+    //         ...validation,
+    //         notificationText: !!values.notificationTitle,
+    //         notificationTitle: !!values.notificationTitle,
+    //         postText: !!values.postText,
+    //         daysSinceVisited: !!values.daysSinceVisited,
+    //         dateToSend: !!values.dateToSend,
+    //       });
+    // }
+    // {
+    //   checked &&
+    //     buttonType === 'SCHEDULED' &&
+    //     setValidation({
+    //       ...validation,
+    //       daysSinceVisited: true,
+    //       dateToSend: !!values.dateToSend,
+    //     });
+    // }
   };
 
   const sendData: NotificationsSendModel = {
@@ -148,21 +210,13 @@ const NotificationsForm = () => {
   };
 
   useEffect(() => {
-    handleValidation();
-  }, [values]);
+    handleValidation('DRAFT' || 'SCHEDULED' || 'SENDNOW');
+  }, [values, checked]);
 
   const submitFormHandler = (buttonType: 'DRAFT' | 'SCHEDULED' | 'SENDNOW') => {
+    handleValidation(buttonType);
     setValidation({ ...validation, submitted: true });
-    if (buttonType === ('DRAFT' || 'SCHEDULED') && checked) {
-      () =>
-        setValidation({
-          ...validation,
-          daysSinceVisited: true,
-          dateToSend: true,
-        });
-    }
     if (
-      !checked &&
       !(
         validation.notificationText &&
         validation.notificationTitle &&
@@ -173,7 +227,6 @@ const NotificationsForm = () => {
     ) {
       return;
     }
-    console.log('we are good');
     sendData.data = {
       placeId: values.placeId,
       daysSinceVisited: +values.daysSinceVisited,
@@ -186,7 +239,6 @@ const NotificationsForm = () => {
       dateToSend: values.dateToSend,
     };
     sendData.image = logoImg[0];
-    console.log(sendData.data);
     switch (buttonType) {
       case 'DRAFT':
       case 'SCHEDULED':
@@ -433,7 +485,6 @@ const NotificationsForm = () => {
             <Button
               label={'Save Draft'}
               onClick={() => {
-                setScheduled(false);
                 submitFormHandler('DRAFT');
               }}
             />
@@ -441,7 +492,6 @@ const NotificationsForm = () => {
               label={'Schedule'}
               className={`${classes.submitButton}`}
               onClick={() => {
-                setScheduled(true);
                 submitFormHandler('SCHEDULED');
               }}
             />
@@ -449,7 +499,6 @@ const NotificationsForm = () => {
               label={'Send Now'}
               className={`${classes.submitButton}`}
               onClick={() => {
-                setScheduled(false);
                 submitFormHandler('SENDNOW');
               }}
               disabled={checked}
