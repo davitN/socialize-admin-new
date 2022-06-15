@@ -3,7 +3,7 @@ phases:
   install:
     on-failure: ABORT
     commands:
-      - npm install
+      - npm install --legacy-peer-deps
   build:
     on-failure: ABORT
     commands:
