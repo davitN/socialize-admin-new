@@ -243,7 +243,7 @@ const NotificationsForm = () => {
       case 'DRAFT':
       case 'SCHEDULED':
         sendData.data.type = buttonType;
-        sendData.data.sendNotificationAfterPosting = checked;
+        sendData.data.sendNotificationAfterPosting = !checked;
         dispatch(
           postDraftOrScheduledActionSG(sendData, {
             success: () => {
